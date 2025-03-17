@@ -1,0 +1,64 @@
+{
+  "sourceLanguage" : "ru",
+  "strings" : {
+    "" : {
+
+    },
+    "emailTitle" : {
+      "comment" : "Title for email input field",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Почта"
+          }
+        }
+      }
+    },
+    "loginSubtitle" : {
+      "comment" : "Subtitle of the login screen",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Открой для себя"
+          }
+        }
+      }
+    },
+    "loginTitle" : {
+      "comment" : "Title of the login screen",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Книжный мир"
+          }
+        }
+      }
+    },
+    "passwordTitle" : {
+      "comment" : "Title for password input field",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пароль"
+          }
+        }
+      }
+    },
+    "signInButtonTitle" : {
+      "comment" : "Text for the login button",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Войти"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
