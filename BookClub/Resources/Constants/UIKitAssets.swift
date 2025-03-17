@@ -46,16 +46,20 @@ enum UIKitAssets {
     }
     
     // MARK: - Fonts
-    static let fontTitle = ("Alumni Sans Bold", CGFloat(96), CGFloat(0.8))
-    static let fontH1 = ("Alumni Sans Bold", CGFloat(48), CGFloat(1.0))
-    static let fontH2 = ("Alumni Sans Bold", CGFloat(24), CGFloat(1.0))
-    static let fontBody = ("Vela Sans", CGFloat(16), CGFloat(1.3))
-    static let fontBodySmall = ("Vela Sans", CGFloat(14), CGFloat(1.3))
-    static let fontFootNote = ("Vela Sans", CGFloat(10), CGFloat(1.3))
-    static let fontText = ("Georgia", CGFloat(14), CGFloat(1.5))
-    static let fontQuote = ("Georgia", CGFloat(16), CGFloat(1.3))
+    static let fontTitle = ("Alumni Sans Bold", CGFloat(96), CGFloat(0.5))
+    static let fontH1 = ("Alumni Sans Bold", CGFloat(48), CGFloat(0.5))
+    static let fontH2 = ("Alumni Sans Bold", CGFloat(24), CGFloat(0.5))
+    static let fontBody = ("Vela Sans", CGFloat(16), CGFloat(1))
+    static let fontBodySmall = ("Vela Sans", CGFloat(14), CGFloat(1))
+    static let fontFootNote = ("Vela Sans", CGFloat(10), CGFloat(1))
+    static let fontText = ("Georgia", CGFloat(14), CGFloat(1))
+    static let fontQuote = ("Georgia", CGFloat(16), CGFloat(1))
     
-    static func setFont(_ font: (name: String, size: CGFloat, lineHeight: CGFloat)) -> (font: Font, size: CGFloat, lineHeight: CGFloat) {
-            return (Font.custom(font.name, size: font.size), font.size, font.lineHeight)
-        }
+    @MainActor static func setFont(_ font: (name: String, baseSize: CGFloat, scaleFactor: CGFloat)) -> (font: Font, size: CGFloat) {
+        let adaptiveSize = min(font.baseSize, UIScreen.main.bounds.width * font.scaleFactor)
+        print("adaptiveSize: \(adaptiveSize)")
+        print("UIScreen.main.bounds.width: \(UIScreen.main.bounds.width)")
+        print("scaleFactor: \(font.scaleFactor)")
+        return (Font.custom(font.name, size: adaptiveSize), adaptiveSize)
+    }
 }
