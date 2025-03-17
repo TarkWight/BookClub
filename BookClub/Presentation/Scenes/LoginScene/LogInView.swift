@@ -21,6 +21,13 @@ struct LogInView: View {
     @State private var passwordTitle = LocalizedKey.passwordTitle
     @State private var signInButtonTitle = LocalizedKey.signInButtonTitle
     
+    let buttonFont = UIKitAssets.setFont(UIKitAssets.fontBody)
+    let inputFieldTitleFont = UIKitAssets.setFont(UIKitAssets.fontBodySmall)
+    let inputFieldFont = UIKitAssets.setFont(UIKitAssets.fontBodySmall)
+    let headerTitleFont = UIKitAssets.setFont(UIKitAssets.fontH1)
+    let headerSubtitleFont = UIKitAssets.setFont(UIKitAssets.fontTitle)
+    
+    
     var body: some View {
         ZStack(alignment: .top) {
             Color(UIKitAssets.colorAccentDark)
@@ -37,23 +44,25 @@ struct LogInView: View {
                 header
                     .padding(.horizontal, Constants.sidePadding)
 
-                Spacer().frame(height: Constants.titleToInputSpacing)
+                Spacer()//.frame(height: Constants.titleToInputSpacing)
 
                 inputFields
                     .padding(.horizontal, Constants.sidePadding)
 
-                Spacer().frame(height: Constants.inputToButtonSpacing)
+                Spacer()//.frame(height: Constants.inputToButtonSpacing)
 
                 signInButton
                     .padding(.horizontal, Constants.sidePadding)
 
-                Spacer().frame(height: Constants.bottomPadding)
+                Spacer()
+                    .frame(height: Constants.bottomPadding)
             }
-            .frame(maxHeight: .infinity, alignment: .top)
+//            .frame(maxHeight: .infinity, alignment: .top)
             .ignoresSafeArea(.all) // Так надо? Без этого у меня не отображается нормально
             /* UIWindow.UITransitionView/UIDropShadowView/UITransitionView/HostingVC/
              LazyView<LoginView>/LoginView - вот здесь трабл был в том, что был непонятный отступ сверху
             */
+            .frame(maxHeight: .infinity, alignment: .top)
         }
     }
 }
@@ -96,18 +105,20 @@ private extension LogInView {
     var header: some View {
         VStack(alignment: .leading) {
             Text(headerSubtitle)
-                .font(Constants.headerTitleFont.font)
+                .font(headerTitleFont.font)
                 .foregroundColor(Constants.headerTitleColor)
+                .minimumScaleFactor(0.5)
             
             //TODO: - Убрать заглушку
             VStack(alignment: .leading) {
                         ForEach(["КНИЖНЫЙ", "МИР"], id: \.self) { line in
                             Text(line)
                                 .applyNegativeSpacing(
-                                    font: Constants.headerSubtitleFont,
+                                    font: headerSubtitleFont,
                                     color: Constants.headerSubtitleColor,
                                     spacingType: .subtitleLines
                                 )
+                                .minimumScaleFactor(0.5)
                         }
                     }
         }
@@ -118,11 +129,11 @@ private extension LogInView {
         VStack(spacing: 0) {
             HStack {
                 Text(emailTitle)
-                    .font(Constants.inputFieldTitleFont.font)
+                    .font(inputFieldTitleFont.font)
                     .foregroundColor(Constants.inputFieldTitleColor)
                 
                 TextField("", text: $email)
-                    .font(Constants.inputFieldFont.font)
+                    .font(inputFieldFont.font)
                     .foregroundColor(Constants.inputFieldTitleColor)
                     .frame(maxWidth: .infinity, minHeight: Constants.inputFieldHeight)
                     .multilineTextAlignment(.leading)
@@ -145,18 +156,18 @@ private extension LogInView {
             
             HStack {
                 Text(passwordTitle)
-                    .font(Constants.inputFieldTitleFont.font)
+                    .font(inputFieldTitleFont.font)
                     .foregroundColor(Constants.inputFieldTitleColor)
                 
                 if isPasswordVisible {
                     TextField("", text: $password)
-                        .font(Constants.inputFieldFont.font)
+                        .font(inputFieldFont.font)
                         .foregroundColor(Constants.inputFieldTitleColor)
                         .frame(maxWidth: .infinity, minHeight: Constants.inputFieldHeight)
                         .multilineTextAlignment(.leading)
                 } else {
                     SecureField("", text: $password)
-                        .font(Constants.inputFieldFont.font)
+                        .font(inputFieldFont.font)
                         .foregroundColor(Constants.inputFieldTitleColor)
                         .frame(maxWidth: .infinity, minHeight: Constants.inputFieldHeight)
                         .multilineTextAlignment(.leading)
@@ -186,7 +197,7 @@ private extension LogInView {
             print("Log in tapped")
         }) {
             Text(signInButtonTitle)
-                .font(Constants.buttonFont.font)
+                .font(buttonFont.font)
                 .foregroundColor(!email.isEmpty && !password.isEmpty ? Constants.buttonActiveTextColor : Constants.buttonInactiveTextColor)
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -215,7 +226,9 @@ private extension LogInView {
 private extension LogInView {
     enum Constants {
         // MARK: - Constraints
-        static let topPadding: CGFloat = 98
+        @MainActor
+        static let topPadding: CGFloat = UIScreen.main.bounds.height < 700 ? 40 : 98
+        
         static let bottomPadding: CGFloat = 50
         static let sidePadding: CGFloat = 16
         
@@ -239,14 +252,12 @@ private extension LogInView {
         static let scrollSpeed: TimeInterval = 30
         
         // MARK: - Header
-        static let headerTitleFont = UIKitAssets.setFont(UIKitAssets.fontH1)
-        static let headerSubtitleFont = UIKitAssets.setFont(UIKitAssets.fontTitle)
+        
         static let headerTitleColor = UIKitAssets.setColor(for: UIKitAssets.colorAccentLight)
         static let headerSubtitleColor = UIKitAssets.setColor(for: UIKitAssets.colorSecondary)
         
         // MARK: - Input Fields
-        static let inputFieldTitleFont = UIKitAssets.setFont(UIKitAssets.fontBodySmall)
-        static let inputFieldFont = UIKitAssets.setFont(UIKitAssets.fontBodySmall)
+
         static let inputFieldTitleColor = UIKitAssets.setColor(for: UIKitAssets.colorAccentMedium)
         static let inputFieldBorderColor = UIKitAssets.setColor(for: UIKitAssets.colorAccentMedium)
         static let inputFieldCornerRadius: CGFloat = 8
@@ -259,7 +270,7 @@ private extension LogInView {
         static let hidePasswordImage = UIKitAssets.setImage(for: UIKitAssets.imageEyeOff)
         
         // MARK: - Button
-        static let buttonFont = UIKitAssets.setFont(UIKitAssets.fontBody)
+        
         static let buttonActiveColor = UIKitAssets.setColor(for: UIKitAssets.colorWhite)
         static let buttonInactiveColor = UIKitAssets.setColor(for: UIKitAssets.colorAccentMedium)
         static let buttonActiveTextColor = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
