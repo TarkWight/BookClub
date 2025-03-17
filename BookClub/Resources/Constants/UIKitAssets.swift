@@ -46,8 +46,8 @@ enum UIKitAssets {
     }
     
     // MARK: - Fonts
-    static let fontTitle = ("Alumni Sans Bold", CGFloat(96), CGFloat(0.8))
-    static let fontH1 = ("Alumni Sans Bold", CGFloat(48), CGFloat(0.6))
+    static let fontTitle = ("Alumni Sans Bold", CGFloat(96), CGFloat(0.5))
+    static let fontH1 = ("Alumni Sans Bold", CGFloat(48), CGFloat(0.5))
     static let fontH2 = ("Alumni Sans Bold", CGFloat(24), CGFloat(0.5))
     static let fontBody = ("Vela Sans", CGFloat(16), CGFloat(1))
     static let fontBodySmall = ("Vela Sans", CGFloat(14), CGFloat(1))
@@ -57,6 +57,9 @@ enum UIKitAssets {
     
     @MainActor static func setFont(_ font: (name: String, baseSize: CGFloat, scaleFactor: CGFloat)) -> (font: Font, size: CGFloat) {
         let adaptiveSize = min(font.baseSize, UIScreen.main.bounds.width * font.scaleFactor)
+        print("adaptiveSize: \(adaptiveSize)")
+        print("UIScreen.main.bounds.width: \(UIScreen.main.bounds.width)")
+        print("scaleFactor: \(font.scaleFactor)")
         return (Font.custom(font.name, size: adaptiveSize), adaptiveSize)
     }
 }

@@ -49,7 +49,8 @@ struct LogInView: View {
                 inputFields
                     .padding(.horizontal, Constants.sidePadding)
 
-                Spacer()//.frame(height: Constants.inputToButtonSpacing)
+                Spacer()
+                    .frame(height: Constants.inputToButtonSpacing)
 
                 signInButton
                     .padding(.horizontal, Constants.sidePadding)
@@ -137,7 +138,7 @@ private extension LogInView {
                     .foregroundColor(Constants.inputFieldTitleColor)
                     .frame(maxWidth: .infinity, minHeight: Constants.inputFieldHeight)
                     .multilineTextAlignment(.leading)
-                
+
                 if !email.isEmpty {
                     Button(action: { email = "" }) {
                         Constants.clearButtonImage
@@ -149,16 +150,16 @@ private extension LogInView {
             }
             .padding(.horizontal, Constants.sidePadding)
             .frame(height: Constants.inputFieldContainerHeight)
-            
+
             Divider()
                 .background(Constants.inputFieldBorderColor)
                 .padding(.leading, Constants.sidePadding)
-            
+
             HStack {
                 Text(passwordTitle)
                     .font(inputFieldTitleFont.font)
                     .foregroundColor(Constants.inputFieldTitleColor)
-                
+
                 if isPasswordVisible {
                     TextField("", text: $password)
                         .font(inputFieldFont.font)
@@ -172,7 +173,7 @@ private extension LogInView {
                         .frame(maxWidth: .infinity, minHeight: Constants.inputFieldHeight)
                         .multilineTextAlignment(.leading)
                 }
-                
+
                 if !password.isEmpty {
                     Button(action: { isPasswordVisible.toggle() }) {
                         (isPasswordVisible ? Constants.hidePasswordImage : Constants.showPasswordImage)
@@ -182,7 +183,7 @@ private extension LogInView {
                     }
                 }
             }
-            .padding(.leading, Constants.sidePadding)
+            .padding(.horizontal, Constants.sidePadding)
             .frame(height: Constants.inputFieldContainerHeight)
         }
         .background(Color.clear)

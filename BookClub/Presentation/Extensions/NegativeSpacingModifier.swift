@@ -19,8 +19,19 @@ enum SpacingType {
     }
     
     func adaptiveSpacing(screenWidth: CGFloat) -> CGFloat {
-        let scaleFactor: CGFloat = 0.08
-        return baseSpacing * (screenWidth * scaleFactor / 100)
+        let scaleFactor: CGFloat
+        switch screenWidth {
+        case 0...375:
+            scaleFactor = 0.5
+        default:
+            scaleFactor = 1.0
+        }
+        
+        print("baseSpacing: \(baseSpacing)")
+        print("screenWidth: \(screenWidth)")
+        print("scaleFactor: \(scaleFactor)")
+        print("result: \(baseSpacing * scaleFactor)")
+        return baseSpacing * scaleFactor
     }
 }
 
