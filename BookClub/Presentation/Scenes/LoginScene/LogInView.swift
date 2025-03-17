@@ -22,37 +22,38 @@ struct LogInView: View {
     @State private var signInButtonTitle = LocalizedKey.signInButtonTitle
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             Color(UIKitAssets.colorAccentDark)
                 .ignoresSafeArea()
-            
+
             VStack(spacing: 0) {
-                Spacer()
-                    .frame(height: Constants.topPadding)
-                
+                Spacer().frame(height: Constants.topPadding)
+
                 carousel
-                
-                Spacer()
-                    .frame(height: Constants.carouselToTitleSpacing)
-                
+                    .frame(maxWidth: .infinity, maxHeight: Constants.carouselHeight)
+
+                Spacer().frame(height: Constants.carouselToTitleSpacing)
+
                 header
                     .padding(.horizontal, Constants.sidePadding)
-                
-                Spacer()
-                    .frame(height: Constants.titleToInputSpacing)
-                
+
+                Spacer().frame(height: Constants.titleToInputSpacing)
+
                 inputFields
                     .padding(.horizontal, Constants.sidePadding)
-                
-                Spacer()
-                    .frame(height: Constants.inputToButtonSpacing)
-                
+
+                Spacer().frame(height: Constants.inputToButtonSpacing)
+
                 signInButton
                     .padding(.horizontal, Constants.sidePadding)
-                
-                Spacer()
-                    .frame(height: Constants.bottomPadding)
+
+                Spacer().frame(height: Constants.bottomPadding)
             }
+            .frame(maxHeight: .infinity, alignment: .top)
+            .ignoresSafeArea(.all) // Так надо? Без этого у меня не отображается нормально
+            /* UIWindow.UITransitionView/UIDropShadowView/UITransitionView/HostingVC/
+             LazyView<LoginView>/LoginView - вот здесь трабл был в том, что был непонятный отступ сверху
+            */
         }
     }
 }
@@ -98,6 +99,7 @@ private extension LogInView {
                 .font(Constants.headerTitleFont.font)
                 .foregroundColor(Constants.headerTitleColor)
             
+            //TODO: - Убрать заглушку
             VStack(alignment: .leading) {
                         ForEach(["КНИЖНЫЙ", "МИР"], id: \.self) { line in
                             Text(line)
