@@ -26,10 +26,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Resources/Constants/Localizable.xcstrings,
-				"Resources/Fonts/AlumniSans/AlumniSans-Bold.ttf",
-				Resources/Fonts/Georgia/georgia.ttf,
-				Resources/Fonts/Georgia/georgiai.ttf,
-				"Resources/Fonts/VelaSans/VelaSans-GX.ttf",
 			);
 			target = 89EC9B702D81B0E200FCF075 /* BookClubUITests */;
 		};
