@@ -14,7 +14,6 @@ struct LogInView: View {
     @State private var password: String = ""
     @State private var isPasswordVisible: Bool = false
     @State private var isAnimating = false
-    @State private var offset: CGFloat = 0
     
     @State private var headerTitle = LocalizedKey.loginTitle
     @State private var headerSubtitle = LocalizedKey.loginSubtitle
@@ -63,28 +62,32 @@ private extension LogInView {
     
     
     var carousel: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: Constants.elementSpacing) {
-                ForEach(bookCovers.indices, id: \.self) { index in
-                    Image(bookCovers[index])
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: Constants.elementWidth, height: Constants.elementHeight)
-                        .clipped()
-                        .cornerRadius(Constants.elementCornerRadius)
+        GeometryReader { geometry in
+            TimelineView(.animation) { timeline in
+                let time = timeline.date.timeIntervalSinceReferenceDate
+                let offset = calculateOffset(for: time, in: geometry.size.width)
+
+                HStack(spacing: Constants.elementSpacing) {
+                    ForEach(bookCovers) { bookCover in
+                        Image(bookCover.imageName)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: Constants.elementWidth, height: Constants.elementHeight)
+                            .clipped()
+                            .cornerRadius(Constants.elementCornerRadius)
+                    }
+
+                    ForEach(bookCovers.prefix(3)) { bookCover in
+                        Image(bookCover.imageName)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: Constants.elementWidth, height: Constants.elementHeight)
+                            .clipped()
+                            .cornerRadius(Constants.elementCornerRadius)
+                    }
                 }
-                
-                ForEach(0..<3, id: \.self) { index in
-                    Image(bookCovers[index])
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: Constants.elementWidth, height: Constants.elementHeight)
-                        .clipped()
-                        .cornerRadius(Constants.elementCornerRadius)
-                }
+                .offset(x: offset)
             }
-            .offset(x: offset)
-            .onAppear { startAutoScroll() }
         }
         .frame(maxWidth: .infinity, maxHeight: Constants.carouselHeight)
     }
@@ -127,7 +130,7 @@ private extension LogInView {
                         Constants.clearButtonImage
                             .resizable()
                             .frame(width: Constants.iconSize, height: Constants.iconSize)
-                            .foregroundColor(Constants.inputFieldTitleColor.opacity(0.5))
+                            .foregroundColor(Constants.inputFieldTitleColor)
                     }
                 }
             }
@@ -196,15 +199,13 @@ private extension LogInView {
 
 // MARK: - Private methods
 private extension LogInView {
-    func startAutoScroll() {
-        let step: CGFloat = Constants.elementWidth + Constants.elementSpacing
+    func calculateOffset(for time: TimeInterval, in width: CGFloat) -> CGFloat {
+        let step = Constants.elementWidth + Constants.elementSpacing
+        let totalWidth = step * CGFloat(bookCovers.count)
+        let speedFactor: CGFloat = 5.0
+        let offset = -CGFloat((time / speedFactor).truncatingRemainder(dividingBy: Constants.scrollSpeed)) * step
         
-        guard !isAnimating else { return }
-        isAnimating = true
-        
-        withAnimation(.linear(duration: Constants.scrollSpeed).repeatForever(autoreverses: false)) {
-            offset -= step * CGFloat(bookCovers.count)
-        }
+        return offset.truncatingRemainder(dividingBy: totalWidth)
     }
 }
 
@@ -233,7 +234,7 @@ private extension LogInView {
         static let elementHeight: CGFloat = 270
         static let elementCornerRadius: CGFloat = 4
         static let elementSpacing: CGFloat = 8
-        static let scrollSpeed: TimeInterval = 60
+        static let scrollSpeed: TimeInterval = 30
         
         // MARK: - Header
         static let headerTitleFont = UIKitAssets.setFont(UIKitAssets.fontH1)
