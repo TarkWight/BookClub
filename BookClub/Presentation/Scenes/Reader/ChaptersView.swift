@@ -12,8 +12,13 @@ struct ChaptersView: View {
 
     var body: some View {
         VStack {
-//            Text("Chapters Screen")
-//            Button("Close") { isPresented = false }
+            BackButtonView(action: { isPresented = false }, title: LocalizedKey.backButtonTitle)
+            
+            Text(LocalizedKey.chaptersLabel)
+                .font(.title)
+                .padding(.top, 10)
+
+            Spacer()
         }
         .padding()
         .background(Color.white)

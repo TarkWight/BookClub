@@ -13,8 +13,9 @@ struct ReaderView: View {
 
     var body: some View {
         VStack {
-//            Text("Reader Screen")
-//            Button("Open Chapters") { isChaptersPresented.toggle() }
+            BackButtonView(action: { router.navigateTo(.mainTab) }, title: LocalizedKey.backButtonTitle)
+            
+            Spacer()
         }
     }
 }

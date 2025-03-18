@@ -15,6 +15,12 @@
         }
       }
     },
+    "bookmarksLabel" : {
+      "comment" : "Title for the bookmarks screen"
+    },
+    "chaptersLabel" : {
+      "comment" : "Title for the chapters screen"
+    },
     "emailTitle" : {
       "comment" : "Title for email input field",
       "localizations" : {
@@ -25,6 +31,9 @@
           }
         }
       }
+    },
+    "libraryLabel" : {
+      "comment" : "Title for the library screen"
     },
     "loginSubtitle" : {
       "comment" : "Subtitle of the login screen",

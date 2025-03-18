@@ -12,8 +12,11 @@ struct BookmarksView: View {
 
     var body: some View {
         VStack {
-//            Text("Bookmarks Screen")
-//            Button("Back to Main Tab") { router.navigateTo(.mainTab) }
+            Text(LocalizedKey.bookmarksLabel)
+                .font(.title)
+                .padding(.top, 20)
+            
+            Spacer()
         }
     }
 }

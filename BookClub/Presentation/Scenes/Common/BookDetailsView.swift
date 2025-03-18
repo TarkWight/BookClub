@@ -12,8 +12,9 @@ struct BookDetailsView: View {
 
     var body: some View {
         VStack {
-//            Text("Book Details Screen")
-//            Button("Open Reader") { router.navigateTo(.reader) }
+            BackButtonView(action: { router.navigateTo(.mainTab) }, title: LocalizedKey.backButtonTitle)
+            
+            Spacer()
         }
     }
 }

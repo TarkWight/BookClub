@@ -12,8 +12,11 @@ struct LibraryView: View {
 
     var body: some View {
         VStack {
-//            Text("Library Screen")
-//            Button("Go to Book Details") { router.navigateTo(.bookDetails) }
+            Text(LocalizedKey.libraryLabel)
+                .font(.title)
+                .padding(.top, 20)
+            
+            Spacer()
         }
     }
 }
