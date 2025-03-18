@@ -11,18 +11,23 @@ struct ChaptersView: View {
     @Binding var isPresented: Bool
 
     var body: some View {
-        VStack {
-            BackButtonView(action: { isPresented = false }, title: LocalizedKey.backButtonTitle)
+        ZStack {
+            Color(UIKitAssets.setColor(for: UIKitAssets.colorBackground))
+                .ignoresSafeArea()
             
-            Text(LocalizedKey.chaptersLabel)
-                .font(.title)
-                .padding(.top, 10)
+            VStack {
+                BackButtonView(action: { isPresented = false }, title: LocalizedKey.backButtonTitle)
+                
+                Text(LocalizedKey.chaptersLabel)
+                    .font(.title)
+                    .padding(.top, 10)
 
-            Spacer()
+                Spacer()
+            }
+            .padding()
+            .background(Color.white)
+            .cornerRadius(12)
+            .shadow(radius: 10)
         }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(radius: 10)
     }
 }

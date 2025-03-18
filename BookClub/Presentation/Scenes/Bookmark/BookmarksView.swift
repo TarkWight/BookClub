@@ -11,17 +11,22 @@ struct BookmarksView: View {
     @ObservedObject var router: Router
 
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(LocalizedKey.bookmarksLabel)
-                .applyTextLabelStyle()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 26)
-                .padding(.leading, 16)
+        ZStack {
+            Color(UIKitAssets.setColor(for: UIKitAssets.colorBackground))
+                .ignoresSafeArea()
+            
+            VStack(alignment: .leading) {
+                Text(LocalizedKey.bookmarksLabel)
+                    .applyTextLabelStyle()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 26)
+                    .padding(.leading, 16)
 
 
-            Spacer()
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

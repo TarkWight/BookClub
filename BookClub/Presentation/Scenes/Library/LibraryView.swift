@@ -11,14 +11,20 @@ struct LibraryView: View {
     @ObservedObject var router: Router
 
     var body: some View {
-        VStack {
-            Text(LocalizedKey.libraryLabel)
-                .applyTextLabelStyle()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 26)
-                .padding(.leading, 16)
+        
+        ZStack {
+            Color(UIKitAssets.setColor(for: UIKitAssets.colorBackground))
+                .ignoresSafeArea()
             
-            Spacer()
+            VStack {
+                Text(LocalizedKey.libraryLabel)
+                    .applyTextLabelStyle()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 26)
+                    .padding(.leading, 16)
+                
+                Spacer()
+            }
         }
     }
 }

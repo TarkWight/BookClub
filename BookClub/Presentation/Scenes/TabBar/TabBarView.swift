@@ -46,6 +46,7 @@ struct TabBarView: View {
                       y: Constants.playButtonOffsetY)
         }
         .frame(height: Constants.tabBarTotalHeight)
+        
     }
 
     @ViewBuilder
