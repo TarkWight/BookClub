@@ -4,6 +4,17 @@
     "" : {
 
     },
+    "backButtonTitle" : {
+      "comment" : "Title for the back button",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Назад"
+          }
+        }
+      }
+    },
     "emailTitle" : {
       "comment" : "Title for email input field",
       "localizations" : {

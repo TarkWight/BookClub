@@ -15,4 +15,7 @@ enum LocalizedKey {
     static let emailTitle = NSLocalizedString("emailTitle", comment: "Title for email input field")
     static let passwordTitle = NSLocalizedString("passwordTitle", comment: "Title for password input field")
     static let signInButtonTitle = NSLocalizedString("signInButtonTitle", comment: "Text for the login button")
+    
+    // MARK: - Navigation
+    static let backButtonTitle = NSLocalizedString("backButtonTitle", comment: "Title for the back button")
 }
