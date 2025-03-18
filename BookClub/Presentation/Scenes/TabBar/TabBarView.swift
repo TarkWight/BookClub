@@ -1,0 +1,111 @@
+//
+//  TabBarView.swift
+//  BookClub
+//
+//  Created by Tark Wight on 14.03.2025.
+//
+
+import SwiftUI
+
+struct TabBarView: View {
+    @Binding var selectedTab: Tab
+    let onTabSelected: (Tab) -> Void
+    let onReadSelected: () -> Void
+    let onLogout: () -> Void
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            HStack {
+                HStack(spacing: 0) {
+                    tabButton(.library)
+                    tabButton(.search)
+                }
+
+                Spacer()
+
+                HStack(spacing: 0) {
+                    tabButton(.bookmarks)
+                    logoutButton()
+                }
+            }
+            .frame(height: Constants.tabBarHeight)
+            .padding(.horizontal, Constants.horizontalPadding)
+            .background(UIKitAssets.setColor(for: Constants.tabBarBackgroundColor))
+            .clipShape(Capsule())
+
+            Button(action: { onReadSelected() }) {
+                UIKitAssets.setImage(for: UIKitAssets.imagePlay)
+                    .resizable()
+                    .frame(width: Constants.iconSize, height: Constants.iconSize)
+                    .foregroundColor(UIKitAssets.setColor(for: Constants.playButtonIconColor))
+                    .frame(width: Constants.playButtonSize, height: Constants.playButtonSize)
+                    .background(UIKitAssets.setColor(for: Constants.playButtonBackgroundColor))
+                    .clipShape(Circle())
+            }
+            .position(x: (UIScreen.main.bounds.width - Constants.horizontalPadding * 2) / 2,
+                      y: Constants.playButtonOffsetY)
+        }
+        .frame(height: Constants.tabBarTotalHeight)
+    }
+
+    @ViewBuilder
+    private func tabButton(_ tab: Tab) -> some View {
+        Button(action: { onTabSelected(tab) }) {
+            VStack {
+                UIKitAssets.setImage(for: tab.icon)
+                    .resizable()
+                    .frame(width: Constants.iconSize, height: Constants.iconSize)
+                    .foregroundColor(selectedTab == tab
+                                     ? UIKitAssets.setColor(for: Constants.selectedTabColor)
+                                     : UIKitAssets.setColor(for: Constants.unselectedTabColor))
+            }
+            .frame(width: Constants.tabSize, height: Constants.tabSize)
+        }
+    }
+
+    @ViewBuilder
+    private func logoutButton() -> some View {
+        Button(action: { onLogout() }) {
+            VStack {
+                UIKitAssets.setImage(for: UIKitAssets.imageLogOut)
+                    .resizable()
+                    .frame(width: Constants.iconSize, height: Constants.iconSize)
+                    .foregroundColor(UIKitAssets.setColor(for: Constants.unselectedTabColor))
+            }
+            .frame(width: Constants.tabSize, height: Constants.tabSize)
+        }
+    }
+}
+
+// MARK: - Constants
+
+private extension TabBarView {
+    enum Constants {
+        static let tabBarHeight: CGFloat = 64
+        static let tabBarTotalHeight: CGFloat = 80
+        static let horizontalPadding: CGFloat = 16
+
+        static let tabSize: CGFloat = 64
+        static let iconSize: CGFloat = 24
+
+        static let playButtonSize: CGFloat = 80
+        static let playButtonOffsetY: CGFloat = 48
+
+        static let tabBarBackgroundColor = "Accent Dark"
+        static let selectedTabColor = "AppWhite"
+        static let unselectedTabColor = "Accent Medium"
+
+        static let playButtonIconColor = "AppWhite"
+        static let playButtonBackgroundColor = "AppSecondary"
+    }
+}
+
+#Preview {
+    TabBarView(
+        selectedTab: .constant(.library),
+        onTabSelected: { _ in },
+        onReadSelected: { },
+        onLogout: { }
+    )
+    .padding(.horizontal, TabBarView.Constants.horizontalPadding)
+}
