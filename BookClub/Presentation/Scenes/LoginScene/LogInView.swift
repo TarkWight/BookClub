@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LogInView: View {
+    @ObservedObject var router: Router
     
     let bookCovers = BookCoversMock.getBookCovers(for: .five)
     @State private var email: String = ""
@@ -195,7 +196,7 @@ private extension LogInView {
     
     var signInButton: some View {
         Button(action: {
-            print("Log in tapped")
+            router.navigateTo(.mainTab)
         }) {
             Text(signInButtonTitle)
                 .font(buttonFont.font)
@@ -277,8 +278,4 @@ private extension LogInView {
         static let buttonActiveTextColor = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
         static let buttonInactiveTextColor = UIKitAssets.setColor(for: UIKitAssets.colorAccentLight)
     }
-}
-
-#Preview {
-    LogInView()
 }
