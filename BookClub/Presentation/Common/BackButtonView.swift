@@ -23,7 +23,7 @@ struct BackButtonView: View {
                     
                     
                 Text(title)
-                    .font(UIKitAssets.setFont(UIKitAssets.fontBody).font)
+                    .font(UIKitAssets.setFont(for: UIKitAssets.fontBody).font)
                     .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
                     .frame(width: 50, alignment: .leading)
             }

@@ -11,12 +11,20 @@ struct BookmarksView: View {
     @ObservedObject var router: Router
 
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             Text(LocalizedKey.bookmarksLabel)
-                .font(.title)
-                .padding(.top, 20)
-            
+                .applyTextLabelStyle()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 26)
+                .padding(.leading, 16)
+
+
             Spacer()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+}
+
+#Preview  {
+    BookmarksView(router: Router())
 }

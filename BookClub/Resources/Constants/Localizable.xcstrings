@@ -16,7 +16,15 @@
       }
     },
     "bookmarksLabel" : {
-      "comment" : "Title for the bookmarks screen"
+      "comment" : "Title for the bookmarks screen",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закладки"
+          }
+        }
+      }
     },
     "chaptersLabel" : {
       "comment" : "Title for the chapters screen"
@@ -33,7 +41,15 @@
       }
     },
     "libraryLabel" : {
-      "comment" : "Title for the library screen"
+      "comment" : "Title for the library screen",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Библиотека"
+          }
+        }
+      }
     },
     "loginSubtitle" : {
       "comment" : "Subtitle of the login screen",

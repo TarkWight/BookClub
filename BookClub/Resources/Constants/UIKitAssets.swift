@@ -55,7 +55,7 @@ enum UIKitAssets {
     static let fontText = ("Georgia", CGFloat(14), CGFloat(1))
     static let fontQuote = ("Georgia", CGFloat(16), CGFloat(1))
     
-    @MainActor static func setFont(_ font: (name: String, baseSize: CGFloat, scaleFactor: CGFloat)) -> (font: Font, size: CGFloat) {
+    @MainActor static func setFont(for font: (name: String, baseSize: CGFloat, scaleFactor: CGFloat)) -> (font: Font, size: CGFloat) {
         let adaptiveSize = min(font.baseSize, UIScreen.main.bounds.width * font.scaleFactor)
         print("adaptiveSize: \(adaptiveSize)")
         print("UIScreen.main.bounds.width: \(UIScreen.main.bounds.width)")

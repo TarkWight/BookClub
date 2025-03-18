@@ -13,8 +13,10 @@ struct LibraryView: View {
     var body: some View {
         VStack {
             Text(LocalizedKey.libraryLabel)
-                .font(.title)
-                .padding(.top, 20)
+                .applyTextLabelStyle()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 26)
+                .padding(.leading, 16)
             
             Spacer()
         }
