@@ -27,10 +27,6 @@ enum SpacingType {
             scaleFactor = 1.0
         }
         
-        print("baseSpacing: \(baseSpacing)")
-        print("screenWidth: \(screenWidth)")
-        print("scaleFactor: \(scaleFactor)")
-        print("result: \(baseSpacing * scaleFactor)")
         return baseSpacing * scaleFactor
     }
 }

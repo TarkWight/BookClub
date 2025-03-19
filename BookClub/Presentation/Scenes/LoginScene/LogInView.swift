@@ -22,11 +22,11 @@ struct LogInView: View {
     @State private var passwordTitle = LocalizedKey.passwordTitle
     @State private var signInButtonTitle = LocalizedKey.signInButtonTitle
     
-    let buttonFont = UIKitAssets.setFont(UIKitAssets.fontBody)
-    let inputFieldTitleFont = UIKitAssets.setFont(UIKitAssets.fontBodySmall)
-    let inputFieldFont = UIKitAssets.setFont(UIKitAssets.fontBodySmall)
-    let headerTitleFont = UIKitAssets.setFont(UIKitAssets.fontH1)
-    let headerSubtitleFont = UIKitAssets.setFont(UIKitAssets.fontTitle)
+    let buttonFont = UIKitAssets.setFont(for: UIKitAssets.fontBody)
+    let inputFieldTitleFont = UIKitAssets.setFont(for: UIKitAssets.fontBodySmall)
+    let inputFieldFont = UIKitAssets.setFont(for: UIKitAssets.fontBodySmall)
+    let headerTitleFont = UIKitAssets.setFont(for: UIKitAssets.fontH1)
+    let headerSubtitleFont = UIKitAssets.setFont(for: UIKitAssets.fontTitle)
     
     
     var body: some View {

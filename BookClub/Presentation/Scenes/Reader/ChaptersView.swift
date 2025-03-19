@@ -11,13 +11,23 @@ struct ChaptersView: View {
     @Binding var isPresented: Bool
 
     var body: some View {
-        VStack {
-//            Text("Chapters Screen")
-//            Button("Close") { isPresented = false }
+        ZStack {
+            Color(UIKitAssets.setColor(for: UIKitAssets.colorBackground))
+                .ignoresSafeArea()
+            
+            VStack {
+                BackButtonView(action: { isPresented = false }, title: LocalizedKey.backButtonTitle)
+                
+                Text(LocalizedKey.chaptersLabel)
+                    .font(.title)
+                    .padding(.top, 10)
+
+                Spacer()
+            }
+            .padding()
+            .background(Color.white)
+            .cornerRadius(12)
+            .shadow(radius: 10)
         }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(radius: 10)
     }
 }

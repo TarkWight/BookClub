@@ -11,9 +11,14 @@ struct BookDetailsView: View {
     @ObservedObject var router: Router
 
     var body: some View {
-        VStack {
-//            Text("Book Details Screen")
-//            Button("Open Reader") { router.navigateTo(.reader) }
+        ZStack {
+            Color(UIKitAssets.setColor(for: UIKitAssets.colorBackground))
+                .ignoresSafeArea()
+            VStack {
+                BackButtonView(action: { router.navigateTo(.mainTab) }, title: LocalizedKey.backButtonTitle)
+                
+                Spacer()
+            }
         }
     }
 }

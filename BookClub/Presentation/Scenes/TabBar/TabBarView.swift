@@ -46,6 +46,7 @@ struct TabBarView: View {
                       y: Constants.playButtonOffsetY)
         }
         .frame(height: Constants.tabBarTotalHeight)
+        
     }
 
     @ViewBuilder
@@ -54,6 +55,7 @@ struct TabBarView: View {
             VStack {
                 UIKitAssets.setImage(for: tab.icon)
                     .resizable()
+                    .renderingMode(.template)
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
                     .foregroundColor(selectedTab == tab
                                      ? UIKitAssets.setColor(for: Constants.selectedTabColor)
@@ -69,6 +71,7 @@ struct TabBarView: View {
             VStack {
                 UIKitAssets.setImage(for: UIKitAssets.imageLogOut)
                     .resizable()
+                    .renderingMode(.template)
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
                     .foregroundColor(UIKitAssets.setColor(for: Constants.unselectedTabColor))
             }

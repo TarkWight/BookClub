@@ -4,6 +4,31 @@
     "" : {
 
     },
+    "backButtonTitle" : {
+      "comment" : "Title for the back button",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Назад"
+          }
+        }
+      }
+    },
+    "bookmarksLabel" : {
+      "comment" : "Title for the bookmarks screen",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закладки"
+          }
+        }
+      }
+    },
+    "chaptersLabel" : {
+      "comment" : "Title for the chapters screen"
+    },
     "emailTitle" : {
       "comment" : "Title for email input field",
       "localizations" : {
@@ -11,6 +36,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Почта"
+          }
+        }
+      }
+    },
+    "libraryLabel" : {
+      "comment" : "Title for the library screen",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Библиотека"
           }
         }
       }
@@ -37,6 +73,17 @@
         }
       }
     },
+    "noveltyCarouselLabel" : {
+      "comment" : "Title for the novelty carousel",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Новинки"
+          }
+        }
+      }
+    },
     "passwordTitle" : {
       "comment" : "Title for password input field",
       "localizations" : {
@@ -44,6 +91,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Пароль"
+          }
+        }
+      }
+    },
+    "popularGridLabel" : {
+      "comment" : "Title for the popular grid",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Популярные книги"
           }
         }
       }

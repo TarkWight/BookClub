@@ -12,9 +12,15 @@ struct ReaderView: View {
     @Binding var isChaptersPresented: Bool
 
     var body: some View {
+        ZStack {
+            Color(UIKitAssets.setColor(for: UIKitAssets.colorBackground))
+                .ignoresSafeArea()
+            
         VStack {
-//            Text("Reader Screen")
-//            Button("Open Chapters") { isChaptersPresented.toggle() }
+            BackButtonView(action: { router.navigateTo(.mainTab) }, title: LocalizedKey.backButtonTitle)
+            
+            Spacer()
         }
+    }
     }
 }

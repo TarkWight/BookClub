@@ -25,6 +25,8 @@
 		89EA9FF72D85591800D3C28D /* Exceptions for "BookClub" folder in "BookClubUITests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Data/Mock/BookMock.swift,
+				"Presentation/Extensions/Text+ViewLabelModifier.swift",
 				Resources/Constants/Localizable.xcstrings,
 			);
 			target = 89EC9B702D81B0E200FCF075 /* BookClubUITests */;
