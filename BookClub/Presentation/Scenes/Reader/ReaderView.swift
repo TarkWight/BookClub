@@ -17,7 +17,7 @@ struct ReaderView: View {
                 .ignoresSafeArea()
             
         VStack {
-            BackButtonView(action: { router.navigateTo(.mainTab) }, title: LocalizedKey.backButtonTitle)
+            BackButtonView(action: { router.navigateTo(.mainTab) }, title: LocalizedKey.backButtonTitle, color: .dark)
             
             Spacer()
         }

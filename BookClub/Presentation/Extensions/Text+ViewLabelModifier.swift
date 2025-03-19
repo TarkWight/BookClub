@@ -83,3 +83,41 @@ extension View {
         self.modifier(SubtitleLabelStyle())
     }
 }
+
+// MARK: - BookDetailsView
+struct BookDetailsTitleStyle: ViewModifier {
+    let font = UIKitAssets.setFont(for: UIKitAssets.fontH1)
+    let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
+
+    func body(content: Content) -> some View {
+        content
+            .font(font.font)
+            .textCase(.uppercase)
+            .foregroundColor(color)
+    }
+}
+
+extension View {
+    func applyBookDetailsTitleStyle() -> some View {
+        self.modifier(BookDetailsTitleStyle())
+    }
+}
+
+struct BookDetailsAuthorStyle: ViewModifier {
+    let font = UIKitAssets.setFont(for: UIKitAssets.fontBody)
+    let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
+
+    func body(content: Content) -> some View {
+        content
+            .font(font.font)
+            .frame(alignment: .trailing)
+            .foregroundColor(color)
+    }
+}
+
+extension View {
+    func applyBookDetailsAuthorStyle() -> some View {
+        self.modifier(BookDetailsAuthorStyle())
+    }
+}
+

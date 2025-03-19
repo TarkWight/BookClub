@@ -16,7 +16,9 @@ struct ChaptersView: View {
                 .ignoresSafeArea()
             
             VStack {
-                BackButtonView(action: { isPresented = false }, title: LocalizedKey.backButtonTitle)
+                BackButtonView(action: { isPresented = false }, title: LocalizedKey.backButtonTitle, color: .dark)
+                    
+                    
                 
                 Text(LocalizedKey.chaptersLabel)
                     .font(.title)

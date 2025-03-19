@@ -30,4 +30,30 @@ extension View {
 }
 
 
+struct BookDetailsGradientMask: ViewModifier {
+    var colors: [Color] = [
+        UIKitAssets.setColor(for: UIKitAssets.colorBackground).opacity(1.0),
+        UIKitAssets.setColor(for: UIKitAssets.colorBackground).opacity(0.0),
+    ]
+    
+    var startPoint: UnitPoint = .bottom
+    var endPoint: UnitPoint = .center
+    
+    func body(content: Content) -> some View {
+        content
+            .overlay(
+                LinearGradient(
+                    gradient: Gradient(colors: colors),
+                    startPoint: startPoint,
+                    endPoint: endPoint
+                )
+                .mask(content)
+            )
+    }
+}
 
+extension View {
+    func applyBookDetailsGradientMask() -> some View {
+        self.modifier(BookDetailsGradientMask())
+    }
+}
