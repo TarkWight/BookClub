@@ -4,6 +4,17 @@
     "" : {
 
     },
+    "addToBookmarkButtonTitle" : {
+      "comment" : "Title for the add to bookmark button",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "В избранное"
+          }
+        }
+      }
+    },
     "backButtonTitle" : {
       "comment" : "Title for the back button",
       "localizations" : {
@@ -47,6 +58,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Библиотека"
+          }
+        }
+      }
+    },
+    "listOfContentsLabel" : {
+      "comment" : "Label for the list of contents",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Оглавление"
           }
         }
       }
@@ -102,6 +124,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Популярные книги"
+          }
+        }
+      }
+    },
+    "progressBarLabel" : {
+      "comment" : "Label for the progress bar",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прочитано"
+          }
+        }
+      }
+    },
+    "readButtonTitle" : {
+      "comment" : "Title for the read button",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Читать"
           }
         }
       }

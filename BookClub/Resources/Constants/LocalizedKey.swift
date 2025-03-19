@@ -22,6 +22,11 @@ enum LocalizedKey {
     static let popularGridLabel = NSLocalizedString("popularGridLabel", comment: "Title for the popular grid")
     
     // MARK: - Book Details Screen
+    static let readButtonTitle = NSLocalizedString("readButtonTitle", comment: "Title for the read button")
+    static let addToBookmarkButtonTitle = NSLocalizedString("addToBookmarkButtonTitle", comment: "Title for the add to bookmark button")
+    static let progressBarLabel = NSLocalizedString("progressBarLabel", comment: "Label for the progress bar")
+    static let listOfContentsLabel = NSLocalizedString("listOfContentsLabel", comment: "Label for the list of contents")
+    
     
     // MARK: - Reader Screen
     
