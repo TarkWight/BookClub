@@ -8,10 +8,18 @@
 
 import SwiftUI
 
+enum BackButtonColor {
+    case dark
+    case light
+}
+
 struct BackButtonView: View {
     let action: () -> Void
     let title: String
-
+    let color: BackButtonColor
+    let darkColor: Color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
+    let lightColor: Color = UIKitAssets.setColor(for: UIKitAssets.colorWhite)
+    
     var body: some View {
         Button(action: action) {
             HStack(spacing: 4) {
@@ -19,12 +27,13 @@ struct BackButtonView: View {
                     .resizable()
                     .renderingMode(.template)
                     .frame(width: 24, height: 24)
-                    .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
+                    .foregroundColor(color == .dark ?  darkColor : lightColor)
+                    
                     
                     
                 Text(title)
                     .font(UIKitAssets.setFont(for: UIKitAssets.fontBody).font)
-                    .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
+                    .foregroundColor(color == .dark ?  darkColor : lightColor)
                     .frame(width: 50, alignment: .leading)
             }
         }
@@ -33,5 +42,5 @@ struct BackButtonView: View {
 }
 
 #Preview {
-    BackButtonView(action: {}, title: LocalizedKey.backButtonTitle)
+    BackButtonView(action: {}, title: LocalizedKey.backButtonTitle, color: .light)
 }

@@ -15,9 +15,9 @@ struct BookDetailsView: View {
         title: "Код Да Винчи",
         author: "Дэн Браун",
         description: """
-        Секретный код скрыт в работах Леонардо да Винчи...
+        Секретный код скрыт в работах Леонардо да Винчи...
         
-        Только он поможет найти христианские святыни, дающие немыслимые власть и могущество... 
+        Только он поможет найти христианские святыни, дающие немыслимые власть и могущество...
         
         Ключ к величайшей тайне, над которой человечество билось веками, наконец может быть найден...
         """,
@@ -42,49 +42,45 @@ struct BookDetailsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
                     
-                    BackButtonView(action: { router.navigateTo(.mainTab) }, title: LocalizedKey.backButtonTitle)
-                        .padding(.top, Constants.topPadding)
-                    
-                    Image(book.imageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: Constants.coverHeight)
-                        .applyBookDetailsGradientMask()
-                        .clipped()
-                    
-                    HStack {
-                        Button(action: { router.navigateTo(.reader) }) {
-                            Text(LocalizedKey.readButtonTitle)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
-                                .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorWhite))
-                                .cornerRadius(Constants.buttonCornerRadius)
-                        }
+                    ZStack(alignment: .topLeading) {
+                        Image(book.imageName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(height: Constants.coverHeight)
+                            .applyBookDetailsGradientMask()
+                            .clipped()
+                            .ignoresSafeArea(edges: .top)
                         
-                        Button(action: { print("Книга добавлена в избранное") }) {
-                            Text(LocalizedKey.addToBookmarkButtonTitle)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(UIKitAssets.setColor(for: UIKitAssets.colorWhite))
-                                .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
-                                .cornerRadius(Constants.buttonCornerRadius)
-                        }
+                        BackButtonView(action: { router.navigateTo(.mainTab) }, title: LocalizedKey.backButtonTitle, color: .light)
+                            .padding(.leading, Constants.sidePadding)
+                            .padding(.top, Constants.topPadding)
+                    }
+                    
+                    HStack(spacing: Constants.buttonSpacing) {
+                        ActionButton(title: LocalizedKey.readButtonTitle, icon: UIKitAssets.imagePlay, width: Constants.readButtonWidth, isPrimary: true, action: {
+                            router.navigateTo(.reader)
+                        })
+                        
+                        ActionButton(title: LocalizedKey.addToBookmarkButtonTitle, icon: UIKitAssets.imageBookmarks, width: Constants.bookmarkButtonWidth, isPrimary: false, action: {
+                            print("Книга добавлена в избранное")
+                        })
                     }
                     .padding(.horizontal, Constants.sidePadding)
+                    .offset(y: -Constants.buttonOverlap)
                     
                     VStack(alignment: .leading, spacing: 4) {
                         Text(book.title)
-                            .applyTextLabelStyle()
+                            .applyBookDetailsTitleStyle()
                             .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
                         
                         Text(book.author)
-                            .applyBookAuthorStyle()
+                            .applyBookDetailsAuthorStyle()
                     }
                     .padding(.horizontal, Constants.sidePadding)
                     
                     Text(book.description)
                         .font(.body)
+                        .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
                         .padding(.horizontal, Constants.sidePadding)
                     
                     VStack(alignment: .leading) {
@@ -96,6 +92,14 @@ struct BookDetailsView: View {
                             .frame(height: Constants.progressBarHeight)
                             .background(UIKitAssets.setColor(for: UIKitAssets.colorAccentMedium))
                             .cornerRadius(Constants.progressBarCornerRadius)
+                            .overlay(
+                                GeometryReader { geo in
+                                    Capsule()
+                                        .fill(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
+                                        .frame(width: geo.size.width * CGFloat(progress()), height: geo.size.height)
+                                },
+                                alignment: .leading
+                            )
                     }
                     .padding(.horizontal, Constants.sidePadding)
                     
@@ -117,6 +121,7 @@ struct BookDetailsView: View {
                                     .frame(width: Constants.chapterIconSize, height: Constants.chapterIconSize)
                                     .foregroundColor(chapter.status.iconColor)
                             }
+                            .frame(height: Constants.chapterRowHeight)
                         }
                     }
                     .padding(.horizontal, Constants.sidePadding)
@@ -124,6 +129,7 @@ struct BookDetailsView: View {
                     Spacer()
                 }
             }
+            .ignoresSafeArea(edges: .top)
         }
     }
     
@@ -131,9 +137,37 @@ struct BookDetailsView: View {
         let readChapters = book.chapters.filter { $0.status == .read }.count
         return Double(readChapters) / Double(book.chapters.count)
     }
+    
+    // MARK: - Action Button
+    struct ActionButton: View {
+        let title: String
+        let icon: String
+        let width: CGFloat
+        let isPrimary: Bool
+        let action: () -> Void
+        
+        var body: some View {
+            Button(action: action) {
+                HStack {
+                    UIKitAssets.setImage(for: icon)
+                        .resizable()
+                        .renderingMode(.template)
+                        .frame(width: Constants.iconSize, height: Constants.iconSize)
+                    
+                    Text(title)
+                        .font(.body)
+                        .bold()
+                }
+                .frame(width: width, height: Constants.buttonHeight)
+                .foregroundColor(isPrimary ? UIKitAssets.setColor(for: UIKitAssets.colorWhite) : UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
+                .background(isPrimary ? UIKitAssets.setColor(for: UIKitAssets.colorAccentDark) : UIKitAssets.setColor(for: UIKitAssets.colorWhite))
+                .cornerRadius(Constants.buttonCornerRadius)
+            }
+        }
+    }
 }
 
-// MARK: - Book and chapter models
+// MARK: - Book and Chapter Models
 struct BookDetails {
     let imageName: String
     let title: String
@@ -171,18 +205,26 @@ enum ChapterStatus {
 // MARK: - Constants
 private extension BookDetailsView {
     enum Constants {
-        static let topPadding: CGFloat = 16
+        static let topPadding: CGFloat = 66
         static let sidePadding: CGFloat = 16
         static let sectionSpacing: CGFloat = 20
         
         static let coverHeight: CGFloat = 380
-        static let buttonCornerRadius: CGFloat = 8
+        static let readButtonWidth: CGFloat = 189
+        static let bookmarkButtonWidth: CGFloat = 173
+        static let buttonHeight: CGFloat = 50
+        static let buttonCornerRadius: CGFloat = 12
+        static let buttonSpacing: CGFloat = 16
+        static let buttonOverlap: CGFloat = 25
         
         static let progressBarHeight: CGFloat = 8
         static let progressBarCornerRadius: CGFloat = 4
         
         static let chapterSpacing: CGFloat = 12
+        static let chapterRowHeight: CGFloat = 48
         static let chapterIconSize: CGFloat = 20
+        
+        static let iconSize: CGFloat = 18
     }
 }
 
