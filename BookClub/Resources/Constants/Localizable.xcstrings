@@ -73,6 +73,17 @@
         }
       }
     },
+    "noveltyCarouselLabel" : {
+      "comment" : "Title for the novelty carousel",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Новинки"
+          }
+        }
+      }
+    },
     "passwordTitle" : {
       "comment" : "Title for password input field",
       "localizations" : {
@@ -80,6 +91,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Пароль"
+          }
+        }
+      }
+    },
+    "popularGridLabel" : {
+      "comment" : "Title for the popular grid",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Популярные книги"
           }
         }
       }

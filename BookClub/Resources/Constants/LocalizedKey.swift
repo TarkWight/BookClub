@@ -18,7 +18,8 @@ enum LocalizedKey {
     
     // MARK: - Library Screen
     static let libraryLabel = NSLocalizedString("libraryLabel", comment: "Title for the library screen")
-    
+    static let noveltyCarouselLabel = NSLocalizedString("noveltyCarouselLabel", comment: "Title for the novelty carousel")
+    static let popularGridLabel = NSLocalizedString("popularGridLabel", comment: "Title for the popular grid")
     
     // MARK: - Book Details Screen
     
@@ -27,6 +28,7 @@ enum LocalizedKey {
     
     // MARK: - Chapters Screen
     static let chaptersLabel = NSLocalizedString("chaptersLabel", comment: "Title for the chapters screen")
+    
     
     // MARK: - Search Screen
     
