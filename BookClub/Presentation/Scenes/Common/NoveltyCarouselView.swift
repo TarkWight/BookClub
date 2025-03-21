@@ -19,7 +19,7 @@ struct NoveltyCarouselView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(LocalizedKey.noveltyCarouselLabel)
-                .applySubtitleLabelStyle()
+                .applyFontH2AccentDarkStyle()
                 .padding(.horizontal, 16)
                 .frame(height: 24)
 

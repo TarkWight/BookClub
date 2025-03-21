@@ -17,7 +17,7 @@ struct BookmarksView: View {
             
             VStack(alignment: .leading) {
                 Text(LocalizedKey.bookmarksLabel)
-                    .applyTextLabelStyle()
+                    .applyFontH1SecondaryStyle()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, 26)
                     .padding(.leading, 16)

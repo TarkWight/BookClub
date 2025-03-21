@@ -70,11 +70,11 @@ struct BookDetailsView: View {
                     
                     VStack(alignment: .leading, spacing: 4) {
                         Text(book.title)
-                            .applyH2AccentDarkTitleStyle()
+                            .applyH1AccentDarkTitleStyle()
                             .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
                         
                         Text(book.author)
-                            .applyBookDetailsAuthorStyle()
+                            .applyFontBodyAccentDarkStyle()
                     }
                     .padding(.horizontal, Constants.sidePadding)
                     
@@ -85,7 +85,7 @@ struct BookDetailsView: View {
                     
                     VStack(alignment: .leading) {
                         Text(LocalizedKey.progressBarLabel)
-                            .applySubtitleLabelStyle()
+                            .applyFontH2AccentDarkStyle()
                         
                         ProgressView(value: progress(), total: 1.0)
                             .progressViewStyle(LinearProgressViewStyle())
@@ -105,7 +105,7 @@ struct BookDetailsView: View {
                     
                     VStack(alignment: .leading, spacing: Constants.chapterSpacing) {
                         Text(LocalizedKey.listOfContentsLabel)
-                            .applySubtitleLabelStyle()
+                            .applyFontH2AccentDarkStyle()
                         
                         ForEach(book.chapters) { chapter in
                             HStack {
