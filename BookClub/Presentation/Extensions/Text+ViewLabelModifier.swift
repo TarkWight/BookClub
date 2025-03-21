@@ -25,6 +25,7 @@ extension View {
     }
 }
 
+// MARK: -
 struct BookTitleStyle: ViewModifier {
     let font = UIKitAssets.setFont(for: UIKitAssets.fontH3)
     let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
@@ -44,6 +45,7 @@ extension View {
     }
 }
 
+// MARK: -
 
 struct BookAuthorStyle: ViewModifier {
     let font = UIKitAssets.setFont(for: UIKitAssets.fontFootNote)
@@ -63,6 +65,7 @@ extension View {
     }
 }
 
+// MARK: -
 
 struct SubtitleLabelStyle: ViewModifier {
     let font = UIKitAssets.setFont(for: UIKitAssets.fontH2)
@@ -84,8 +87,9 @@ extension View {
     }
 }
 
-// MARK: - BookDetailsView
-struct BookDetailsTitleStyle: ViewModifier {
+// MARK: -
+
+struct H2AccentDarkTitleStyle: ViewModifier {
     let font = UIKitAssets.setFont(for: UIKitAssets.fontH1)
     let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
 
@@ -98,10 +102,12 @@ struct BookDetailsTitleStyle: ViewModifier {
 }
 
 extension View {
-    func applyBookDetailsTitleStyle() -> some View {
-        self.modifier(BookDetailsTitleStyle())
+    func applyH2AccentDarkTitleStyle() -> some View {
+        self.modifier(H2AccentDarkTitleStyle())
     }
 }
+
+// MARK: -
 
 struct BookDetailsAuthorStyle: ViewModifier {
     let font = UIKitAssets.setFont(for: UIKitAssets.fontBody)
@@ -118,6 +124,25 @@ struct BookDetailsAuthorStyle: ViewModifier {
 extension View {
     func applyBookDetailsAuthorStyle() -> some View {
         self.modifier(BookDetailsAuthorStyle())
+    }
+}
+
+// MARK: -
+
+struct GenreLabelStyle: ViewModifier {
+    let font = UIKitAssets.setFont(for: UIKitAssets.fontBodySmall)
+    let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
+
+    func body(content: Content) -> some View {
+        content
+            .font(font.font)
+            .foregroundColor(color)
+    }
+}
+
+extension View {
+    func applySmallBodyLabelStyle() -> some View {
+        self.modifier(GenreLabelStyle())
     }
 }
 
