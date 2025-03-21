@@ -36,6 +36,11 @@ enum LocalizedKey {
     
     
     // MARK: - Search Screen
+    static let seatchFieldPlaceholder = NSLocalizedString("seatchFieldPlaceholder", comment: "Placeholder for the search field")
+    static let recentRequestsLabel = NSLocalizedString("recentRequestsLabel", comment: "Title for the recent requests")
+    static let genresLabel = NSLocalizedString("genresLabel", comment: "Title for the genres")
+    static let authorsLabel = NSLocalizedString("authorsLabel", comment: "Title for the authors")
+    
     
     // MARK: - Bookmarks Screen
     static let bookmarksLabel = NSLocalizedString("bookmarksLabel", comment: "Title for the bookmarks screen")
