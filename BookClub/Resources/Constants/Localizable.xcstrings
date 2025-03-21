@@ -15,6 +15,17 @@
         }
       }
     },
+    "authorsLabel" : {
+      "comment" : "Title for the authors",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Авторы"
+          }
+        }
+      }
+    },
     "backButtonTitle" : {
       "comment" : "Title for the back button",
       "localizations" : {
@@ -38,7 +49,15 @@
       }
     },
     "chaptersLabel" : {
-      "comment" : "Title for the chapters screen"
+      "comment" : "Title for the chapters screen",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Оглавление"
+          }
+        }
+      }
     },
     "emailTitle" : {
       "comment" : "Title for email input field",
@@ -47,6 +66,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Почта"
+          }
+        }
+      }
+    },
+    "genresLabel" : {
+      "comment" : "Title for the genres",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Жанры"
           }
         }
       }
@@ -146,6 +176,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Читать"
+          }
+        }
+      }
+    },
+    "recentRequestsLabel" : {
+      "comment" : "Title for the recent requests",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Недавние запросы"
+          }
+        }
+      }
+    },
+    "seatchFieldPlaceholder" : {
+      "comment" : "Placeholder for the search field",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Поиск по книгам"
           }
         }
       }

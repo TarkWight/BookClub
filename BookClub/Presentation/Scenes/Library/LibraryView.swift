@@ -19,7 +19,7 @@ struct LibraryView: View {
             
             ScrollView {
                 Text(LocalizedKey.libraryLabel)
-                    .applyTextLabelStyle()
+                    .applyFontH1SecondaryStyle()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, Constants.topPadding)
                     .padding(.horizontal, Constants.sidePadding)
@@ -28,7 +28,7 @@ struct LibraryView: View {
                 NoveltyCarouselView()
                 
                 Text(LocalizedKey.popularGridLabel)
-                    .applySubtitleLabelStyle()
+                    .applyFontH2AccentDarkStyle()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, Constants.sidePadding)
                 
@@ -57,12 +57,12 @@ struct LibraryView: View {
                     .cornerRadius(Constants.cornerRadius)
                 
                 Text(book.title)
-                    .applyBookTitleStyle()
+                    .applyFontH3AccentDarkStyle()
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: Constants.bookWidth, alignment: .leading)
                 
                 Text(book.author)
-                    .applyBookAuthorStyle()
+                    .applyFontFootNoteStyle()
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: Constants.bookWidth, alignment: .leading)
             }
