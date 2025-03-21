@@ -70,7 +70,7 @@ struct BookDetailsView: View {
                     
                     VStack(alignment: .leading, spacing: 4) {
                         Text(book.title)
-                            .applyBookDetailsTitleStyle()
+                            .applyH2AccentDarkTitleStyle()
                             .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
                         
                         Text(book.author)
