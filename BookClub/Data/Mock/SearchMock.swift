@@ -35,4 +35,6 @@ struct SearchMock {
         Author(name: "Дэн Браун", imageName: "plBrown"),
         Author(name: "Фёдор Достоевский", imageName: "plDostoevsky")
     ]
+    
+    static let books: [Book] = BookMock.allBooks
 }
