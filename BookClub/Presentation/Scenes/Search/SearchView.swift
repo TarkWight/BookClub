@@ -56,6 +56,8 @@ private extension SearchView {
                     isSearching = !searchText.isEmpty
                 }
             })
+            .font(UIKitAssets.setFont(for: UIKitAssets.fontBody).font)
+            .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
             .padding(.leading, Constants.textFieldPadding)
             
             if !searchText.isEmpty {
@@ -76,9 +78,10 @@ private extension SearchView {
         }
         .frame(height: Constants.searchFieldHeight)
         .overlay(
-            RoundedRectangle(cornerRadius: Constants.cornerRadius)
-                .stroke(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark), lineWidth: Constants.borderWidth)
+            RoundedRectangle(cornerRadius: Constants.cornerRadiusBig)
+                .stroke(UIKitAssets.setColor(for: UIKitAssets.colorAccentMedium), lineWidth: Constants.borderWidth)
         )
+        .background(UIKitAssets.setColor(for: UIKitAssets.colorWhite))
         .padding(.horizontal, Constants.sidePadding)
     }
     
@@ -241,6 +244,7 @@ private extension SearchView {
         static let sidePadding: CGFloat = 16
         static let textFieldPadding: CGFloat = 8
         static let borderWidth: CGFloat = 1
+        static let cornerRadiusBig: CGFloat = 10
         static let cornerRadius: CGFloat = 8
         static let cornerRadiusSmall: CGFloat = 4
         static let gridSpacing: CGFloat = 8
