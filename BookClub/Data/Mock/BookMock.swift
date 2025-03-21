@@ -30,7 +30,7 @@ struct BookMock {
         Book(imageName: "Cover12", title: "Swift: Карманный справочник", author: "Эрик Садун"),
         Book(imageName: "Cover13", title: "Рассвет жатвы", author: "Сьюзен Коллинз"),
         Book(imageName: "Cover14", title: "Swift для детей", author: "Мэри Лим"),
-        Book(imageName: "Cover15", title: "Программирование на Kotlin для Android", author: "Биг Нерд Рэнч"),
+        Book(imageName: "Cover15", title: "Программирование на Kotlin для Android", author: "Пьер-Оливье Лоранс, Аманда Хинчман-Домингес"),
     ]
     
     static func getBooks() -> [Book] {

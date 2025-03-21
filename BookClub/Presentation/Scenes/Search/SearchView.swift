@@ -11,8 +11,11 @@ struct SearchView: View {
     @ObservedObject var router: Router
     @State private var searchText: String = ""
     @State private var recentQueries: [String] = SearchMock.recentSearches
-    let genres = SearchMock.genres
-    let authors = SearchMock.authors
+    let genres: [String] = SearchMock.genres
+    let authors: [SearchMock.Author] = SearchMock.authors
+    let books: [Book] = SearchMock.books
+    
+    @State private var isSearching: Bool = false
     
     var body: some View {
         ZStack {
@@ -22,9 +25,14 @@ struct SearchView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
                     searchField
-                    recentSearchesSection
-                    genresSection
-                    authorsSection
+                    
+                    if isSearching {
+                        searchResultsSection
+                    } else {
+                        recentSearchesSection
+                        genresSection
+                        authorsSection
+                    }
                 }
             }
         }
@@ -43,11 +51,20 @@ private extension SearchView {
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
                 .padding(.leading, Constants.sidePadding)
             
-            TextField(LocalizedKey.seatchFieldPlaceholder, text: $searchText)
-                .padding(.leading, Constants.textFieldPadding)
+            TextField(LocalizedKey.searchFieldPlaceholder, text: $searchText, onEditingChanged: { isEditing in
+                withAnimation {
+                    isSearching = !searchText.isEmpty
+                }
+            })
+            .padding(.leading, Constants.textFieldPadding)
             
             if !searchText.isEmpty {
-                Button(action: { searchText = "" }) {
+                Button(action: {
+                    searchText = ""
+                    withAnimation {
+                        isSearching = false
+                    }
+                }) {
                     UIKitAssets.setImage(for: UIKitAssets.imageClose)
                         .resizable()
                         .renderingMode(.template)
@@ -69,7 +86,7 @@ private extension SearchView {
         Group {
             if !recentQueries.isEmpty {
                 Text(LocalizedKey.recentRequestsLabel)
-                    .applySubtitleLabelStyle()
+                    .applyFontH2AccentDarkStyle()
                     .padding(.horizontal, Constants.sidePadding)
                 
                 ForEach(recentQueries, id: \.self) { query in
@@ -82,7 +99,7 @@ private extension SearchView {
     var genresSection: some View {
         VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
             Text(LocalizedKey.genresLabel)
-                .applySubtitleLabelStyle()
+                .applyFontH2AccentDarkStyle()
                 .padding(.horizontal, Constants.sidePadding)
             
             LazyVGrid(columns: [
@@ -96,14 +113,24 @@ private extension SearchView {
             .padding(.horizontal, Constants.sidePadding)
         }
     }
+    
     var authorsSection: some View {
         VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
             Text(LocalizedKey.authorsLabel)
-                .applySubtitleLabelStyle()
+                .applyFontH2AccentDarkStyle()
                 .padding(.horizontal, Constants.sidePadding)
             
             ForEach(authors, id: \.name) { author in
                 authorItem(author)
+            }
+        }
+    }
+    
+    var searchResultsSection: some View {
+        VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
+            
+            ForEach(books.filter { $0.title.localizedCaseInsensitiveContains(searchText) || $0.author.localizedCaseInsensitiveContains(searchText) }) { book in
+                bookItem(book)
             }
         }
     }
@@ -142,18 +169,20 @@ private extension SearchView {
         .cornerRadius(Constants.cornerRadius)
         .padding(.horizontal, Constants.sidePadding)
         .onTapGesture {
-            print("Недавний запрос выбран: \(query)")
+            searchText = query
+            isSearching = true
         }
     }
     
     func genreItem(_ genre: String) -> some View {
         Text(genre)
-            .applySmallBodyLabelStyle()
+            .applyFontBodySmallAccentDarkStyle()
             .frame(width: Constants.genreWidth, height: Constants.genreHeight)
             .background(UIKitAssets.setColor(for: UIKitAssets.colorAccentLight))
             .cornerRadius(Constants.cornerRadius)
             .onTapGesture {
-                print("Жанр выбран: \(genre)")
+                searchText = genre
+                isSearching = true
             }
     }
     
@@ -177,8 +206,31 @@ private extension SearchView {
         .cornerRadius(Constants.cornerRadius)
         .padding(.horizontal, Constants.sidePadding)
         .onTapGesture {
-            print("Автор выбран: \(author.name)")
+            searchText = author.name
+            isSearching = true
         }
+    }
+    
+    func bookItem(_ book: Book) -> some View {
+        HStack {
+            Image(book.imageName)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 80, height: 126)
+                .cornerRadius(Constants.cornerRadiusSmall)
+            
+            VStack(alignment: .leading) {
+                Text(book.title)
+                    .applyFontH2AccentDarkStyle()
+                
+                Text(book.author)
+                    .applyFontBodySmallAccentDarkStyle()
+            }
+            
+            Spacer()
+        }
+        .frame(height: Constants.bookRowHeight)
+        .padding(.horizontal, Constants.sidePadding)
     }
 }
 
@@ -190,6 +242,7 @@ private extension SearchView {
         static let textFieldPadding: CGFloat = 8
         static let borderWidth: CGFloat = 1
         static let cornerRadius: CGFloat = 8
+        static let cornerRadiusSmall: CGFloat = 4
         static let gridSpacing: CGFloat = 8
         
         static let searchFieldHeight: CGFloat = 44
@@ -200,6 +253,8 @@ private extension SearchView {
         static var genreWidth: CGFloat {
             (UIScreen.main.bounds.width - (2 * sidePadding) - (gridSpacing * 1)) / 2
         }
+        
+        static let bookRowHeight: CGFloat = 126
         
         static let authorRowHeight: CGFloat = 72
         static let authorImageSize: CGFloat = 48

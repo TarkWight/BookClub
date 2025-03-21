@@ -137,7 +137,7 @@ struct FontBodySmallAccentDarkModifier  : ViewModifier {
 }
 
 extension View {
-    func applyFontSmallBodyAccentDarkStyle() -> some View {
+    func applyFontBodySmallAccentDarkStyle() -> some View {
         self.modifier(FontBodySmallAccentDarkModifier())
     }
 }
