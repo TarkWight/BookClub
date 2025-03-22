@@ -142,3 +142,39 @@ extension View {
     }
 }
 
+// MARK: - Font Quote Accent Dark Style
+struct FontQuoteAccentDarkModifier: ViewModifier {
+    let font = UIKitAssets.setFont(for: UIKitAssets.fontQuote)
+    let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
+
+    func body(content: Content) -> some View {
+        content
+            .font(font.font)
+            .foregroundColor(color)
+    }
+}
+
+extension View {
+    func applyFontQuoteAccentDarkStyle() -> some View {
+        self.modifier(FontQuoteAccentDarkModifier())
+    }
+}
+
+// MARK: - Font Text Accent Dark Style
+struct FontTextAccentDarkModifier: ViewModifier {
+    let font = UIKitAssets.setFont(for: UIKitAssets.fontText)
+    let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
+
+    func body(content: Content) -> some View {
+        content
+            .font(font.font)
+            .foregroundColor(color)
+    }
+}
+
+extension View {
+    func applyFontTextAccentDarkStyle() -> some View {
+        self.modifier(FontTextAccentDarkModifier())
+    }
+}
+
