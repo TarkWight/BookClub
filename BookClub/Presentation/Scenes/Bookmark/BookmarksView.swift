@@ -22,7 +22,7 @@ struct BookmarksView: View {
     
     var body: some View {
         ZStack {
-            Color(UIKitAssets.setColor(for: UIKitAssets.colorBackground))
+            Color(UIKitAssets.setColor(for: .background))
                 .ignoresSafeArea()
             
             ScrollView {
@@ -113,7 +113,7 @@ private extension BookmarksView {
         }
         .padding(.all, 16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(UIKitAssets.setColor(for: UIKitAssets.colorAccentLight))
+        .background(UIKitAssets.setColor(for: .accentLight))
         .cornerRadius(8)
         .padding(.horizontal, 16)
     }

@@ -13,11 +13,11 @@ struct ProgressBarView: View {
     var body: some View {
         ZStack(alignment: .leading) {
             RoundedRectangle(cornerRadius: 4)
-                .fill(UIKitAssets.setColor(for: UIKitAssets.colorAccentMedium))
+                .fill(UIKitAssets.setColor(for: .accentMedium))
                 .frame(height: 8)
 
             RoundedRectangle(cornerRadius: 4)
-                .fill(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
+                .fill(UIKitAssets.setColor(for: .accentDark))
                 .frame(width: CGFloat(progress) * UIScreen.main.bounds.width, height: 8)
         }
     }

@@ -22,16 +22,16 @@ struct LogInView: View {
     @State private var passwordTitle = LocalizedKey.passwordTitle
     @State private var signInButtonTitle = LocalizedKey.signInButtonTitle
     
-    let buttonFont = UIKitAssets.setFont(for: UIKitAssets.fontBody)
-    let inputFieldTitleFont = UIKitAssets.setFont(for: UIKitAssets.fontBodySmall)
-    let inputFieldFont = UIKitAssets.setFont(for: UIKitAssets.fontBodySmall)
-    let headerTitleFont = UIKitAssets.setFont(for: UIKitAssets.fontH1)
-    let headerSubtitleFont = UIKitAssets.setFont(for: UIKitAssets.fontTitle)
-    
+    let buttonFont = UIKitAssets.setFont(for: .body)
+    let inputFieldTitleFont = UIKitAssets.setFont(for: .bodySmall)
+    let inputFieldFont = UIKitAssets.setFont(for: .bodySmall)
+    let headerTitleFont = UIKitAssets.setFont(for: .h1)
+    let headerSubtitleFont = UIKitAssets.setFont(for: .title)
+    let background = UIKitAssets.setColor(for: .background)
     
     var body: some View {
         ZStack(alignment: .top) {
-            Color(UIKitAssets.colorAccentDark)
+            Color(background)
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
@@ -262,27 +262,27 @@ private extension LogInView {
         
         // MARK: - Header
         
-        static let headerTitleColor = UIKitAssets.setColor(for: UIKitAssets.colorAccentLight)
-        static let headerSubtitleColor = UIKitAssets.setColor(for: UIKitAssets.colorSecondary)
+        static let headerTitleColor = UIKitAssets.setColor(for: .accentLight)
+        static let headerSubtitleColor = UIKitAssets.setColor(for: .secondary)
         
         // MARK: - Input Fields
 
-        static let inputFieldTitleColor = UIKitAssets.setColor(for: UIKitAssets.colorAccentMedium)
-        static let inputFieldBorderColor = UIKitAssets.setColor(for: UIKitAssets.colorAccentMedium)
+        static let inputFieldTitleColor = UIKitAssets.setColor(for: .accentMedium)
+        static let inputFieldBorderColor = UIKitAssets.setColor(for: .accentMedium)
         static let inputFieldCornerRadius: CGFloat = 8
         static let inputFieldHeight: CGFloat = 22
         static let inputFieldContainerHeight: CGFloat = 44
         static let iconSize: CGFloat = 16
         
-        static let clearButtonImage = UIKitAssets.setImage(for: UIKitAssets.imageClose)
-        static let showPasswordImage = UIKitAssets.setImage(for: UIKitAssets.imageEyeOn)
-        static let hidePasswordImage = UIKitAssets.setImage(for: UIKitAssets.imageEyeOff)
+        static let clearButtonImage = UIKitAssets.setImage(for: .close)
+        static let showPasswordImage = UIKitAssets.setImage(for: .eyeOn)
+        static let hidePasswordImage = UIKitAssets.setImage(for: .eyeOff)
         
         // MARK: - Button
         
-        static let buttonActiveColor = UIKitAssets.setColor(for: UIKitAssets.colorWhite)
-        static let buttonInactiveColor = UIKitAssets.setColor(for: UIKitAssets.colorAccentMedium)
-        static let buttonActiveTextColor = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
-        static let buttonInactiveTextColor = UIKitAssets.setColor(for: UIKitAssets.colorAccentLight)
+        static let buttonActiveColor = UIKitAssets.setColor(for: .white)
+        static let buttonInactiveColor = UIKitAssets.setColor(for: .accentMedium)
+        static let buttonActiveTextColor = UIKitAssets.setColor(for: .accentDark)
+        static let buttonInactiveTextColor = UIKitAssets.setColor(for: .accentLight)
     }
 }

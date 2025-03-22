@@ -12,7 +12,7 @@ struct ChaptersView: View {
 
     var body: some View {
         ZStack {
-            Color(UIKitAssets.setColor(for: UIKitAssets.colorBackground))
+            Color(UIKitAssets.setColor(for: .background))
                 .ignoresSafeArea()
             
             VStack {

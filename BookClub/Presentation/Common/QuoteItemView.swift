@@ -20,7 +20,7 @@ struct QuoteItemView: View {
         }
         .padding(.all, 16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(UIKitAssets.setColor(for: UIKitAssets.colorAccentLight))
+        .background(UIKitAssets.setColor(for: .accentLight))
         .cornerRadius(8)
         .padding(.horizontal, 16)
     }
