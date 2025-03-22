@@ -135,6 +135,8 @@ private extension LogInView {
                     .foregroundColor(Constants.inputFieldTitleColor)
                 
                 TextField("", text: $email)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
                     .font(inputFieldFont.font)
                     .foregroundColor(Constants.inputFieldTitleColor)
                     .frame(maxWidth: .infinity, minHeight: Constants.inputFieldHeight)
@@ -163,12 +165,17 @@ private extension LogInView {
 
                 if isPasswordVisible {
                     TextField("", text: $password)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
                         .font(inputFieldFont.font)
                         .foregroundColor(Constants.inputFieldTitleColor)
                         .frame(maxWidth: .infinity, minHeight: Constants.inputFieldHeight)
                         .multilineTextAlignment(.leading)
                 } else {
                     SecureField("", text: $password)
+                        .autocapitalization(.none)
+                        .submitLabel(.done)
+                        .disableAutocorrection(true)
                         .font(inputFieldFont.font)
                         .foregroundColor(Constants.inputFieldTitleColor)
                         .frame(maxWidth: .infinity, minHeight: Constants.inputFieldHeight)
