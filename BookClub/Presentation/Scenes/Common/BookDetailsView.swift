@@ -86,20 +86,7 @@ struct BookDetailsView: View {
                     VStack(alignment: .leading) {
                         Text(LocalizedKey.progressBarLabel)
                             .applyFontH2AccentDarkStyle()
-                        
-                        ProgressView(value: progress(), total: 1.0)
-                            .progressViewStyle(LinearProgressViewStyle())
-                            .frame(height: Constants.progressBarHeight)
-                            .background(UIKitAssets.setColor(for: UIKitAssets.colorAccentMedium))
-                            .cornerRadius(Constants.progressBarCornerRadius)
-                            .overlay(
-                                GeometryReader { geo in
-                                    Capsule()
-                                        .fill(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
-                                        .frame(width: geo.size.width * CGFloat(progress()), height: geo.size.height)
-                                },
-                                alignment: .leading
-                            )
+                        ProgressBarView(progress: progress())
                     }
                     .padding(.horizontal, Constants.sidePadding)
                     
