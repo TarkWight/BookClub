@@ -34,7 +34,7 @@ struct LibraryView: View {
                 
                 
                 LazyVGrid(columns: columns, alignment: .leading, spacing: Constants.itemSpacing) {
-                    ForEach(BookMock.getBooks()) { book in
+                    ForEach(BookMock.getBooks(for: .all)) { book in
                         BookCell(book: book)
                             .frame(maxHeight: .infinity, alignment: .top)
                     }

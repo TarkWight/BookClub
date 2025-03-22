@@ -33,8 +33,19 @@ struct BookMock {
         Book(imageName: "Cover15", title: "Программирование на Kotlin для Android", author: "Пьер-Оливье Лоранс, Аманда Хинчман-Домингес"),
     ]
     
-    static func getBooks() -> [Book] {
-        return allBooks
+    static func getBooks(for count: Count) -> [Book] {
+        switch count {
+        case .three: return Array(allBooks.prefix(3))
+        case .five: return Array(allBooks.prefix(5))
+        case .all: return allBooks
+        }
+    }
+    
+    
+    enum Count {
+        case three
+        case five
+        case all
     }
 }
 

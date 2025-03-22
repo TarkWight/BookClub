@@ -44,6 +44,9 @@ enum LocalizedKey {
     
     // MARK: - Bookmarks Screen
     static let bookmarksLabel = NSLocalizedString("bookmarksLabel", comment: "Title for the bookmarks screen")
+    static let favoritesLabel = NSLocalizedString("favoritesLabel", comment: "Title for the favorites")
+    static let readingNowLabel = NSLocalizedString("readingNowLabel", comment: "Title for the reading now")
+    static let quotesLabel = NSLocalizedString("quotesLabel", comment: "Title for the quotes")
     
     // MARK: - Navigation
     static let backButtonTitle = NSLocalizedString("backButtonTitle", comment: "Title for the back button")

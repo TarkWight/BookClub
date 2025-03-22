@@ -4,6 +4,19 @@
     "" : {
 
     },
+    "“%@”" : {
+
+    },
+    "%@ • %@" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ • %2$@"
+          }
+        }
+      }
+    },
     "addToBookmarkButtonTitle" : {
       "comment" : "Title for the add to bookmark button",
       "localizations" : {
@@ -66,6 +79,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Почта"
+          }
+        }
+      }
+    },
+    "favoritesLabel" : {
+      "comment" : "Title for the favorites",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Избранные книги"
           }
         }
       }
@@ -169,6 +193,17 @@
         }
       }
     },
+    "quotesLabel" : {
+      "comment" : "Title for the quotes",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цитаты"
+          }
+        }
+      }
+    },
     "readButtonTitle" : {
       "comment" : "Title for the read button",
       "localizations" : {
@@ -176,6 +211,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Читать"
+          }
+        }
+      }
+    },
+    "readingNowLabel" : {
+      "comment" : "Title for the reading now",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Читаете сейчас"
           }
         }
       }
