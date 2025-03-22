@@ -49,7 +49,7 @@ private extension BookmarksView {
     
     var readingNowSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Читаете сейчас")
+            Text(LocalizedKey.readingNowLabel)
                 .applyFontH2AccentDarkStyle()
                 .padding(.horizontal, 16)
             
@@ -77,7 +77,7 @@ private extension BookmarksView {
     
     var favoritesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Избранные книги")
+            Text(LocalizedKey.favoritesLabel)
                 .applyFontH2AccentDarkStyle()
                 .padding(.horizontal, 16)
             
@@ -91,7 +91,7 @@ private extension BookmarksView {
     
     var quotesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Цитаты")
+            Text(LocalizedKey.quotesLabel)
                 .applyFontH2AccentDarkStyle()
                 .padding(.horizontal, 16)
             

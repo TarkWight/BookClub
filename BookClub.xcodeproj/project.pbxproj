@@ -26,6 +26,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Data/Mock/BookMock.swift,
+				Presentation/Common/ProgressBarView.swift,
 				"Presentation/Extensions/Text+ViewLabelModifier.swift",
 				Resources/Constants/Localizable.xcstrings,
 			);
