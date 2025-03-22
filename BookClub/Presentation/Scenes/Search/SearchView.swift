@@ -13,7 +13,7 @@ struct SearchView: View {
     @State private var recentQueries: [String] = SearchMock.recentSearches
     let genres: [String] = SearchMock.genres
     let authors: [SearchMock.Author] = SearchMock.authors
-    let books: [Book] = SearchMock.books
+    let books: [Book] = BookMock.getBooks(for: .all)
     
     @State private var isSearching: Bool = false
     
