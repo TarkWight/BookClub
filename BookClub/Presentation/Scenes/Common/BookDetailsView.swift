@@ -51,7 +51,7 @@ struct BookDetailsView: View {
                             .clipped()
                             .ignoresSafeArea(edges: .top)
                         
-                        BackButtonView(action: { router.navigateTo(.mainTab) }, title: LocalizedKey.backButtonTitle, color: .light)
+                        BackButtonView(action: { router.navigateTo(.mainTab) }, color: .light)
                             .padding(.leading, Constants.sidePadding)
                             .padding(.top, Constants.topPadding)
                     }

@@ -10,13 +10,13 @@ import SwiftUI
 struct ReaderView: View {
     @ObservedObject var router: Router
     @Binding var isChaptersPresented: Bool
-    
+
     @State private var isPlaying = false
     @State private var isSettingsPresented = false
-    
+
     @State private var fontSize: CGFloat = 16
     @State private var lineSpacing: CGFloat = 8
-    
+
     var body: some View {
         ZStack {
             Color(UIKitAssets.setColor(for: .background))
@@ -24,165 +24,206 @@ struct ReaderView: View {
 
             VStack(spacing: 0) {
                 header
-                    .padding(.top, 16)
-                
+                    .padding(.top, Constants.topPadding)
+                    .padding(.horizontal, Constants.sidePadding)
+
                 ScrollView {
                     Text(MockBookText.text)
                         .font(.system(size: fontSize))
                         .lineSpacing(lineSpacing)
                         .foregroundColor(UIKitAssets.setColor(for: .accentDark))
-                        .padding(.horizontal, 16)
-                        .padding(.top, 16)
-                        .padding(.bottom, 16 + Constants.toolbarHeight)
+                        .padding(.horizontal, Constants.sidePadding)
+                        .padding(.top, Constants.sidePadding)
+                        .padding(.bottom, Constants.sidePadding + Constants.toolbarHeight)
                 }
-                
+
                 toolbar
                     .frame(height: Constants.toolbarHeight)
-                    .background(UIKitAssets.setColor(for: .accentLight))
-            }
-            
-            if isSettingsPresented {
-                settingsPopup
+                    .background(UIKitAssets.setColor(for: .accentDark))
             }
         }
         .sheet(isPresented: $isChaptersPresented) {
             ChaptersView(isPresented: $isChaptersPresented)
         }
+        .sheet(isPresented: $isSettingsPresented) {
+            settingsSheet
+                .presentationDetents([.height(Constants.settingsSheetHeight)])
+        }
     }
 }
 
+// MARK: - UI Components
 private extension ReaderView {
     
     var header: some View {
         HStack {
-            BackButtonView(action: { router.navigateTo(.mainTab) }, title: "", color: .dark)
-                .padding(.leading, 16)
-            
+            BackButtonView(action: { router.navigateTo(.mainTab) }, color: .dark)
+
             Spacer()
-            
-            VStack(spacing: 4) {
+
+            VStack(spacing: Constants.headerSpacing) {
                 Text("Код Да Винчи")
                     .applyFontH2AccentDarkStyle()
                 Text("Глава 5")
                     .applyFontBodySmallAccentDarkStyle()
             }
-            
+            .frame(maxWidth: .infinity)
+
             Spacer()
-            
-            Spacer().frame(width: 50) // симметрия с кнопкой назад
+                .frame(width: Constants.fakeTrailingWidth)
         }
     }
-    
+
     var toolbar: some View {
         HStack {
-            HStack(spacing: 8) {
-                ReaderIconButton(imageName: "prev") { print("Prev") }
-                ReaderIconButton(imageName: "chapters") { isChaptersPresented = true }
-                ReaderIconButton(imageName: "next") { print("Next") }
-                ReaderIconButton(imageName: "settings") { isSettingsPresented = true }
+            HStack(spacing: Constants.controlButtonSpacing) {
+                ReaderIconButton(image: UIKitAssets.setImage(for: .previous)) { print("Prev") }
+                ReaderIconButton(image: UIKitAssets.setImage(for: .contents)) { isChaptersPresented = true }
+                ReaderIconButton(image: UIKitAssets.setImage(for: .next)) { print("Next") }
+                ReaderIconButton(image: UIKitAssets.setImage(for: .settings)) { isSettingsPresented = true }
             }
-            .frame(width: 200, height: 44)
-            .padding(.leading, 16)
-            .padding(.top, 16)
-            
+            .frame(width: Constants.controlGroupWidth, height: Constants.controlButtonSize)
+            .padding(.leading, Constants.sidePadding)
+            .padding(.top, Constants.sidePadding)
+
             Spacer()
-            
+
             Button(action: {
                 isPlaying.toggle()
             }) {
-                Text(isPlaying ? "Stop" : "Play")
+                UIKitAssets.setImage(for: isPlaying ? .pause : .play)
+                    .resizable()
+                    .renderingMode(.template)
                     .foregroundColor(UIKitAssets.setColor(for: .accentDark))
-                    .padding(.trailing, 16)
-                    .padding(.top, 16)
+                    .frame(width: 24, height: 24)
             }
+            .frame(width: Constants.playButtonSize, height: Constants.playButtonSize)
+            .background(UIKitAssets.setColor(for: .accentLight))
+            .clipShape(Circle())
+            .padding(.trailing, Constants.sidePadding)
+            .padding(.top, Constants.sidePadding)
         }
     }
-    
-    var settingsPopup: some View {
+
+    var settingsSheet: some View {
         VStack(spacing: 24) {
             HStack {
-                Text("Настройки")
+                Text(LocalizedKey.readerSettingsLabel)
                     .applyFontH2AccentDarkStyle()
+
                 Spacer()
-                Button("Close") {
-                    isSettingsPresented = false
+
+                Button(action: { isSettingsPresented = false }) {
+                    UIKitAssets.setImage(for: .close)
+                        .resizable()
+                        .renderingMode(.template)
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(UIKitAssets.setColor(for: .accentDark))
                 }
             }
 
-            settingRow(title: "Размер шрифта", value: "\(Int(fontSize)) pt", increment: { fontSize += 1 }, decrement: { fontSize = max(10, fontSize - 1) })
+            settingRow(
+                title: LocalizedKey.readerFontSizeLabel,
+                value: "\(Int(fontSize)) " + LocalizedKey.readerPTLabel,
+                increment: { fontSize += 1 },
+                decrement: { fontSize = max(10, fontSize - 1) }
+            )
 
-            settingRow(title: "Межстрочный интервал", value: "\(Int(lineSpacing)) pt", increment: { lineSpacing += 1 }, decrement: { lineSpacing = max(0, lineSpacing - 1) })
+            settingRow(
+                title: LocalizedKey.readerStringSpacingLabel,
+                value: "\(Int(lineSpacing)) " + LocalizedKey.readerPTLabel,
+                increment: { lineSpacing += 1 },
+                decrement: { lineSpacing = max(0, lineSpacing - 1) }
+            )
+
+            Spacer()
         }
         .padding()
-        .frame(maxWidth: .infinity)
-        .background(UIKitAssets.setColor(for:.white))
-        .cornerRadius(12)
-        .padding()
+        .background(UIKitAssets.setColor(for: .background))
     }
-    
+
     func settingRow(title: String, value: String, increment: @escaping () -> Void, decrement: @escaping () -> Void) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .applyFontBodyAccentDarkStyle()
+
             HStack {
                 Text(value)
                     .applyFontBodySmallAccentDarkStyle()
+
                 Spacer()
-                Button("+", action: increment)
-                Button("-", action: decrement)
+
+                HStack(spacing: 0) {
+                    Button(action: increment) {
+                        UIKitAssets.setImage(for: .increment)
+                            .frame(width: Constants.settingsButtonWidth, height: Constants.settingsButtonHeight)
+                            .foregroundColor(UIKitAssets.setColor(for: .accentDark))
+                    }
+
+                    Divider()
+                        .frame(width: Constants.dividerWidth, height: Constants.dividerHeight)
+                        .background(UIKitAssets.setColor(for: .accentDark))
+
+                    Button(action: decrement) {
+                        UIKitAssets.setImage(for: .decrement)
+                            .frame(width: Constants.settingsButtonWidth, height: Constants.settingsButtonHeight)
+                            .foregroundColor(UIKitAssets.setColor(for: .accentDark))
+                    }
+                }
+                .background(UIKitAssets.setColor(for: .accentMedium))
+                .cornerRadius(Constants.settingsButtonCornerRadius)
             }
         }
     }
 }
 
+// MARK: - Icon Button Component
 struct ReaderIconButton: View {
-    let imageName: String
+    let image: Image
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: imageName) 
+            image
+                .renderingMode(.template)
                 .resizable()
                 .frame(width: 24, height: 24)
+                .foregroundColor(UIKitAssets.setColor(for: .white))
         }
+        .frame(width: ReaderView.Constants.controlButtonSize, height: ReaderView.Constants.controlButtonSize)
     }
-}
-
-
-struct MockBookText {
-    static let text = """
-    Факты
-
-    Приорат Сиона — реальное тайное общество, основанное в 1099 году.
-
-    В 1975 году в Национальной библиотеке Франции были обнаружены свитки, известные как Les Dossiers Secrets, содержащие доказательства существования Приората и перечень его Великих магистров. Среди них — Исаак Ньютон, Боттичелли, Виктор Гюго и Леонардо да Винчи.
-
-    Ватиканская прелатура Opus Dei — католическая организация, получившая противоречивую известность из-за преданности и практик.
-
-    Все описанные произведения искусства, здания, документы и тайные ритуалы существуют на самом деле.
-    """
 }
 
 // MARK: - Constants
 private extension ReaderView {
     enum Constants {
-        static let toolbarHeight: CGFloat = 74
-        
+        /// Layout
         static let sidePadding: CGFloat = 16
         static let topPadding: CGFloat = 16
-        
-        static let headerSpacing: CGFloat = 8
-        
+
+        /// Header
+        static let headerSpacing: CGFloat = 4
+        static let fakeTrailingWidth: CGFloat = 80
+
+        /// Scroll/Text
+        static let toolbarHeight: CGFloat = 74
+
+        /// Toolbar Buttons
+        static let controlGroupWidth: CGFloat = 200
         static let controlButtonSize: CGFloat = 44
         static let controlButtonSpacing: CGFloat = 8
-        static let controlGroupWidth: CGFloat = 200
-        
-        static let settingsPopupCornerRadius: CGFloat = 12
-        static let settingsPopupPadding: CGFloat = 16
+        static let playButtonSize: CGFloat = 40
+
+        /// Settings Sheet
+        static let settingsSheetHeight: CGFloat = 256
+        static let settingsButtonWidth: CGFloat = 47
+        static let settingsButtonHeight: CGFloat = 32
+        static let settingsButtonCornerRadius: CGFloat = 8
+        static let dividerWidth: CGFloat = 1
+        static let dividerHeight: CGFloat = 18
     }
 }
 
 #Preview {
     ReaderView(router: Router(), isChaptersPresented: .constant(false))
-        
 }
