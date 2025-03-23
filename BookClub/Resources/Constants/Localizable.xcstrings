@@ -4,9 +4,6 @@
     "" : {
 
     },
-    "-" : {
-
-    },
     "“%@”" : {
 
     },
@@ -19,9 +16,6 @@
           }
         }
       }
-    },
-    "+" : {
-
     },
     "addToBookmarkButtonTitle" : {
       "comment" : "Title for the add to bookmark button",
