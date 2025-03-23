@@ -4,6 +4,9 @@
     "" : {
 
     },
+    "-" : {
+
+    },
     "“%@”" : {
 
     },
@@ -16,6 +19,9 @@
           }
         }
       }
+    },
+    "+" : {
+
     },
     "addToBookmarkButtonTitle" : {
       "comment" : "Title for the add to bookmark button",
@@ -72,6 +78,9 @@
         }
       }
     },
+    "Close" : {
+
+    },
     "emailTitle" : {
       "comment" : "Title for email input field",
       "localizations" : {
@@ -90,6 +99,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Избранные книги"
+          }
+        }
+      }
+    },
+    "fontSizeLabel" : {
+      "comment" : "Title for the font size",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Размер шрифта"
           }
         }
       }
@@ -171,6 +191,9 @@
         }
       }
     },
+    "Play" : {
+
+    },
     "popularGridLabel" : {
       "comment" : "Title for the popular grid",
       "localizations" : {
@@ -189,6 +212,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Прочитано"
+          }
+        }
+      }
+    },
+    "ptLabel" : {
+      "comment" : "Title for the pt",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "пт"
           }
         }
       }
@@ -248,6 +282,17 @@
         }
       }
     },
+    "settingsLabel" : {
+      "comment" : "Title for the settings",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Настройки"
+          }
+        }
+      }
+    },
     "signInButtonTitle" : {
       "comment" : "Text for the login button",
       "localizations" : {
@@ -258,6 +303,23 @@
           }
         }
       }
+    },
+    "stringSpacingLabel" : {
+      "comment" : "Title for the string spacing",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Межстрочное расстояние"
+          }
+        }
+      }
+    },
+    "Глава 5" : {
+
+    },
+    "Код Да Винчи" : {
+
     }
   },
   "version" : "1.0"

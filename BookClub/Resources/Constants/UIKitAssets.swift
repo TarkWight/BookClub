@@ -28,6 +28,8 @@ enum UIKitAssets {
         case logOut = "Log Out"
         case read = "Read"
         case readingNow = "Reading Now"
+        case decrement = "Decrement"
+        case increment = "Increment"
     }
     
     static func setImage(for icon: Icon) -> Image {
