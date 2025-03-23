@@ -12,11 +12,11 @@ struct ChaptersView: View {
 
     var body: some View {
         ZStack {
-            Color(UIKitAssets.setColor(for: UIKitAssets.colorBackground))
+            Color(UIKitAssets.setColor(for: .background))
                 .ignoresSafeArea()
             
             VStack {
-                BackButtonView(action: { isPresented = false }, title: LocalizedKey.backButtonTitle, color: .dark)
+                BackButtonView(action: { isPresented = false }, color: .dark)
                     
                     
                 

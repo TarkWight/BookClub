@@ -10,11 +10,11 @@ import SwiftUI
 enum Tab: CaseIterable {
     case library, search, bookmarks
 
-    var icon: String {
+    var icon: UIKitAssets.Icon {
         switch self {
-        case .library: return UIKitAssets.imageLibrary
-        case .search: return UIKitAssets.imageSearch
-        case .bookmarks: return UIKitAssets.imageBookmarks
+        case .library: return UIKitAssets.Icon.library
+        case .search: return UIKitAssets.Icon.search
+        case .bookmarks: return UIKitAssets.Icon.bookmarks
         }
     }
 }

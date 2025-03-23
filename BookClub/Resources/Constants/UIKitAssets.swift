@@ -10,54 +10,78 @@ import SwiftUI
 enum UIKitAssets {
     
     // MARK: - Icons
-    static let imageEyeOn = "Eye On"
-    static let imageEyeOff = "Eye Off"
-    static let imageClose = "Close"
-    static let imageLibrary = "Library"
-    static let imageSearch = "Search"
-    static let imageBookmarks = "Bookmarks"
-    static let imageArrowLeft = "Arrow Left"
-    static let imageContents = "Contents"
-    static let imagePlay = "Play"
-    static let imagePause = "Pause"
-    static let imageSettings = "Settings"
-    static let imagePrevious = "Previous"
-    static let imageNext = "Next"
-    static let imageHistory = "History"
-    static let imageLogOut = "Log Out"
-    static let imageRead = "Read"
-    static let imageReadingNow = "Reading Now"
-    
-    static func setImage(for icon: String) -> Image {
-        return Image(icon)
+    enum Icon: String {
+        case eyeOn = "Eye On"
+        case eyeOff = "Eye Off"
+        case close = "Close"
+        case library = "Library"
+        case search = "Search"
+        case bookmarks = "Bookmarks"
+        case arrowLeft = "Arrow Left"
+        case contents = "Contents"
+        case play = "Play"
+        case pause = "Pause"
+        case settings = "Settings"
+        case previous = "Previous"
+        case next = "Next"
+        case history = "History"
+        case logOut = "Log Out"
+        case read = "Read"
+        case readingNow = "Reading Now"
+        case decrement = "Decrement"
+        case increment = "Increment"
     }
     
+    static func setImage(for icon: Icon) -> Image {
+        Image(icon.rawValue)
+    }
+
     // MARK: - Colors
-    static let colorAccentDark = "Accent Dark"
-    static let colorAccentMedium = "Accent Medium"
-    static let colorAccentLight = "Accent Light"
-    static let colorSecondary = "AppSecondary"
-    static let colorBackground = "AppBackground"
-    static let colorBlack = "AppBlack"
-    static let colorWhite = "AppWhite"
-    
-    static func setColor(for name: String) -> Color {
-        return Color(name)
+    enum ColorName: String {
+        case accentDark = "Accent Dark"
+        case accentMedium = "Accent Medium"
+        case accentLight = "Accent Light"
+        case secondary = "AppSecondary"
+        case background = "AppBackground"
+        case black = "AppBlack"
+        case white = "AppWhite"
     }
-    
+
+    static func setColor(for name: ColorName) -> Color {
+        Color(name.rawValue)
+    }
+
     // MARK: - Fonts
-    static let fontTitle = ("Alumni Sans Bold", CGFloat(96), CGFloat(0.5))
-    static let fontH1 = ("Alumni Sans Bold", CGFloat(48), CGFloat(0.5))
-    static let fontH2 = ("Alumni Sans Bold", CGFloat(24), CGFloat(0.5))
-    static let fontH3 = ("Alumni Sans Bold", CGFloat(14), CGFloat(1))
-    static let fontBody = ("Vela Sans", CGFloat(16), CGFloat(1))
-    static let fontBodySmall = ("Vela Sans", CGFloat(14), CGFloat(1))
-    static let fontFootNote = ("Vela Sans", CGFloat(10), CGFloat(1))
-    static let fontText = ("Georgia", CGFloat(14), CGFloat(1))
-    static let fontQuote = ("Georgia-Italic", CGFloat(16), CGFloat(1))
-    
-    @MainActor static func setFont(for font: (name: String, baseSize: CGFloat, scaleFactor: CGFloat)) -> (font: Font, size: CGFloat) {
-        let adaptiveSize = min(font.baseSize, UIScreen.main.bounds.width * font.scaleFactor)
-        return (Font.custom(font.name, size: adaptiveSize), adaptiveSize)
+    enum FontName {
+        case title
+        case h1
+        case h2
+        case h3
+        case body
+        case bodySmall
+        case footnote
+        case text
+        case quote
+
+        var fontInfo: (name: String, baseSize: CGFloat, scaleFactor: CGFloat) {
+            switch self {
+            case .title: return ("Alumni Sans Bold", 96, 0.5)
+            case .h1: return ("Alumni Sans Bold", 48, 0.5)
+            case .h2: return ("Alumni Sans Bold", 24, 0.5)
+            case .h3: return ("Alumni Sans Bold", 14, 1)
+            case .body: return ("Vela Sans", 16, 1)
+            case .bodySmall: return ("Vela Sans", 14, 1)
+            case .footnote: return ("Vela Sans", 10, 1)
+            case .text: return ("Georgia", 14, 1)
+            case .quote: return ("Georgia-Italic", 16, 1)
+            }
+        }
+    }
+
+    @MainActor
+    static func setFont(for font: FontName) -> (font: Font, size: CGFloat) {
+        let info = font.fontInfo
+        let adaptiveSize = min(info.baseSize, UIScreen.main.bounds.width * info.scaleFactor)
+        return (Font.custom(info.name, size: adaptiveSize), adaptiveSize)
     }
 }

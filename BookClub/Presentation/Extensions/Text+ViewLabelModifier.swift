@@ -9,8 +9,8 @@ import SwiftUI
 
 // MARK: - H1 Secondary Label Style
 struct FontH1SecondaryModifier: ViewModifier {
-    let font = UIKitAssets.setFont(for: UIKitAssets.fontH1)
-    let color = UIKitAssets.setColor(for: UIKitAssets.colorSecondary)
+    let font = UIKitAssets.setFont(for: .h1)
+    let color = UIKitAssets.setColor(for: .secondary)
 
     func body(content: Content) -> some View {
         content
@@ -28,8 +28,8 @@ extension View {
 
 // MARK: - Font H1 Accent Dark Style
 struct FontH1AccentDarkModifier: ViewModifier {
-    let font = UIKitAssets.setFont(for: UIKitAssets.fontH1)
-    let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
+    let font = UIKitAssets.setFont(for: .h1)
+    let color = UIKitAssets.setColor(for: .accentDark)
 
     func body(content: Content) -> some View {
         content
@@ -47,8 +47,8 @@ extension View {
 
 // MARK: - Font H2 Accent Dark Style
 struct FontH2AccentDarkModifier: ViewModifier {
-    let font = UIKitAssets.setFont(for: UIKitAssets.fontH2)
-    let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
+    let font = UIKitAssets.setFont(for: .h2)
+    let color = UIKitAssets.setColor(for: .accentDark)
     
     func body(content: Content) -> some View {
         content
@@ -68,8 +68,8 @@ extension View {
 
 // MARK: - Font H3 Accent Dark Title Style
 struct FontH3AccentDarkModifier: ViewModifier {
-    let font = UIKitAssets.setFont(for: UIKitAssets.fontH3)
-    let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
+    let font = UIKitAssets.setFont(for: .h3)
+    let color = UIKitAssets.setColor(for: .accentDark)
 
     func body(content: Content) -> some View {
         content
@@ -88,8 +88,8 @@ extension View {
 
 // MARK: - Font Foot Note Accent Dark Style
 struct FontFootNoteAccentDarkModifier: ViewModifier {
-    let font = UIKitAssets.setFont(for: UIKitAssets.fontFootNote)
-    let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
+    let font = UIKitAssets.setFont(for: .footnote)
+    let color = UIKitAssets.setColor(for: .accentDark)
 
     func body(content: Content) -> some View {
         content
@@ -107,8 +107,8 @@ extension View {
 
 // MARK: - Font Body Accent Dark Style
 struct FontBodyAccentDarkModifier: ViewModifier {
-    let font = UIKitAssets.setFont(for: UIKitAssets.fontBody)
-    let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
+    let font = UIKitAssets.setFont(for: .body)
+    let color = UIKitAssets.setColor(for: .accentDark)
 
     func body(content: Content) -> some View {
         content
@@ -126,8 +126,8 @@ extension View {
 
 // MARK: - Font Body Small Accent Dark Style
 struct FontBodySmallAccentDarkModifier  : ViewModifier {
-    let font = UIKitAssets.setFont(for: UIKitAssets.fontBodySmall)
-    let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
+    let font = UIKitAssets.setFont(for: .bodySmall)
+    let color = UIKitAssets.setColor(for: .accentDark)
 
     func body(content: Content) -> some View {
         content
@@ -144,8 +144,8 @@ extension View {
 
 // MARK: - Font Quote Accent Dark Style
 struct FontQuoteAccentDarkModifier: ViewModifier {
-    let font = UIKitAssets.setFont(for: UIKitAssets.fontQuote)
-    let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
+    let font = UIKitAssets.setFont(for: .quote)
+    let color = UIKitAssets.setColor(for: .accentDark)
 
     func body(content: Content) -> some View {
         content
@@ -162,8 +162,8 @@ extension View {
 
 // MARK: - Font Text Accent Dark Style
 struct FontTextAccentDarkModifier: ViewModifier {
-    let font = UIKitAssets.setFont(for: UIKitAssets.fontText)
-    let color = UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
+    let font = UIKitAssets.setFont(for: .text)
+    let color = UIKitAssets.setColor(for: .accentDark)
 
     func body(content: Content) -> some View {
         content

@@ -36,7 +36,7 @@ struct BookDetailsView: View {
     
     var body: some View {
         ZStack {
-            Color(UIKitAssets.setColor(for: UIKitAssets.colorBackground))
+            Color(UIKitAssets.setColor(for: .background))
                 .ignoresSafeArea()
             
             ScrollView {
@@ -51,17 +51,17 @@ struct BookDetailsView: View {
                             .clipped()
                             .ignoresSafeArea(edges: .top)
                         
-                        BackButtonView(action: { router.navigateTo(.mainTab) }, title: LocalizedKey.backButtonTitle, color: .light)
+                        BackButtonView(action: { router.navigateTo(.mainTab) }, color: .light)
                             .padding(.leading, Constants.sidePadding)
                             .padding(.top, Constants.topPadding)
                     }
                     
                     HStack(spacing: Constants.buttonSpacing) {
-                        ActionButton(title: LocalizedKey.readButtonTitle, icon: UIKitAssets.imagePlay, width: Constants.readButtonWidth, isPrimary: true, action: {
+                        ActionButton(title: LocalizedKey.readButtonTitle, icon: UIKitAssets.Icon.play, width: Constants.readButtonWidth, isPrimary: true, action: {
                             router.navigateTo(.reader)
                         })
                         
-                        ActionButton(title: LocalizedKey.addToBookmarkButtonTitle, icon: UIKitAssets.imageBookmarks, width: Constants.bookmarkButtonWidth, isPrimary: false, action: {
+                        ActionButton(title: LocalizedKey.addToBookmarkButtonTitle, icon: UIKitAssets.Icon.bookmarks, width: Constants.bookmarkButtonWidth, isPrimary: false, action: {
                             print("Книга добавлена в избранное")
                         })
                     }
@@ -71,7 +71,7 @@ struct BookDetailsView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(book.title)
                             .applyH1AccentDarkTitleStyle()
-                            .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
+                            .foregroundColor(UIKitAssets.setColor(for: .accentDark))
                         
                         Text(book.author)
                             .applyFontBodyAccentDarkStyle()
@@ -80,7 +80,7 @@ struct BookDetailsView: View {
                     
                     Text(book.description)
                         .font(.body)
-                        .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
+                        .foregroundColor(UIKitAssets.setColor(for: .accentDark))
                         .padding(.horizontal, Constants.sidePadding)
                     
                     VStack(alignment: .leading) {
@@ -98,7 +98,7 @@ struct BookDetailsView: View {
                             HStack {
                                 Text(chapter.title)
                                     .font(.body)
-                                    .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
+                                    .foregroundColor(UIKitAssets.setColor(for: .accentDark))
                                 
                                 Spacer()
                                 
@@ -128,7 +128,7 @@ struct BookDetailsView: View {
     // MARK: - Action Button
     struct ActionButton: View {
         let title: String
-        let icon: String
+        let icon: UIKitAssets.Icon
         let width: CGFloat
         let isPrimary: Bool
         let action: () -> Void
@@ -146,8 +146,8 @@ struct BookDetailsView: View {
                         .bold()
                 }
                 .frame(width: width, height: Constants.buttonHeight)
-                .foregroundColor(isPrimary ? UIKitAssets.setColor(for: UIKitAssets.colorWhite) : UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
-                .background(isPrimary ? UIKitAssets.setColor(for: UIKitAssets.colorAccentDark) : UIKitAssets.setColor(for: UIKitAssets.colorWhite))
+                .foregroundColor(isPrimary ? UIKitAssets.setColor(for: .white) : UIKitAssets.setColor(for: .accentDark))
+                .background(isPrimary ? UIKitAssets.setColor(for: .accentDark) : UIKitAssets.setColor(for: .white))
                 .cornerRadius(Constants.buttonCornerRadius)
             }
         }
@@ -174,17 +174,17 @@ enum ChapterStatus {
     
     var iconName: String {
         switch self {
-        case .read: return UIKitAssets.imageRead
-        case .reading: return UIKitAssets.imageReadingNow
-        case .unread: return UIKitAssets.imageReadingNow
+        case .read: return UIKitAssets.Icon.read.rawValue
+        case .reading: return UIKitAssets.Icon.readingNow.rawValue
+        case .unread: return UIKitAssets.Icon.readingNow.rawValue
         }
     }
     
     var iconColor: Color {
         switch self {
-        case .read: return UIKitAssets.setColor(for: UIKitAssets.colorAccentMedium)
-        case .reading: return UIKitAssets.setColor(for: UIKitAssets.colorAccentDark)
-        case .unread: return UIKitAssets.setColor(for: UIKitAssets.colorBackground)
+        case .read: return UIKitAssets.setColor(for: .accentMedium)
+        case .reading: return UIKitAssets.setColor(for: .accentDark)
+        case .unread: return UIKitAssets.setColor(for: .background)
         }
     }
 }

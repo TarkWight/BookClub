@@ -19,7 +19,7 @@ struct SearchView: View {
     
     var body: some View {
         ZStack {
-            Color(UIKitAssets.setColor(for: UIKitAssets.colorBackground))
+            Color(UIKitAssets.setColor(for: .background))
                 .ignoresSafeArea()
             
             ScrollView {
@@ -44,10 +44,10 @@ private extension SearchView {
     
     var searchField: some View {
         HStack {
-            UIKitAssets.setImage(for: UIKitAssets.imageSearch)
+            UIKitAssets.setImage(for: .search)
                 .resizable()
                 .renderingMode(.template)
-                .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentMedium))
+                .foregroundColor(UIKitAssets.setColor(for: .accentMedium))
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
                 .padding(.leading, Constants.sidePadding)
             
@@ -56,8 +56,8 @@ private extension SearchView {
                     isSearching = !searchText.isEmpty
                 }
             })
-            .font(UIKitAssets.setFont(for: UIKitAssets.fontBody).font)
-            .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
+            .font(UIKitAssets.setFont(for: .body).font)
+            .foregroundColor(UIKitAssets.setColor(for: .accentDark))
             .padding(.leading, Constants.textFieldPadding)
             
             if !searchText.isEmpty {
@@ -67,10 +67,10 @@ private extension SearchView {
                         isSearching = false
                     }
                 }) {
-                    UIKitAssets.setImage(for: UIKitAssets.imageClose)
+                    UIKitAssets.setImage(for: .close)
                         .resizable()
                         .renderingMode(.template)
-                        .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
+                        .foregroundColor(UIKitAssets.setColor(for: .accentDark))
                         .frame(width: Constants.iconSize, height: Constants.iconSize)
                         .padding(.trailing, Constants.sidePadding)
                 }
@@ -79,9 +79,9 @@ private extension SearchView {
         .frame(height: Constants.searchFieldHeight)
         .overlay(
             RoundedRectangle(cornerRadius: Constants.cornerRadiusBig)
-                .stroke(UIKitAssets.setColor(for: UIKitAssets.colorAccentMedium), lineWidth: Constants.borderWidth)
+                .stroke(UIKitAssets.setColor(for: .accentMedium), lineWidth: Constants.borderWidth)
         )
-        .background(UIKitAssets.setColor(for: UIKitAssets.colorWhite))
+        .background(UIKitAssets.setColor(for: .white))
         .padding(.horizontal, Constants.sidePadding)
     }
     
@@ -144,31 +144,31 @@ private extension SearchView {
     
     func recentQueryItem(_ query: String) -> some View {
         HStack {
-            UIKitAssets.setImage(for: UIKitAssets.imageHistory)
+            UIKitAssets.setImage(for: .history)
                 .resizable()
                 .renderingMode(.template)
-                .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
+                .foregroundColor(UIKitAssets.setColor(for: .accentDark))
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
                 .padding(.leading, Constants.sidePadding)
             
             Text(query)
-                .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
+                .foregroundColor(UIKitAssets.setColor(for: .accentDark))
             
             Spacer()
             
             Button(action: {
                 recentQueries.removeAll { $0 == query }
             }) {
-                UIKitAssets.setImage(for: UIKitAssets.imageClose)
+                UIKitAssets.setImage(for: .close)
                     .resizable()
                     .renderingMode(.template)
-                    .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
+                    .foregroundColor(UIKitAssets.setColor(for: .accentDark))
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
                     .padding(.trailing, Constants.sidePadding)
             }
         }
         .frame(height: Constants.recentQueryHeight)
-        .background(UIKitAssets.setColor(for: UIKitAssets.colorAccentLight))
+        .background(UIKitAssets.setColor(for: .accentLight))
         .cornerRadius(Constants.cornerRadius)
         .padding(.horizontal, Constants.sidePadding)
         .onTapGesture {
@@ -181,7 +181,7 @@ private extension SearchView {
         Text(genre)
             .applyFontBodySmallAccentDarkStyle()
             .frame(width: Constants.genreWidth, height: Constants.genreHeight)
-            .background(UIKitAssets.setColor(for: UIKitAssets.colorAccentLight))
+            .background(UIKitAssets.setColor(for: .accentLight))
             .cornerRadius(Constants.cornerRadius)
             .onTapGesture {
                 searchText = genre
@@ -199,13 +199,13 @@ private extension SearchView {
                 .padding(.leading, Constants.sidePadding)
             
             Text(author.name)
-                .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorAccentDark))
+                .foregroundColor(UIKitAssets.setColor(for: .accentDark))
                 .padding(.leading, Constants.textFieldPadding)
             
             Spacer()
         }
         .frame(height: Constants.authorRowHeight)
-        .background(UIKitAssets.setColor(for: UIKitAssets.colorAccentLight))
+        .background(UIKitAssets.setColor(for: .accentLight))
         .cornerRadius(Constants.cornerRadius)
         .padding(.horizontal, Constants.sidePadding)
         .onTapGesture {
