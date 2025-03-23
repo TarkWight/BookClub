@@ -15,7 +15,7 @@ enum BackButtonColor {
 
 struct BackButtonView: View {
     let action: () -> Void
-    let title: String
+    let title: String = LocalizedKey.backButtonTitle
     let color: BackButtonColor
     let darkColor: Color = UIKitAssets.setColor(for: .accentDark)
     let lightColor: Color = UIKitAssets.setColor(for: .white)
@@ -42,5 +42,5 @@ struct BackButtonView: View {
 }
 
 #Preview {
-    BackButtonView(action: {}, title: LocalizedKey.backButtonTitle, color: .light)
+    BackButtonView(action: {}, color: .light)
 }
