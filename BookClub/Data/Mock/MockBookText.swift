@@ -6,7 +6,7 @@
 //
 
 
-struct MockBookText {
+enum MockBookText {
     static let text = """
     Факты
 

@@ -14,7 +14,7 @@ struct Book: Identifiable {
     let author: String
 }
 
-struct BookMock {
+enum BookMock {
     static let allBooks: [Book] = [
         Book(imageName: "Cover1", title: "Понедельник начинается в субботу", author: "Аркадий и Борис Стругацкие"),
         Book(imageName: "Cover2", title: "Код да Винчи", author: "Дэн Браун"),
