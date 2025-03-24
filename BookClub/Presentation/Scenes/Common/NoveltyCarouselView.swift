@@ -91,13 +91,13 @@ struct NoveltyBookView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(book.description)
                         .font(.footnote)
-                        .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorWhite))
+                        .foregroundColor(UIKitAssets.setColor(for: .white))
                         .lineLimit(2)
 
                     Text(book.title)
                         .font(.headline)
                         .bold()
-                        .foregroundColor(UIKitAssets.setColor(for: UIKitAssets.colorWhite))
+                        .foregroundColor(UIKitAssets.setColor(for: .white))
                 }
                 .padding()
                 .cornerRadius(8)

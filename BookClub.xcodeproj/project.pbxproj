@@ -29,6 +29,7 @@
 				Presentation/Common/ProgressBarView.swift,
 				"Presentation/Extensions/Text+ViewLabelModifier.swift",
 				Resources/Constants/Localizable.xcstrings,
+				Resources/LocalConfig.plist,
 			);
 			target = 89EC9B702D81B0E200FCF075 /* BookClubUITests */;
 		};

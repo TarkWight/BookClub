@@ -29,8 +29,12 @@ enum LocalizedKey {
     
     
     // MARK: - Reader Screen
-    
-    
+    /// Title for settings subview
+    static let readerSettingsLabel = NSLocalizedString("settingsLabel", comment: "Title for the settings")
+    static let readerFontSizeLabel = NSLocalizedString("fontSizeLabel", comment: "Title for the font size")
+    static let readerStringSpacingLabel = NSLocalizedString("stringSpacingLabel", comment: "Title for the string spacing")
+    static let readerPTLabel = NSLocalizedString("ptLabel", comment: "Title for the pt")
+
     // MARK: - Chapters Screen
     static let chaptersLabel = NSLocalizedString("chaptersLabel", comment: "Title for the chapters screen")
     

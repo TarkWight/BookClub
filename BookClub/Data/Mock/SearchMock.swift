@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SearchMock {
+enum SearchMock {
     static let recentSearches: [String] = [
         "Android",
         "iOS",

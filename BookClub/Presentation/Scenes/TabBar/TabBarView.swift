@@ -30,16 +30,16 @@ struct TabBarView: View {
             }
             .frame(height: Constants.tabBarHeight)
             .padding(.horizontal, Constants.horizontalPadding)
-            .background(UIKitAssets.setColor(for: Constants.tabBarBackgroundColor))
+            .background(UIKitAssets.setColor(for: .accentDark))
             .clipShape(Capsule())
 
             Button(action: { onReadSelected() }) {
-                UIKitAssets.setImage(for: UIKitAssets.imagePlay)
+                UIKitAssets.setImage(for: .play)
                     .resizable()
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
-                    .foregroundColor(UIKitAssets.setColor(for: Constants.playButtonIconColor))
+                    .foregroundColor(UIKitAssets.setColor(for: .accentDark))
                     .frame(width: Constants.playButtonSize, height: Constants.playButtonSize)
-                    .background(UIKitAssets.setColor(for: Constants.playButtonBackgroundColor))
+                    .background(UIKitAssets.setColor(for: .accentDark))
                     .clipShape(Circle())
             }
             .position(x: (UIScreen.main.bounds.width - Constants.horizontalPadding * 2) / 2,
@@ -58,8 +58,8 @@ struct TabBarView: View {
                     .renderingMode(.template)
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
                     .foregroundColor(selectedTab == tab
-                                     ? UIKitAssets.setColor(for: Constants.selectedTabColor)
-                                     : UIKitAssets.setColor(for: Constants.unselectedTabColor))
+                                     ? UIKitAssets.setColor(for: .white)
+                                     : UIKitAssets.setColor(for: .accentMedium))
             }
             .frame(width: Constants.tabSize, height: Constants.tabSize)
         }
@@ -69,11 +69,11 @@ struct TabBarView: View {
     private func logoutButton() -> some View {
         Button(action: { onLogout() }) {
             VStack {
-                UIKitAssets.setImage(for: UIKitAssets.imageLogOut)
+                UIKitAssets.setImage(for: .logOut)
                     .resizable()
                     .renderingMode(.template)
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
-                    .foregroundColor(UIKitAssets.setColor(for: Constants.unselectedTabColor))
+                    .foregroundColor(UIKitAssets.setColor(for: .accentMedium))
             }
             .frame(width: Constants.tabSize, height: Constants.tabSize)
         }
@@ -94,12 +94,12 @@ private extension TabBarView {
         static let playButtonSize: CGFloat = 80
         static let playButtonOffsetY: CGFloat = 48
 
-        static let tabBarBackgroundColor = "Accent Dark"
-        static let selectedTabColor = "AppWhite"
-        static let unselectedTabColor = "Accent Medium"
+        static let tabBarBackgroundColor = UIKitAssets.setColor(for: .accentDark)
+        static let selectedTabColor = UIKitAssets.setColor(for: .white)
+        static let unselectedTabColor = UIKitAssets.setColor(for: .accentMedium)
 
-        static let playButtonIconColor = "AppWhite"
-        static let playButtonBackgroundColor = "AppSecondary"
+        static let playButtonIconColor = UIKitAssets.setColor(for: .white)
+        static let playButtonBackgroundColor = UIKitAssets.setColor(for: .secondary)
     }
 }
 
