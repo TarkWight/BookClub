@@ -7,7 +7,9 @@
 
 import Foundation
 
-struct TextChunk {
+struct TextChunk: Identifiable, Equatable {
     let index: Int
     let text: String
+
+    var id: Int { index }
 }
