@@ -7,7 +7,11 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct ReaderView: View {
+    @EnvironmentObject var manager: TextChunkManager
+
     @ObservedObject var router: Router
     @Binding var isChaptersPresented: Bool
 
@@ -16,6 +20,8 @@ struct ReaderView: View {
 
     @State private var fontSize: CGFloat = 16
     @State private var lineSpacing: CGFloat = 8
+
+    @State private var chunkText: String = "Загрузка..."
 
     var body: some View {
         ZStack {
@@ -28,7 +34,7 @@ struct ReaderView: View {
                     .padding(.horizontal, Constants.sidePadding)
 
                 ScrollView {
-                    Text(MockBookText.text)
+                    Text(chunkText)
                         .font(.system(size: fontSize))
                         .lineSpacing(lineSpacing)
                         .foregroundColor(UIKitAssets.setColor(for: .accentDark))
@@ -42,6 +48,7 @@ struct ReaderView: View {
                     .background(UIKitAssets.setColor(for: .accentDark))
             }
         }
+        .onAppear(perform: loadInitial)
         .sheet(isPresented: $isChaptersPresented) {
             ChaptersView(isPresented: $isChaptersPresented)
         }
@@ -64,7 +71,7 @@ private extension ReaderView {
             VStack(spacing: Constants.headerSpacing) {
                 Text("Код Да Винчи")
                     .applyFontH2AccentDarkStyle()
-                Text("Глава 5")
+                Text(manager.currentChapterTitle() ?? "Глава")
                     .applyFontBodySmallAccentDarkStyle()
             }
             .frame(maxWidth: .infinity)
@@ -77,10 +84,26 @@ private extension ReaderView {
     var toolbar: some View {
         HStack {
             HStack(spacing: Constants.controlButtonSpacing) {
-                ReaderIconButton(image: UIKitAssets.setImage(for: .previous)) { print("Prev") }
-                ReaderIconButton(image: UIKitAssets.setImage(for: .contents)) { isChaptersPresented = true }
-                ReaderIconButton(image: UIKitAssets.setImage(for: .next)) { print("Next") }
-                ReaderIconButton(image: UIKitAssets.setImage(for: .settings)) { isSettingsPresented = true }
+                ReaderIconButton(
+                    image: UIKitAssets.setImage(for: .previous),
+                    isEnabled: manager.hasPrevious(),
+                    action: loadPrevious
+                )
+                ReaderIconButton(
+                    image: UIKitAssets.setImage(for: .contents),
+                    isEnabled: true,
+                    action: { isChaptersPresented = true }
+                )
+                ReaderIconButton(
+                    image: UIKitAssets.setImage(for: .next),
+                    isEnabled: manager.hasNext(),
+                    action: loadNext
+                )
+                ReaderIconButton(
+                    image: UIKitAssets.setImage(for: .settings),
+                    isEnabled: true,
+                    action: { isSettingsPresented = true }
+                )
             }
             .frame(width: Constants.controlGroupWidth, height: Constants.controlButtonSize)
             .padding(.leading, Constants.sidePadding)
@@ -177,20 +200,60 @@ private extension ReaderView {
     }
 }
 
+// MARK: - Text Chunk Loading
+private extension ReaderView {
+    func loadInitial() {
+        do {
+            let chunk = try manager.loadInitialChunk()
+            chunkText = chunk.text
+        } catch {
+            chunkText = "Ошибка загрузки: \(error)"
+        }
+    }
+
+    func loadNext() {
+        guard manager.hasNext() else { return }
+        do {
+            let chunk = try manager.loadNextChunk()
+            chunkText = chunk.text
+        } catch {
+            chunkText = "Ошибка загрузки следующей главы: \(error)"
+        }
+    }
+
+    func loadPrevious() {
+        guard manager.hasPrevious() else { return }
+        do {
+            let chunk = try manager.loadPreviousChunk()
+            chunkText = chunk.text
+        } catch {
+            chunkText = "Ошибка загрузки предыдущей главы: \(error)"
+        }
+    }
+}
+
 // MARK: - Icon Button Component
 struct ReaderIconButton: View {
     let image: Image
+    let isEnabled: Bool
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            if isEnabled { action() }
+        }) {
             image
                 .renderingMode(.template)
                 .resizable()
                 .frame(width: 24, height: 24)
-                .foregroundColor(UIKitAssets.setColor(for: .white))
+                .foregroundColor(
+                    isEnabled
+                        ? UIKitAssets.setColor(for: .white)
+                        : UIKitAssets.setColor(for: .accentMedium)
+                )
         }
         .frame(width: ReaderView.Constants.controlButtonSize, height: ReaderView.Constants.controlButtonSize)
+        .disabled(!isEnabled)
     }
 }
 
@@ -226,4 +289,5 @@ private extension ReaderView {
 
 #Preview {
     ReaderView(router: Router(), isChaptersPresented: .constant(false))
+        .environmentObject(TextChunkManager())
 }
