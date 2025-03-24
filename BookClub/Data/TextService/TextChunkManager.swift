@@ -99,54 +99,6 @@ final class TextChunkManager: ObservableObject, TextChunkManagerProtocol{
         return currentChunkIndexValue + 1 < total
     }
     
-    @MainActor
-    func loadNextChunkIfNeeded() async {
-        let nextIndex = currentChunkIndexValue + 1
-        guard nextIndex < totalChunks() else { return }
-
-        do {
-            try preloadChunks(from: nextIndex)
-            let chunk = try requireChunk(at: nextIndex)
-            currentChunkIndexValue = nextIndex
-
-            if !currentChunks.contains(where: { $0.index == chunk.index }) {
-                currentChunks.append(chunk)
-            }
-
-        } catch {
-            print("Failed to load next chunk: \(error)")
-        }
-    }
-
-    @MainActor
-    func loadInitialChunkSet() async {
-        currentChunkIndexValue = chapters.first?.chunkIndex ?? 0
-
-        do {
-            try preloadChunks(from: currentChunkIndexValue)
-            currentChunks = [try requireChunk(at: currentChunkIndexValue)]
-        } catch {
-            print("Failed to load initial chunk: \(error)")
-        }
-    }
-    
-    
-    /// может понадобиться для скролла
-//    func preloadChunks(around index: Int, range: Int = 2) throws {
-//        let total = totalChunks()
-//        let indices = (index - range...index + range).filter { $0 >= 0 && $0 < total }
-//
-//        let toRemove = cache.keys.filter { !indices.contains($0) }
-//        for i in toRemove {
-//            cache.removeValue(forKey: i)
-//        }
-//
-//        for i in indices where cache[i] == nil {
-//            let chunk = try loadChunk(at: i)
-//            cache[i] = chunk
-//        }
-//    }
-    
     func getCurrentChunkIndex() -> Int {
         currentChunkIndexValue
     }
