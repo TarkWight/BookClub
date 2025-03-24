@@ -8,21 +8,41 @@
 import SwiftUI
 
 struct ChaptersView: View {
+    @EnvironmentObject var manager: TextChunkManager
     @Binding var isPresented: Bool
 
     var body: some View {
         ZStack {
             Color(UIKitAssets.setColor(for: .background))
                 .ignoresSafeArea()
-            
-            VStack {
+
+            VStack(alignment: .leading) {
                 BackButtonView(action: { isPresented = false }, color: .dark)
-                    
-                    
-                
+
                 Text(LocalizedKey.chaptersLabel)
-                    .font(.title)
+                    .applyFontH2AccentDarkStyle()
                     .padding(.top, 10)
+
+                Divider()
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 12) {
+                        ForEach(manager.fetchChapters()) { chapter in
+                            Button {
+                                manager.setCurrentChunkIndex(chapter.chunkIndex)
+                                isPresented = false
+                            } label: {
+                                HStack {
+                                    Text(chapter.title)
+                                        .foregroundColor(UIKitAssets.setColor(for: .accentDark))
+                                    Spacer()
+                                }
+                                .padding(.vertical, 8)
+                            }
+                        }
+                    }
+                    .padding(.top, 8)
+                }
 
                 Spacer()
             }
@@ -32,4 +52,9 @@ struct ChaptersView: View {
             .shadow(radius: 10)
         }
     }
+}
+
+#Preview {
+    ChaptersView(isPresented: .constant(true))
+        .environmentObject(TextChunkManager())    
 }
