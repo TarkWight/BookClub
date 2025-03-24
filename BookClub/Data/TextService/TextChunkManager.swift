@@ -14,9 +14,11 @@ final class TextChunkManager: ObservableObject, TextChunkManagerProtocol{
     private let cacheDirectory: URL
     private let chaptersFileName = "chapters.json"
     
-    private var currentChunkIndexValue = 0
     private var cache: [Int: TextChunk] = [:]
     private var chapters: [BookChapter] = []
+    
+    @Published private(set) var currentChunkIndexValue = 0
+    @Published private(set) var currentChunks: [TextChunk] = []
     
     // MARK: - Init
     
@@ -97,7 +99,39 @@ final class TextChunkManager: ObservableObject, TextChunkManagerProtocol{
         return currentChunkIndexValue + 1 < total
     }
     
-/// может понадобиться для скролла
+    @MainActor
+    func loadNextChunkIfNeeded() async {
+        let nextIndex = currentChunkIndexValue + 1
+        guard nextIndex < totalChunks() else { return }
+
+        do {
+            try preloadChunks(from: nextIndex)
+            let chunk = try requireChunk(at: nextIndex)
+            currentChunkIndexValue = nextIndex
+
+            if !currentChunks.contains(where: { $0.index == chunk.index }) {
+                currentChunks.append(chunk)
+            }
+
+        } catch {
+            print("Failed to load next chunk: \(error)")
+        }
+    }
+
+    @MainActor
+    func loadInitialChunkSet() async {
+        currentChunkIndexValue = chapters.first?.chunkIndex ?? 0
+
+        do {
+            try preloadChunks(from: currentChunkIndexValue)
+            currentChunks = [try requireChunk(at: currentChunkIndexValue)]
+        } catch {
+            print("Failed to load initial chunk: \(error)")
+        }
+    }
+    
+    
+    /// может понадобиться для скролла
 //    func preloadChunks(around index: Int, range: Int = 2) throws {
 //        let total = totalChunks()
 //        let indices = (index - range...index + range).filter { $0 >= 0 && $0 < total }

@@ -13,8 +13,6 @@ protocol ReaderTextServiceProtocol {
     func loadPreviousChunk() throws -> TextChunk
     func loadChunk(for chapter: BookChapter) throws -> TextChunk
 
-//    func preloadChunks(around index: Int, range: Int) throws
-
     func currentChapterTitle() -> String?
 
     func getCurrentChunkIndex() -> Int
