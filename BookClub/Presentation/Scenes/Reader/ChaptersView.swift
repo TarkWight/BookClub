@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ChaptersView: View {
-    @EnvironmentObject var manager: TextChunkManager
+    @EnvironmentObject var session: ReadingSession
     @Binding var isPresented: Bool
 
     var body: some View {
@@ -27,10 +27,12 @@ struct ChaptersView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 12) {
-                        ForEach(manager.fetchChapters()) { chapter in
+                        ForEach(session.fetchChapters()) { chapter in
                             Button {
-                                manager.setCurrentChunkIndex(chapter.chunkIndex)
-                                isPresented = false
+                                Task {
+                                    await session.startFromChapter(chapter)
+                                    isPresented = false
+                                }
                             } label: {
                                 HStack {
                                     Text(chapter.title)
@@ -54,7 +56,8 @@ struct ChaptersView: View {
     }
 }
 
+
 #Preview {
     ChaptersView(isPresented: .constant(true))
-        .environmentObject(TextChunkManager())    
+        .environmentObject(ReadingSession(chunkManager: TextChunkManager()))
 }
