@@ -27,7 +27,7 @@ struct LogInView: View {
     let inputFieldFont = UIKitAssets.setFont(for: .bodySmall)
     let headerTitleFont = UIKitAssets.setFont(for: .h1)
     let headerSubtitleFont = UIKitAssets.setFont(for: .title)
-    let background = UIKitAssets.setColor(for: .background)
+    let background = UIKitAssets.setColor(for: .accentDark)
     
     var body: some View {
         ZStack(alignment: .top) {
