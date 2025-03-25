@@ -8,7 +8,7 @@
 import Foundation
 
 struct Book: Identifiable {
-    let id: UUID = UUID()
+    let id: UUID = .init()
     let imageName: String
     let title: String
     let author: String
@@ -32,7 +32,7 @@ enum BookMock {
         Book(imageName: "Cover14", title: "Swift для детей", author: "Мэри Лим"),
         Book(imageName: "Cover15", title: "Программирование на Kotlin для Android", author: "Пьер-Оливье Лоранс, Аманда Хинчман-Домингес"),
     ]
-    
+
     static func getBooks(for count: Count) -> [Book] {
         switch count {
         case .three: return Array(allBooks.prefix(3))
@@ -40,12 +40,10 @@ enum BookMock {
         case .all: return allBooks
         }
     }
-    
-    
+
     enum Count {
         case three
         case five
         case all
     }
 }
-

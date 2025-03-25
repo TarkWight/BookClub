@@ -31,4 +31,3 @@ struct BookItemView: View {
         .padding(.horizontal, 16)
     }
 }
-

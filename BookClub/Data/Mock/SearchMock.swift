@@ -14,7 +14,7 @@ enum SearchMock {
         "Дэн Браун",
         "Фантастика"
     ]
-    
+
     static let genres: [String] = [
         "Классика", "Фэнтези",
         "Фантастика", "Детектив",
@@ -23,17 +23,17 @@ enum SearchMock {
         "Поэзия", "Биография",
         "Для подростков", "Для детей"
     ]
-    
+
     struct Author: Identifiable {
         let id = UUID()
         let name: String
         let imageName: String
     }
-    
+
     static let authors: [Author] = [
         Author(name: "Братья Стругацкие", imageName: "plStrugatskie"),
         Author(name: "Дэн Браун", imageName: "plBrown"),
         Author(name: "Фёдор Достоевский", imageName: "plDostoevsky")
     ]
-    
+
 }

@@ -9,7 +9,7 @@ import Foundation
 
 enum ChunkLoaderError: Error, LocalizedError {
     case chunkNotFound(Int)
-    
+
     var errorDescription: String? {
         switch self {
         case .chunkNotFound(let index):

@@ -30,53 +30,59 @@ struct TabBarView: View {
             }
             .frame(height: Constants.tabBarHeight)
             .padding(.horizontal, Constants.horizontalPadding)
-            .background(UIKitAssets.setColor(for: .accentDark))
+            .background(AppColors.accentDark)
             .clipShape(Capsule())
 
-            Button(action: { onReadSelected() }) {
-                UIKitAssets.setImage(for: .play)
+            Button(action: {
+                onReadSelected()
+            }, label: {
+                AppImages.play
                     .resizable()
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
-                    .foregroundColor(UIKitAssets.setColor(for: .accentDark))
+                    .foregroundColor(AppColors.accentDark)
                     .frame(width: Constants.playButtonSize, height: Constants.playButtonSize)
-                    .background(UIKitAssets.setColor(for: .accentDark))
+                    .background(AppColors.secondary)
                     .clipShape(Circle())
-            }
+            })
             .position(x: (UIScreen.main.bounds.width - Constants.horizontalPadding * 2) / 2,
                       y: Constants.playButtonOffsetY)
         }
         .frame(height: Constants.tabBarTotalHeight)
-        
+
     }
 
     @ViewBuilder
     private func tabButton(_ tab: Tab) -> some View {
-        Button(action: { onTabSelected(tab) }) {
+        Button(action: {
+            onTabSelected(tab)
+        }, label: {
             VStack {
-                UIKitAssets.setImage(for: tab.icon)
+                tab.icon
                     .resizable()
                     .renderingMode(.template)
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
                     .foregroundColor(selectedTab == tab
-                                     ? UIKitAssets.setColor(for: .white)
-                                     : UIKitAssets.setColor(for: .accentMedium))
+                                     ? AppColors.white
+                                     : AppColors.accentMedium)
             }
             .frame(width: Constants.tabSize, height: Constants.tabSize)
-        }
+        })
     }
 
     @ViewBuilder
     private func logoutButton() -> some View {
-        Button(action: { onLogout() }) {
+        Button(action: {
+            onLogout()
+        }, label: {
             VStack {
-                UIKitAssets.setImage(for: .logOut)
+                AppImages.logOut
                     .resizable()
                     .renderingMode(.template)
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
-                    .foregroundColor(UIKitAssets.setColor(for: .accentMedium))
+                    .foregroundColor(AppColors.accentMedium)
             }
             .frame(width: Constants.tabSize, height: Constants.tabSize)
-        }
+        })
     }
 }
 
@@ -94,12 +100,12 @@ private extension TabBarView {
         static let playButtonSize: CGFloat = 80
         static let playButtonOffsetY: CGFloat = 48
 
-        static let tabBarBackgroundColor = UIKitAssets.setColor(for: .accentDark)
-        static let selectedTabColor = UIKitAssets.setColor(for: .white)
-        static let unselectedTabColor = UIKitAssets.setColor(for: .accentMedium)
+        static let tabBarBackgroundColor = AppColors.accentDark
+        static let selectedTabColor = AppColors.white
+        static let unselectedTabColor = AppColors.accentMedium
 
-        static let playButtonIconColor = UIKitAssets.setColor(for: .white)
-        static let playButtonBackgroundColor = UIKitAssets.setColor(for: .secondary)
+        static let playButtonIconColor = AppColors.white
+        static let playButtonBackgroundColor = AppColors.secondary
     }
 }
 

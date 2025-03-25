@@ -25,8 +25,7 @@ struct MainTabView: View {
             )
             .padding(.bottom, 42)
             .padding(.horizontal, 16)
-            .background(UIKitAssets.setColor(for:.background))
-            //TODO: - может помешать отображению информации за таббаром
+            .background(AppColors.background)
         }
         .ignoresSafeArea(edges: .bottom)
     }

@@ -13,7 +13,7 @@ struct ChaptersView: View {
 
     var body: some View {
         ZStack {
-            Color(UIKitAssets.setColor(for: .background))
+            Color(AppColors.background)
                 .ignoresSafeArea()
 
             VStack(alignment: .leading) {
@@ -36,7 +36,7 @@ struct ChaptersView: View {
                             } label: {
                                 HStack {
                                     Text(chapter.title)
-                                        .foregroundColor(UIKitAssets.setColor(for: .accentDark))
+                                        .foregroundColor(AppColors.accentDark)
                                     Spacer()
                                 }
                                 .padding(.vertical, 8)
@@ -55,7 +55,6 @@ struct ChaptersView: View {
         }
     }
 }
-
 
 #Preview {
     ChaptersView(isPresented: .constant(true))
