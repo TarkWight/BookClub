@@ -10,38 +10,31 @@ import SwiftUI
 enum SpacingType {
     case titleToSubtitle
     case subtitleLines
-    
+
     var baseSpacing: CGFloat {
         switch self {
         case .titleToSubtitle: return -20
         case .subtitleLines: return -80
         }
     }
-    
+
     func adaptiveSpacing(screenWidth: CGFloat) -> CGFloat {
-        let scaleFactor: CGFloat
-        switch screenWidth {
-        case 0...375:
-            scaleFactor = 0.5
-        default:
-            scaleFactor = 1.0
-        }
-        
+        let scaleFactor: CGFloat = screenWidth <= 375 ? 0.5 : 1.0
         return baseSpacing * scaleFactor
     }
 }
 
 struct NegativeSpacingModifier: ViewModifier {
-    let font: (font: Font, size: CGFloat)
+    let font: Font
     let color: Color
     let spacingType: SpacingType
-    
+
     func body(content: Content) -> some View {
         let screenWidth = UIScreen.main.bounds.width
         let adaptiveSpacing = spacingType.adaptiveSpacing(screenWidth: screenWidth)
-        
+
         return content
-            .font(font.font)
+            .font(font)
             .foregroundColor(color)
             .padding(.bottom, adaptiveSpacing)
     }
@@ -49,7 +42,7 @@ struct NegativeSpacingModifier: ViewModifier {
 
 extension View {
     func applyNegativeSpacing(
-        font: (font: Font, size: CGFloat),
+        font: Font,
         color: Color,
         spacingType: SpacingType
     ) -> some View {

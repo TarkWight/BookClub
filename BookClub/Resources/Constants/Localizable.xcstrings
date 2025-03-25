@@ -4,6 +4,19 @@
     "" : {
 
     },
+    "“%@”" : {
+
+    },
+    "%@ • %@" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ • %2$@"
+          }
+        }
+      }
+    },
     "addToBookmarkButtonTitle" : {
       "comment" : "Title for the add to bookmark button",
       "localizations" : {
@@ -70,6 +83,28 @@
         }
       }
     },
+    "favoritesLabel" : {
+      "comment" : "Title for the favorites",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Избранные книги"
+          }
+        }
+      }
+    },
+    "fontSizeLabel" : {
+      "comment" : "Title for the font size",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Размер шрифта"
+          }
+        }
+      }
+    },
     "genresLabel" : {
       "comment" : "Title for the genres",
       "localizations" : {
@@ -120,7 +155,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Книжный мир"
+            "value" : "Книжный\nмир"
           }
         }
       }
@@ -169,6 +204,28 @@
         }
       }
     },
+    "ptLabel" : {
+      "comment" : "Title for the pt",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "пт"
+          }
+        }
+      }
+    },
+    "quotesLabel" : {
+      "comment" : "Title for the quotes",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цитаты"
+          }
+        }
+      }
+    },
     "readButtonTitle" : {
       "comment" : "Title for the read button",
       "localizations" : {
@@ -176,6 +233,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Читать"
+          }
+        }
+      }
+    },
+    "readingNowLabel" : {
+      "comment" : "Title for the reading now",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Читаете сейчас"
           }
         }
       }
@@ -202,6 +270,17 @@
         }
       }
     },
+    "settingsLabel" : {
+      "comment" : "Title for the settings",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Настройки"
+          }
+        }
+      }
+    },
     "signInButtonTitle" : {
       "comment" : "Text for the login button",
       "localizations" : {
@@ -212,6 +291,26 @@
           }
         }
       }
+    },
+    "stringSpacingLabel" : {
+      "comment" : "Title for the string spacing",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Межстрочное расстояние"
+          }
+        }
+      }
+    },
+    "Дэн Браун" : {
+
+    },
+    "Код Да Винчи" : {
+
+    },
+    "Секретный код скрыт в работах Леонардо да Винчи...\n\nТолько он поможет найти христианские святыни, дающие немыслимые власть и могущество...\n\nКлюч к величайшей тайне, над которой человечество билось веками, наконец может быть найден..." : {
+
     }
   },
   "version" : "1.0"

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct BookGradientMask: ViewModifier {
     var colors: [Color] = [.white.opacity(0.0), .black.opacity(0.5)]
-    
+
     func body(content: Content) -> some View {
         content
             .overlay(
@@ -29,16 +29,15 @@ extension View {
     }
 }
 
-
 struct BookDetailsGradientMask: ViewModifier {
     var colors: [Color] = [
-        UIKitAssets.setColor(for: UIKitAssets.colorBackground).opacity(1.0),
-        UIKitAssets.setColor(for: UIKitAssets.colorBackground).opacity(0.0),
+        AppColors.background.opacity(1.0),
+        AppColors.background.opacity(0.0),
     ]
-    
+
     var startPoint: UnitPoint = .bottom
     var endPoint: UnitPoint = .center
-    
+
     func body(content: Content) -> some View {
         content
             .overlay(

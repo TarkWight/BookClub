@@ -7,12 +7,7 @@
 
 import Foundation
 
-struct BookCover: Identifiable {
-    let id: UUID = UUID()
-    let imageName: String
-}
-
-struct BookCoversMock {
+enum BookCoversMock {
     static let allBookCovers: [BookCover] = [
         "Cover1", "Cover2", "Cover3",
         "Cover4", "Cover5", "Cover6",
@@ -31,7 +26,7 @@ struct BookCoversMock {
             return allBookCovers
         }
     }
-    
+
     enum Count {
         case three
         case five

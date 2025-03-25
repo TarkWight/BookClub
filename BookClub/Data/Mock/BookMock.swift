@@ -8,13 +8,13 @@
 import Foundation
 
 struct Book: Identifiable {
-    let id: UUID = UUID()
+    let id: UUID = .init()
     let imageName: String
     let title: String
     let author: String
 }
 
-struct BookMock {
+enum BookMock {
     static let allBooks: [Book] = [
         Book(imageName: "Cover1", title: "Понедельник начинается в субботу", author: "Аркадий и Борис Стругацкие"),
         Book(imageName: "Cover2", title: "Код да Винчи", author: "Дэн Браун"),
@@ -32,9 +32,18 @@ struct BookMock {
         Book(imageName: "Cover14", title: "Swift для детей", author: "Мэри Лим"),
         Book(imageName: "Cover15", title: "Программирование на Kotlin для Android", author: "Пьер-Оливье Лоранс, Аманда Хинчман-Домингес"),
     ]
-    
-    static func getBooks() -> [Book] {
-        return allBooks
+
+    static func getBooks(for count: Count) -> [Book] {
+        switch count {
+        case .three: return Array(allBooks.prefix(3))
+        case .five: return Array(allBooks.prefix(5))
+        case .all: return allBooks
+        }
+    }
+
+    enum Count {
+        case three
+        case five
+        case all
     }
 }
-

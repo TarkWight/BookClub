@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct SearchMock {
+enum SearchMock {
     static let recentSearches: [String] = [
         "Android",
         "iOS",
         "Дэн Браун",
         "Фантастика"
     ]
-    
+
     static let genres: [String] = [
         "Классика", "Фэнтези",
         "Фантастика", "Детектив",
@@ -23,18 +23,17 @@ struct SearchMock {
         "Поэзия", "Биография",
         "Для подростков", "Для детей"
     ]
-    
+
     struct Author: Identifiable {
         let id = UUID()
         let name: String
         let imageName: String
     }
-    
+
     static let authors: [Author] = [
         Author(name: "Братья Стругацкие", imageName: "plStrugatskie"),
         Author(name: "Дэн Браун", imageName: "plBrown"),
         Author(name: "Фёдор Достоевский", imageName: "plDostoevsky")
     ]
-    
-    static let books: [Book] = BookMock.allBooks
+
 }

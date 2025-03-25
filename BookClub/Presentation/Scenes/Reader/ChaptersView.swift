@@ -8,21 +8,43 @@
 import SwiftUI
 
 struct ChaptersView: View {
+    @EnvironmentObject var session: ReadingSession
     @Binding var isPresented: Bool
 
     var body: some View {
         ZStack {
-            Color(UIKitAssets.setColor(for: UIKitAssets.colorBackground))
+            Color(AppColors.background)
                 .ignoresSafeArea()
-            
-            VStack {
-                BackButtonView(action: { isPresented = false }, title: LocalizedKey.backButtonTitle, color: .dark)
-                    
-                    
-                
+
+            VStack(alignment: .leading) {
+                BackButtonView(action: { isPresented = false }, color: .dark)
+
                 Text(LocalizedKey.chaptersLabel)
-                    .font(.title)
+                    .applyFontH2AccentDarkStyle()
                     .padding(.top, 10)
+
+                Divider()
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 12) {
+                        ForEach(session.fetchChapters()) { chapter in
+                            Button {
+                                Task {
+                                    await session.startFromChapter(chapter)
+                                    isPresented = false
+                                }
+                            } label: {
+                                HStack {
+                                    Text(chapter.title)
+                                        .foregroundColor(AppColors.accentDark)
+                                    Spacer()
+                                }
+                                .padding(.vertical, 8)
+                            }
+                        }
+                    }
+                    .padding(.top, 8)
+                }
 
                 Spacer()
             }
@@ -32,4 +54,9 @@ struct ChaptersView: View {
             .shadow(radius: 10)
         }
     }
+}
+
+#Preview {
+    ChaptersView(isPresented: .constant(true))
+        .environmentObject(ReadingSession(chunkManager: TextChunkManager()))
 }
