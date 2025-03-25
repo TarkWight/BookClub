@@ -8,6 +8,6 @@
 import Foundation
 
 struct BookCover: Identifiable {
-    let id: UUID = UUID()
+    let id: UUID = .init()
     let imageName: String
 }

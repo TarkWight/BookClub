@@ -120,11 +120,11 @@ final class ReadingSession: ObservableObject {
             print("Failed to load initial chunk: \(error)")
         }
     }
-    
+
     // MARK: - List of chapters
-    
+
     func fetchChapters() -> [BookChapter] {
         chunkManager.fetchChapters()
     }
-    
+
 }

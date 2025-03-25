@@ -9,16 +9,16 @@ import SwiftUI
 
 struct BookDetailsView: View {
     @ObservedObject var router: Router
-    
+
     private let book = BookDetails(
-        imageName: "pl",
+        image: Image("pl"),
         title: "Код Да Винчи",
         author: "Дэн Браун",
         description: """
         Секретный код скрыт в работах Леонардо да Винчи...
-        
+
         Только он поможет найти христианские святыни, дающие немыслимые власть и могущество...
-        
+
         Ключ к величайшей тайне, над которой человечество билось веками, наконец может быть найден...
         """,
         chapters: [
@@ -33,76 +33,76 @@ struct BookDetailsView: View {
             Chapter(title: "Глава 7", status: .unread),
         ]
     )
-    
+
     var body: some View {
         ZStack {
-            Color(UIKitAssets.setColor(for: .background))
+            Color(AppColors.background)
                 .ignoresSafeArea()
-            
+
             ScrollView {
                 VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
-                    
+
                     ZStack(alignment: .topLeading) {
-                        Image(book.imageName)
+                        book.image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(height: Constants.coverHeight)
                             .applyBookDetailsGradientMask()
                             .clipped()
                             .ignoresSafeArea(edges: .top)
-                        
+
                         BackButtonView(action: { router.navigateTo(.mainTab) }, color: .light)
                             .padding(.leading, Constants.sidePadding)
                             .padding(.top, Constants.topPadding)
                     }
-                    
+
                     HStack(spacing: Constants.buttonSpacing) {
-                        ActionButton(title: LocalizedKey.readButtonTitle, icon: UIKitAssets.Icon.play, width: Constants.readButtonWidth, isPrimary: true, action: {
+                        ActionButton(title: LocalizedKey.readButtonTitle, icon: AppImages.play, width: Constants.readButtonWidth, isPrimary: true, action: {
                             router.navigateTo(.reader)
                         })
-                        
-                        ActionButton(title: LocalizedKey.addToBookmarkButtonTitle, icon: UIKitAssets.Icon.bookmarks, width: Constants.bookmarkButtonWidth, isPrimary: false, action: {
+
+                        ActionButton(title: LocalizedKey.addToBookmarkButtonTitle, icon: AppImages.bookmarks, width: Constants.bookmarkButtonWidth, isPrimary: false, action: {
                             print("Книга добавлена в избранное")
                         })
                     }
                     .padding(.horizontal, Constants.sidePadding)
                     .offset(y: -Constants.buttonOverlap)
-                    
+
                     VStack(alignment: .leading, spacing: 4) {
                         Text(book.title)
                             .applyH1AccentDarkTitleStyle()
-                            .foregroundColor(UIKitAssets.setColor(for: .accentDark))
-                        
+                            .foregroundColor(AppColors.accentDark)
+
                         Text(book.author)
                             .applyFontBodyAccentDarkStyle()
                     }
                     .padding(.horizontal, Constants.sidePadding)
-                    
+
                     Text(book.description)
                         .font(.body)
-                        .foregroundColor(UIKitAssets.setColor(for: .accentDark))
+                        .foregroundColor(AppColors.accentDark)
                         .padding(.horizontal, Constants.sidePadding)
-                    
+
                     VStack(alignment: .leading) {
                         Text(LocalizedKey.progressBarLabel)
                             .applyFontH2AccentDarkStyle()
                         ProgressBarView(progress: progress())
                     }
                     .padding(.horizontal, Constants.sidePadding)
-                    
+
                     VStack(alignment: .leading, spacing: Constants.chapterSpacing) {
                         Text(LocalizedKey.listOfContentsLabel)
                             .applyFontH2AccentDarkStyle()
-                        
+
                         ForEach(book.chapters) { chapter in
                             HStack {
                                 Text(chapter.title)
                                     .font(.body)
-                                    .foregroundColor(UIKitAssets.setColor(for: .accentDark))
-                                
+                                    .foregroundColor(AppColors.accentDark)
+
                                 Spacer()
-                                
-                                Image(chapter.status.iconName)
+
+                               chapter.status.icon
                                     .resizable()
                                     .renderingMode(.template)
                                     .frame(width: Constants.chapterIconSize, height: Constants.chapterIconSize)
@@ -112,42 +112,42 @@ struct BookDetailsView: View {
                         }
                     }
                     .padding(.horizontal, Constants.sidePadding)
-                    
+
                     Spacer()
                 }
             }
             .ignoresSafeArea(edges: .top)
         }
     }
-    
+
     private func progress() -> Double {
         let readChapters = book.chapters.filter { $0.status == .read }.count
         return Double(readChapters) / Double(book.chapters.count)
     }
-    
+
     // MARK: - Action Button
     struct ActionButton: View {
         let title: String
-        let icon: UIKitAssets.Icon
+        let icon: Image
         let width: CGFloat
         let isPrimary: Bool
         let action: () -> Void
-        
+
         var body: some View {
             Button(action: action) {
                 HStack {
-                    UIKitAssets.setImage(for: icon)
+                    icon
                         .resizable()
                         .renderingMode(.template)
                         .frame(width: Constants.iconSize, height: Constants.iconSize)
-                    
+
                     Text(title)
                         .font(.body)
                         .bold()
                 }
                 .frame(width: width, height: Constants.buttonHeight)
-                .foregroundColor(isPrimary ? UIKitAssets.setColor(for: .white) : UIKitAssets.setColor(for: .accentDark))
-                .background(isPrimary ? UIKitAssets.setColor(for: .accentDark) : UIKitAssets.setColor(for: .white))
+                .foregroundColor(isPrimary ? AppColors.white : AppColors.accentDark)
+                .background(isPrimary ? AppColors.accentDark : AppColors.white)
                 .cornerRadius(Constants.buttonCornerRadius)
             }
         }
@@ -156,7 +156,7 @@ struct BookDetailsView: View {
 
 // MARK: - Book and Chapter Models
 struct BookDetails {
-    let imageName: String
+    let image: Image
     let title: String
     let author: String
     let description: String
@@ -171,20 +171,20 @@ struct Chapter: Identifiable {
 
 enum ChapterStatus {
     case read, reading, unread
-    
-    var iconName: String {
+
+    var icon: Image {
         switch self {
-        case .read: return UIKitAssets.Icon.read.rawValue
-        case .reading: return UIKitAssets.Icon.readingNow.rawValue
-        case .unread: return UIKitAssets.Icon.readingNow.rawValue
+        case .read: return AppImages.read
+        case .reading: return AppImages.readingNow
+        case .unread: return AppImages.readingNow
         }
     }
-    
+
     var iconColor: Color {
         switch self {
-        case .read: return UIKitAssets.setColor(for: .accentMedium)
-        case .reading: return UIKitAssets.setColor(for: .accentDark)
-        case .unread: return UIKitAssets.setColor(for: .background)
+        case .read: return AppColors.accentMedium
+        case .reading: return AppColors.accentDark
+        case .unread: return AppColors.background
         }
     }
 }
@@ -195,7 +195,7 @@ private extension BookDetailsView {
         static let topPadding: CGFloat = 66
         static let sidePadding: CGFloat = 16
         static let sectionSpacing: CGFloat = 20
-        
+
         static let coverHeight: CGFloat = 380
         static let readButtonWidth: CGFloat = 189
         static let bookmarkButtonWidth: CGFloat = 173
@@ -203,14 +203,14 @@ private extension BookDetailsView {
         static let buttonCornerRadius: CGFloat = 12
         static let buttonSpacing: CGFloat = 16
         static let buttonOverlap: CGFloat = 25
-        
+
         static let progressBarHeight: CGFloat = 8
         static let progressBarCornerRadius: CGFloat = 4
-        
+
         static let chapterSpacing: CGFloat = 12
         static let chapterRowHeight: CGFloat = 48
         static let chapterIconSize: CGFloat = 20
-        
+
         static let iconSize: CGFloat = 18
     }
 }

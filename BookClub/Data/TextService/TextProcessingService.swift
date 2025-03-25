@@ -9,16 +9,15 @@ import Foundation
 
 final class TextProcessingService {
     // MARK: - Properties
-    
+
     private let chunkSize: Int
     private let cacheDirectory: URL
     private let chaptersFileName = "chapters.json"
-    
-    // TODO: Подкрутить регулярку
+
     private let chapterKeywords = ["Глава", "Факты", "Пролог", "Предисловие", "Эпилог", "Примечания"]
 
     // MARK: - Init
-    
+
     init(chunkSize: Int = 2000) {
         self.chunkSize = chunkSize
         if let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -40,7 +39,7 @@ final class TextProcessingService {
         try saveChunks(chunks)
         try saveChapters(chapters)
     }
-    
+
     // MARK: - Private
 
     private func loadRawText(from fileURL: URL) throws -> String {
@@ -79,14 +78,12 @@ final class TextProcessingService {
     private func extractChapters(from chunks: [TextChunk]) -> [BookChapter] {
         var chapters: [BookChapter] = []
         for chunk in chunks {
-            for keyword in chapterKeywords {
-                if chunk.text.contains(keyword) {
+            for keyword in chapterKeywords where chunk.text.contains(keyword) {
                     let lines = chunk.text.components(separatedBy: .newlines)
                     if let title = lines.first(where: { $0.contains(keyword) }) {
                         chapters.append(BookChapter(title: title, chunkIndex: chunk.index))
                         break
                     }
-                }
             }
         }
 

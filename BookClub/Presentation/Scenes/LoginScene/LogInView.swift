@@ -9,26 +9,26 @@ import SwiftUI
 
 struct LogInView: View {
     @ObservedObject var router: Router
-    
+
     let bookCovers = BookCoversMock.getBookCovers(for: .five)
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var isPasswordVisible: Bool = false
     @State private var isAnimating = false
-    
+
     @State private var headerTitle = LocalizedKey.loginTitle
     @State private var headerSubtitle = LocalizedKey.loginSubtitle
     @State private var emailTitle = LocalizedKey.emailTitle
     @State private var passwordTitle = LocalizedKey.passwordTitle
     @State private var signInButtonTitle = LocalizedKey.signInButtonTitle
-    
-    let buttonFont = UIKitAssets.setFont(for: .body)
-    let inputFieldTitleFont = UIKitAssets.setFont(for: .bodySmall)
-    let inputFieldFont = UIKitAssets.setFont(for: .bodySmall)
-    let headerTitleFont = UIKitAssets.setFont(for: .h1)
-    let headerSubtitleFont = UIKitAssets.setFont(for: .title)
-    let background = UIKitAssets.setColor(for: .accentDark)
-    
+
+    let buttonFont = AppFonts.body
+    let inputFieldTitleFont = AppFonts.bodySmall
+    let inputFieldFont = AppFonts.bodySmall
+    let headerTitleFont = AppFonts.header1
+    let headerSubtitleFont = AppFonts.title
+    let background = AppColors.accentDark
+
     var body: some View {
         ZStack(alignment: .top) {
             Color(background)
@@ -45,7 +45,7 @@ struct LogInView: View {
                 header
                     .padding(.horizontal, Constants.sidePadding)
 
-                Spacer()//.frame(height: Constants.titleToInputSpacing)
+                Spacer()
 
                 inputFields
                     .padding(.horizontal, Constants.sidePadding)
@@ -59,11 +59,7 @@ struct LogInView: View {
                 Spacer()
                     .frame(height: Constants.bottomPadding)
             }
-//            .frame(maxHeight: .infinity, alignment: .top)
-            .ignoresSafeArea(.all) // Так надо? Без этого у меня не отображается нормально
-            /* UIWindow.UITransitionView/UIDropShadowView/UITransitionView/HostingVC/
-             LazyView<LoginView>/LoginView - вот здесь трабл был в том, что был непонятный отступ сверху
-            */
+            .ignoresSafeArea(.all)
             .frame(maxHeight: .infinity, alignment: .top)
         }
     }
@@ -71,8 +67,6 @@ struct LogInView: View {
 
 // MARK: - LogInView content
 private extension LogInView {
-    
-    
     var carousel: some View {
         GeometryReader { geometry in
             TimelineView(.animation) { timeline in
@@ -103,15 +97,14 @@ private extension LogInView {
         }
         .frame(maxWidth: .infinity, maxHeight: Constants.carouselHeight)
     }
-    
+
     var header: some View {
         VStack(alignment: .leading) {
             Text(headerSubtitle)
-                .font(headerTitleFont.font)
+                .font(headerTitleFont)
                 .foregroundColor(Constants.headerTitleColor)
                 .minimumScaleFactor(0.5)
-            
-            //TODO: - Убрать заглушку
+
             VStack(alignment: .leading) {
                         ForEach(["КНИЖНЫЙ", "МИР"], id: \.self) { line in
                             Text(line)
@@ -126,29 +119,31 @@ private extension LogInView {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    
+
     var inputFields: some View {
         VStack(spacing: 0) {
             HStack {
                 Text(emailTitle)
-                    .font(inputFieldTitleFont.font)
+                    .font(inputFieldTitleFont)
                     .foregroundColor(Constants.inputFieldTitleColor)
-                
+
                 TextField("", text: $email)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
-                    .font(inputFieldFont.font)
+                    .font(inputFieldFont)
                     .foregroundColor(Constants.inputFieldTitleColor)
                     .frame(maxWidth: .infinity, minHeight: Constants.inputFieldHeight)
                     .multilineTextAlignment(.leading)
 
                 if !email.isEmpty {
-                    Button(action: { email = "" }) {
+                    Button(action: {
+                        email = ""
+                    }, label: {
                         Constants.clearButtonImage
                             .resizable()
                             .frame(width: Constants.iconSize, height: Constants.iconSize)
                             .foregroundColor(Constants.inputFieldTitleColor)
-                    }
+                    })
                 }
             }
             .padding(.horizontal, Constants.sidePadding)
@@ -160,14 +155,14 @@ private extension LogInView {
 
             HStack {
                 Text(passwordTitle)
-                    .font(inputFieldTitleFont.font)
+                    .font(inputFieldTitleFont)
                     .foregroundColor(Constants.inputFieldTitleColor)
 
                 if isPasswordVisible {
                     TextField("", text: $password)
                         .autocapitalization(.none)
                         .disableAutocorrection(true)
-                        .font(inputFieldFont.font)
+                        .font(inputFieldFont)
                         .foregroundColor(Constants.inputFieldTitleColor)
                         .frame(maxWidth: .infinity, minHeight: Constants.inputFieldHeight)
                         .multilineTextAlignment(.leading)
@@ -176,19 +171,21 @@ private extension LogInView {
                         .autocapitalization(.none)
                         .submitLabel(.done)
                         .disableAutocorrection(true)
-                        .font(inputFieldFont.font)
+                        .font(inputFieldFont)
                         .foregroundColor(Constants.inputFieldTitleColor)
                         .frame(maxWidth: .infinity, minHeight: Constants.inputFieldHeight)
                         .multilineTextAlignment(.leading)
                 }
 
                 if !password.isEmpty {
-                    Button(action: { isPasswordVisible.toggle() }) {
+                    Button(action: {
+                        isPasswordVisible.toggle()
+                    }, label: {
                         (isPasswordVisible ? Constants.hidePasswordImage : Constants.showPasswordImage)
                             .resizable()
                             .frame(width: Constants.iconSize, height: Constants.iconSize)
                             .foregroundColor(Constants.inputFieldTitleColor)
-                    }
+                    })
                 }
             }
             .padding(.horizontal, Constants.sidePadding)
@@ -200,20 +197,20 @@ private extension LogInView {
                 .stroke(Constants.inputFieldBorderColor, lineWidth: 1)
         )
     }
-    
+
     var signInButton: some View {
         Button(action: {
             router.navigateTo(.mainTab)
-        }) {
+        }, label: {
             Text(signInButtonTitle)
-                .font(buttonFont.font)
+                .font(buttonFont)
                 .foregroundColor(!email.isEmpty && !password.isEmpty ? Constants.buttonActiveTextColor : Constants.buttonInactiveTextColor)
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(!email.isEmpty && !password.isEmpty ? Constants.buttonActiveColor : Constants.buttonInactiveColor)
                 .cornerRadius(Constants.buttonCornerRadius)
                 .animation(.easeInOut(duration: 0.2), value: !email.isEmpty && !password.isEmpty)
-        }
+        })
         .disabled(email.isEmpty || password.isEmpty)
         .frame(maxWidth: .infinity, minHeight: Constants.buttonHeight)
     }
@@ -226,7 +223,7 @@ private extension LogInView {
         let totalWidth = step * CGFloat(bookCovers.count)
         let speedFactor: CGFloat = 5.0
         let offset = -CGFloat((time / speedFactor).truncatingRemainder(dividingBy: Constants.scrollSpeed)) * step
-        
+
         return offset.truncatingRemainder(dividingBy: totalWidth)
     }
 }
@@ -237,52 +234,52 @@ private extension LogInView {
         // MARK: - Constraints
         @MainActor
         static let topPadding: CGFloat = UIScreen.main.bounds.height < 700 ? 40 : 98
-        
+
         static let bottomPadding: CGFloat = 50
         static let sidePadding: CGFloat = 16
-        
+
         static let carouselHeight: CGFloat = 270
         static let carouselToTitleSpacing: CGFloat = 48
-        
+
         static let headerHeight: CGFloat = 210
         static let titleToInputSpacing: CGFloat = 32
-        
+
         static let inputGroupHeight: CGFloat = 88
         static let inputToButtonSpacing: CGFloat = 28
-        
+
         static let buttonHeight: CGFloat = 50
         static let buttonCornerRadius: CGFloat = 12
-        
+
         // MARK: - Carousel
         static let elementWidth: CGFloat = 172
         static let elementHeight: CGFloat = 270
         static let elementCornerRadius: CGFloat = 4
         static let elementSpacing: CGFloat = 8
         static let scrollSpeed: TimeInterval = 30
-        
+
         // MARK: - Header
-        
-        static let headerTitleColor = UIKitAssets.setColor(for: .accentLight)
-        static let headerSubtitleColor = UIKitAssets.setColor(for: .secondary)
-        
+
+        static let headerTitleColor = AppColors.accentLight
+        static let headerSubtitleColor = AppColors.secondary
+
         // MARK: - Input Fields
 
-        static let inputFieldTitleColor = UIKitAssets.setColor(for: .accentMedium)
-        static let inputFieldBorderColor = UIKitAssets.setColor(for: .accentMedium)
+        static let inputFieldTitleColor = AppColors.accentMedium
+        static let inputFieldBorderColor = AppColors.accentMedium
         static let inputFieldCornerRadius: CGFloat = 8
         static let inputFieldHeight: CGFloat = 22
         static let inputFieldContainerHeight: CGFloat = 44
         static let iconSize: CGFloat = 16
-        
-        static let clearButtonImage = UIKitAssets.setImage(for: .close)
-        static let showPasswordImage = UIKitAssets.setImage(for: .eyeOn)
-        static let hidePasswordImage = UIKitAssets.setImage(for: .eyeOff)
-        
+
+        static let clearButtonImage = AppImages.close
+        static let showPasswordImage = AppImages.eyeOn
+        static let hidePasswordImage = AppImages.eyeOff
+
         // MARK: - Button
-        
-        static let buttonActiveColor = UIKitAssets.setColor(for: .white)
-        static let buttonInactiveColor = UIKitAssets.setColor(for: .accentMedium)
-        static let buttonActiveTextColor = UIKitAssets.setColor(for: .accentDark)
-        static let buttonInactiveTextColor = UIKitAssets.setColor(for: .accentLight)
+
+        static let buttonActiveColor = AppColors.white
+        static let buttonInactiveColor = AppColors.accentMedium
+        static let buttonActiveTextColor = AppColors.accentDark
+        static let buttonInactiveTextColor = AppColors.accentLight
     }
 }

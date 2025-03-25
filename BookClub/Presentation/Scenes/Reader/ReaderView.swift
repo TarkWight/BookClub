@@ -43,7 +43,7 @@ private extension ReaderView {
 
             toolbar
                 .frame(height: Constants.toolbarHeight)
-                .background(UIKitAssets.setColor(for: .accentDark))
+                .background(AppColors.accentDark)
         }
     }
 
@@ -62,7 +62,7 @@ private extension ReaderView {
                         Text(chunk.text)
                             .font(.system(size: session.fontSize))
                             .lineSpacing(session.lineSpacing)
-                            .foregroundColor(UIKitAssets.setColor(for: .accentDark))
+                            .foregroundColor(AppColors.accentDark)
                     }
                     .padding(.horizontal, Constants.sidePadding)
                     .onAppear {
@@ -76,63 +76,15 @@ private extension ReaderView {
     }
 }
 
-
-
-
-
-
-
 // MARK: - UI Components
 private extension ReaderView {
     var backgroundColor: some View {
-        Color(UIKitAssets.setColor(for: .background))
+        Color(AppColors.background)
             .ignoresSafeArea()
     }
-    
-//    var content: some View {
-//        VStack(spacing: 0) {
-//            header
-//                .padding(.top, Constants.topPadding)
-//                .padding(.horizontal, Constants.sidePadding)
-//            
-//            scrollView
-//            
-//            toolbar
-//                .frame(height: Constants.toolbarHeight)
-//                .background(UIKitAssets.setColor(for: .accentDark))
-//        }
-//    }
-//    
-//    var scrollView: some View {
-//        ScrollView {
-//            chunkList
-//        }
-//    }
-//    
-//    var chunkList: some View {
-//        LazyVStack(alignment: .leading, spacing: lineSpacing) {
-//            ForEach(chunkManager.currentChunks, id: \.id) { chunk in
-//                Text(chunk.text)
-//                    .font(.system(size: fontSize))
-//                    .lineSpacing(lineSpacing)
-//                    .foregroundColor(UIKitAssets.setColor(for: .accentDark))
-//                    .padding(.horizontal, Constants.sidePadding)
-//                    .onAppear {
-//                        if chunk == chunkManager.currentChunks.last {
-//                            Task {
-//                                await chunkManager.loadNextChunkIfNeeded()
-//                            }
-//                        }
-//                    }
-//            }
-//        }
-//        .padding(.top, Constants.sidePadding)
-//        .padding(.bottom, Constants.sidePadding + Constants.toolbarHeight)
-//    }
 }
 
 private extension ReaderView {
-    
     var header: some View {
         HStack {
             BackButtonView(action: { router.navigateTo(.mainTab) }, color: .dark)
@@ -150,45 +102,45 @@ private extension ReaderView {
             Spacer().frame(width: Constants.fakeTrailingWidth)
         }
     }
-    
+
     var toolbar: some View {
         HStack {
             HStack(spacing: Constants.controlButtonSpacing) {
-                ReaderIconButton(image: UIKitAssets.setImage(for: .previous)) {
+                ReaderIconButton(image: AppImages.previous) {
                     Task {
                         session.jumpToPreviousChapter()
                     }
                 }
-                ReaderIconButton(image: UIKitAssets.setImage(for: .contents)) { isChaptersPresented = true }
-                ReaderIconButton(image: UIKitAssets.setImage(for: .next)) { Task {
+                ReaderIconButton(image: AppImages.contents) { isChaptersPresented = true }
+                ReaderIconButton(image: AppImages.next) { Task {
                         session.jumpToNextChapter()
                     }
                 }
-                ReaderIconButton(image: UIKitAssets.setImage(for: .settings)) { isSettingsPresented = true }
+                ReaderIconButton(image: AppImages.settings) { isSettingsPresented = true }
             }
             .frame(width: Constants.controlGroupWidth, height: Constants.controlButtonSize)
             .padding(.leading, Constants.sidePadding)
             .padding(.top, Constants.sidePadding)
-            
+
             Spacer()
-            
+
             Button(action: {
                 isPlaying.toggle()
-            }) {
-                UIKitAssets.setImage(for: isPlaying ? .pause : .play)
+            }, label: {
+                (isPlaying ? AppImages.pause : AppImages.play)
                     .resizable()
                     .renderingMode(.template)
-                    .foregroundColor(UIKitAssets.setColor(for: .accentDark))
+                    .foregroundColor(AppColors.accentDark)
                     .frame(width: 24, height: 24)
-            }
+            })
             .frame(width: Constants.playButtonSize, height: Constants.playButtonSize)
-            .background(UIKitAssets.setColor(for: .accentLight))
+            .background(AppColors.accentLight)
             .clipShape(Circle())
             .padding(.trailing, Constants.sidePadding)
             .padding(.top, Constants.sidePadding)
         }
     }
-    
+
     var settingsSheet: some View {
         VStack(spacing: 24) {
             HStack {
@@ -197,13 +149,15 @@ private extension ReaderView {
 
                 Spacer()
 
-                Button(action: { isSettingsPresented = false }) {
-                    UIKitAssets.setImage(for: .close)
+                Button(action: {
+                    isSettingsPresented = false
+                }, label: {
+                    AppImages.close
                         .resizable()
                         .renderingMode(.template)
                         .frame(width: 30, height: 30)
-                        .foregroundColor(UIKitAssets.setColor(for: .accentDark))
-                }
+                        .foregroundColor(AppColors.accentDark)
+                })
             }
 
             settingRow(
@@ -223,38 +177,38 @@ private extension ReaderView {
             Spacer()
         }
         .padding()
-        .background(UIKitAssets.setColor(for: .background))
+        .background(AppColors.background)
     }
-    
+
     func settingRow(title: String, value: String, increment: @escaping () -> Void, decrement: @escaping () -> Void) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .applyFontBodyAccentDarkStyle()
-            
+
             HStack {
                 Text(value)
                     .applyFontBodySmallAccentDarkStyle()
-                
+
                 Spacer()
-                
+
                 HStack(spacing: 0) {
                     Button(action: increment) {
-                        UIKitAssets.setImage(for: .increment)
+                        AppImages.increment
                             .frame(width: Constants.settingsButtonWidth, height: Constants.settingsButtonHeight)
-                            .foregroundColor(UIKitAssets.setColor(for: .accentDark))
+                            .foregroundColor(AppColors.accentDark)
                     }
-                    
+
                     Divider()
                         .frame(width: Constants.dividerWidth, height: Constants.dividerHeight)
-                        .background(UIKitAssets.setColor(for: .accentDark))
-                    
+                        .background(AppColors.accentDark)
+
                     Button(action: decrement) {
-                        UIKitAssets.setImage(for: .decrement)
+                        AppImages.decrement
                             .frame(width: Constants.settingsButtonWidth, height: Constants.settingsButtonHeight)
-                            .foregroundColor(UIKitAssets.setColor(for: .accentDark))
+                            .foregroundColor(AppColors.accentDark)
                     }
                 }
-                .background(UIKitAssets.setColor(for: .accentMedium))
+                .background(AppColors.accentMedium)
                 .cornerRadius(Constants.settingsButtonCornerRadius)
             }
         }
@@ -265,14 +219,14 @@ private extension ReaderView {
 struct ReaderIconButton: View {
     let image: Image
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             image
                 .renderingMode(.template)
                 .resizable()
                 .frame(width: 24, height: 24)
-                .foregroundColor(UIKitAssets.setColor(for: .white))
+                .foregroundColor(AppColors.white)
         }
         .frame(width: ReaderView.Constants.controlButtonSize, height: ReaderView.Constants.controlButtonSize)
     }
@@ -284,20 +238,20 @@ private extension ReaderView {
         /// Layout
         static let sidePadding: CGFloat = 16
         static let topPadding: CGFloat = 16
-        
+
         /// Header
         static let headerSpacing: CGFloat = 4
         static let fakeTrailingWidth: CGFloat = 80
-        
+
         /// Scroll/Text
         static let toolbarHeight: CGFloat = 74
-        
+
         /// Toolbar Buttons
         static let controlGroupWidth: CGFloat = 200
         static let controlButtonSize: CGFloat = 44
         static let controlButtonSpacing: CGFloat = 8
         static let playButtonSize: CGFloat = 40
-        
+
         /// Settings Sheet
         static let settingsSheetHeight: CGFloat = 256
         static let settingsButtonWidth: CGFloat = 47
@@ -308,7 +262,7 @@ private extension ReaderView {
     }
 }
 
-//#Preview {
-//    ReaderView(router: Router(), isChaptersPresented: .constant(false))
-//        
-//}
+#Preview {
+    ReaderView(router: Router(), isChaptersPresented: .constant(false))
+        .environmentObject(ReadingSession(chunkManager: TextChunkManager()))
+}

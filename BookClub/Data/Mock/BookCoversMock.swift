@@ -26,7 +26,7 @@ enum BookCoversMock {
             return allBookCovers
         }
     }
-    
+
     enum Count {
         case three
         case five

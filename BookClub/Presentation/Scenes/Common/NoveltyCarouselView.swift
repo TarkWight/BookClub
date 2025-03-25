@@ -13,7 +13,7 @@ struct NoveltyCarouselView: View {
         NoveltyBook(imageName: "Cover2i", title: "Портрет в тени", description: "Захватывающая история о тайнах прошлого"),
         NoveltyBook(imageName: "Cover0i", title: "Красная Шапочка", description: "Тёмное переосмысление классической сказки"),
         ]
-    
+
     @State private var currentIndex: Int = 0
 
     var body: some View {
@@ -91,13 +91,13 @@ struct NoveltyBookView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(book.description)
                         .font(.footnote)
-                        .foregroundColor(UIKitAssets.setColor(for: .white))
+                        .foregroundColor(AppColors.white)
                         .lineLimit(2)
 
                     Text(book.title)
                         .font(.headline)
                         .bold()
-                        .foregroundColor(UIKitAssets.setColor(for: .white))
+                        .foregroundColor(AppColors.white)
                 }
                 .padding()
                 .cornerRadius(8)

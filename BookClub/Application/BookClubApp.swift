@@ -11,22 +11,22 @@ import SwiftUI
 struct BookClubApp: App {
     private var chunkManager = TextChunkManager()
     @StateObject private var session: ReadingSession
-    //TODO: - Вызывается один раз, чтобы загрузить ан устройство книгу
+    /// Вызывается один раз, чтобы загрузить ан устройство книгу
     /// Иначе нужно закомментировать 'if let' и 'else'
 
     init() {
         let manager = TextChunkManager()
         self.chunkManager = manager
         self._session = StateObject(wrappedValue: ReadingSession(chunkManager: manager))
-        
+
         if let plistURL = Bundle.main.url(forResource: "LocalConfig", withExtension: "plist"),
            let data = try? Data(contentsOf: plistURL),
            let dict = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
            let path = dict["BookFilePath"] as? String {
-            
+
             let fileURL = URL(fileURLWithPath: path)
             let processor = TextProcessingService()
-            
+
             do {
                 try processor.processRawText(from: fileURL)
                 print("It's done. The text of the book has been processed.")
@@ -37,7 +37,7 @@ struct BookClubApp: App {
             print("LocalConfig.plist not found or corrupted")
         }
     }
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView()
