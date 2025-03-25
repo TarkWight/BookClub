@@ -127,4 +127,19 @@ final class ReadingSession: ObservableObject {
         chunkManager.fetchChapters()
     }
 
+    func getCurrentChunkIndex() -> Int {
+        chunkManager.getCurrentChunkIndex()
+    }
+
+    func hasNextChunk() -> Bool {
+        chunkManager.hasNext()
+    }
+
+    func hasPreviousChunk() -> Bool {
+        chunkManager.hasPrevious()
+    }
+
+    func fetchAllChapters() -> [BookChapter] {
+        chunkManager.fetchChapters()
+    }
 }

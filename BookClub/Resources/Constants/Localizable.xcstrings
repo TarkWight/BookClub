@@ -149,13 +149,13 @@
         }
       }
     },
-    "loginTitle": {
-      "comment": "Title of the login screen",
-      "localizations": {
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Книжный\nмир"
+    "loginTitle" : {
+      "comment" : "Title of the login screen",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Книжный\nмир"
           }
         }
       }
@@ -303,7 +303,13 @@
         }
       }
     },
+    "Дэн Браун" : {
+
+    },
     "Код Да Винчи" : {
+
+    },
+    "Секретный код скрыт в работах Леонардо да Винчи...\n\nТолько он поможет найти христианские святыни, дающие немыслимые власть и могущество...\n\nКлюч к величайшей тайне, над которой человечество билось веками, наконец может быть найден..." : {
 
     }
   },
