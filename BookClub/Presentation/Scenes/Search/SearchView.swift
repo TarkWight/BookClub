@@ -233,6 +233,9 @@ private extension SearchView {
         }
         .frame(height: Constants.bookRowHeight)
         .padding(.horizontal, Constants.sidePadding)
+        .onTapGesture {
+            router.navigateTo(.bookDetails)
+        }
     }
 }
 
