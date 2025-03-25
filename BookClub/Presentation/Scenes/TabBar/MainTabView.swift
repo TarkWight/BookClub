@@ -13,25 +13,33 @@ struct MainTabView: View {
     @State private var selectedTab: Tab = .library
 
     var body: some View {
-        VStack(spacing: 0) {
-            currentView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            TabBarView(
-                selectedTab: $selectedTab,
-                onTabSelected: handleTabSelection,
-                onReadSelected: { router.navigateTo(.reader) },
-                onLogout: router.logout
-            )
-            .padding(.bottom, 42)
-            .padding(.horizontal, 16)
-            .background(AppColors.background)
+        ZStack(alignment: .bottom) {
+            contentView
+            tabBar
         }
-        .ignoresSafeArea(edges: .bottom)
+    }
+}
+
+// MARK: - UI Components
+private extension MainTabView {
+    var contentView: some View {
+        currentView()
+            .ignoresSafeArea(.all, edges: .bottom)
+    }
+
+    var tabBar: some View {
+        TabBarView(
+            selectedTab: $selectedTab,
+            onTabSelected: handleTabSelection,
+            onReadSelected: { router.navigateTo(.reader) },
+            onLogout: router.logout
+        )
+        .padding(.horizontal, Constants.tabBarHorizontalPadding)
+        .padding(.bottom, Constants.tabBarBottomPadding)
     }
 
     @ViewBuilder
-    private func currentView() -> some View {
+    func currentView() -> some View {
         switch selectedTab {
         case .library:
             LibraryView(router: router)
@@ -42,8 +50,16 @@ struct MainTabView: View {
         }
     }
 
-    private func handleTabSelection(_ tab: Tab) {
+    func handleTabSelection(_ tab: Tab) {
         selectedTab = tab
+    }
+}
+
+// MARK: - Constants
+private extension MainTabView {
+    enum Constants {
+        static let tabBarHorizontalPadding: CGFloat = 16
+        static let tabBarBottomPadding: CGFloat = 8
     }
 }
 
