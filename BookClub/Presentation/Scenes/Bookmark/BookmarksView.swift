@@ -9,7 +9,8 @@ import SwiftUI
 
 struct BookmarksView: View {
     @ObservedObject var router: Router
-
+    @EnvironmentObject var readingSession: ReadingSession
+    
     let currentReadingBook = Book(imageName: "Cover1", title: "Код Да Винчи", author: "Дэн Браун")
     let currentChapter = "Глава 5"
     let readingProgress: Double = 0.6
@@ -67,14 +68,29 @@ private extension BookmarksView {
                     Text(currentChapter)
                         .applyFontBodySmallAccentDarkStyle()
 
-                    ProgressBarView(progress: readingProgress)
+                    ProgressBarView(progress: progress())
+                }
+
+                Spacer()
+
+                Button {
+                    router.navigateTo(.reader)
+                } label: {
+                    AppImages.play
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundColor(AppColors.white)
+                        .frame(width: 16, height: 16)
+                        .padding()
+                        .background(AppColors.accentDark)
+                        .clipShape(Circle())
+                        .frame(width: 34, height: 34)
                 }
             }
             .padding(.horizontal, 16)
             .frame(height: 126)
         }
     }
-
     var favoritesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(LocalizedKey.favoritesLabel)
@@ -84,6 +100,9 @@ private extension BookmarksView {
             VStack(spacing: 16) {
                 ForEach(favoriteBooks) { book in
                     BookItemView(book: book)
+                        .onTapGesture {
+                            router.navigateTo(.bookDetails)
+                        }
                 }
             }
         }
@@ -116,6 +135,13 @@ private extension BookmarksView {
         .background(AppColors.accentLight)
         .cornerRadius(8)
         .padding(.horizontal, 16)
+    }
+    
+    func progress() -> Double {
+        let chapters = readingSession.fetchChapters()
+        let currentIndex = readingSession.getCurrentChunkIndex()
+        let readCount = chapters.filter { $0.chunkIndex < currentIndex }.count
+        return Double(readCount) / Double(chapters.count)
     }
 }
 
