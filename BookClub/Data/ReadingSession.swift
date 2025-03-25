@@ -120,10 +120,26 @@ final class ReadingSession: ObservableObject {
             print("Failed to load initial chunk: \(error)")
         }
     }
-    
+
     // MARK: - List of chapters
-    
+
     func fetchChapters() -> [BookChapter] {
+        chunkManager.fetchChapters()
+    }
+
+    func getCurrentChunkIndex() -> Int {
+        chunkManager.getCurrentChunkIndex()
+    }
+
+    func hasNextChunk() -> Bool {
+        chunkManager.hasNext()
+    }
+
+    func hasPreviousChunk() -> Bool {
+        chunkManager.hasPrevious()
+    }
+
+    func fetchAllChapters() -> [BookChapter] {
         chunkManager.fetchChapters()
     }
     

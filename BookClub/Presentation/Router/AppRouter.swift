@@ -1,5 +1,5 @@
 //
-//  AppScreen.swift
+//  AppRouter.swift
 //  BookClub
 //
 //  Created by Tark Wight on 13.03.2025.

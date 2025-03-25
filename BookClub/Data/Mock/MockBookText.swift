@@ -5,7 +5,7 @@
 //  Created by Tark Wight on 23.03.2025.
 //
 
-
+// swiftlint:disable all
 enum MockBookText {
     static let text = """
     Факты
@@ -19,3 +19,4 @@ enum MockBookText {
     Все описанные произведения искусства, здания, документы и тайные ритуалы существуют на самом деле.
     """
 }
+// swiftlint:enable all
