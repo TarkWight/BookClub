@@ -149,13 +149,13 @@
         }
       }
     },
-    "loginTitle" : {
-      "comment" : "Title of the login screen",
-      "localizations" : {
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Книжный мир"
+    "loginTitle": {
+      "comment": "Title of the login screen",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Книжный\nмир"
           }
         }
       }

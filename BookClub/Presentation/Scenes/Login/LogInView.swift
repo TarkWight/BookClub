@@ -72,36 +72,37 @@ private extension LogInView {
                 let offset = calculateOffset(for: time, in: geometry.size.width)
 
                 HStack(spacing: Constants.elementSpacing) {
-                    ForEach(bookCovers + bookCovers.prefix(3)) { bookCover in
-                        Image(bookCover.imageName)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: Constants.elementWidth, height: Constants.elementHeight)
-                            .clipped()
-                            .cornerRadius(Constants.elementCornerRadius)
+                    // Основные обложки
+                    ForEach(bookCovers, id: \.imageName) { bookCover in
+                        carouselItem(for: bookCover)
+                    }
+
+                    ForEach(bookCovers.prefix(3).map { BookCover(imageName: $0.imageName) }, id: \.imageName) { bookCover in
+                        carouselItem(for: bookCover)
                     }
                 }
                 .offset(x: offset)
             }
         }
-        .frame(height: Constants.carouselHeight)
+        .frame(maxWidth: .infinity, maxHeight: Constants.carouselHeight)
     }
 
     var header: some View {
-        VStack(alignment: .leading) {
-            Text(headerSubtitle)
-                .font(Constants.headerTitleFont)
+        VStack(alignment: .leading, spacing: 0) {
+            CustomTextLabel()
+                .text(LocalizedKey.loginSubtitle.uppercased())
+                .font(name: "Alumni Sans Bold", size: Constants.headerTitleFontSize)
                 .foregroundColor(Constants.headerTitleColor)
+                .lineHeightMultiple(1.0)
+                .padding(.bottom, 8)
 
-            ForEach(["КНИЖНЫЙ", "МИР"], id: \.self) { line in
-                Text(line)
-                    .applyNegativeSpacing(
-                        font: Constants.headerSubtitleFont,
-                        color: Constants.headerSubtitleColor,
-                        spacingType: .subtitleLines
-                    )
-            }
+            CustomTextLabel()
+                .text(LocalizedKey.loginTitle.uppercased())
+                .font(name: "Alumni Sans Bold", size: Constants.headerSubtitleFontSize)
+                .foregroundColor(Constants.headerSubtitleColor)
+                .lineHeightMultiple(0.8)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, Constants.sidePadding)
     }
 
@@ -207,6 +208,16 @@ private extension LogInView {
 
         return offset.truncatingRemainder(dividingBy: totalWidth)
     }
+
+    @ViewBuilder
+    func carouselItem(for bookCover: BookCover) -> some View {
+        Image(bookCover.imageName)
+            .resizable()
+            .scaledToFill()
+            .frame(width: Constants.elementWidth, height: Constants.elementHeight)
+            .clipped()
+            .cornerRadius(Constants.elementCornerRadius)
+    }
 }
 
 // MARK: - Constants
@@ -216,12 +227,11 @@ private extension LogInView {
         // MARK: - Constraints
 
         @MainActor
-        static let topPadding: CGFloat = UIScreen.main.bounds.height < 700 ? 40 : 98
+        static let topPadding: CGFloat = 48
 
         static let bottomPadding: CGFloat = 50
         static let sidePadding: CGFloat = 16
 
-        static let carouselHeight: CGFloat = 270
         static let carouselToTitleSpacing: CGFloat = 48
 
         static let headerHeight: CGFloat = 210
@@ -237,14 +247,34 @@ private extension LogInView {
 
         // MARK: - Carousel
 
-        static let elementWidth: CGFloat = 172
-        static let elementHeight: CGFloat = 270
+        @MainActor
+        static var carouselHeight: CGFloat {
+            UIScreen.main.bounds.height < 700 ? 180 : 270
+        }
+        @MainActor
+        static var elementHeight: CGFloat {
+            carouselHeight
+        }
+        @MainActor
+        static var elementWidth: CGFloat {
+            elementHeight * aspectRatio
+        }
+
         static let elementCornerRadius: CGFloat = 4
         static let elementSpacing: CGFloat = 8
         static let scrollSpeed: TimeInterval = 30
 
-        // MARK: - Header
+        private static let aspectRatio: CGFloat = 172.0 / 270.0
 
+        // MARK: - Header
+        @MainActor
+        static var headerTitleFontSize: CGFloat {
+            UIScreen.main.bounds.width < 400 ? 36 : 48
+        }
+        @MainActor
+        static var headerSubtitleFontSize: CGFloat {
+            UIScreen.main.bounds.width < 400 ? 72 : 96
+        }
         static let headerTitleColor = AppColors.accentLight
         static let headerSubtitleColor = AppColors.secondary
 
