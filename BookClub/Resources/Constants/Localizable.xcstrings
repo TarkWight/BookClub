@@ -72,9 +72,6 @@
         }
       }
     },
-    "Close" : {
-
-    },
     "emailTitle" : {
       "comment" : "Title for email input field",
       "localizations" : {
@@ -184,9 +181,6 @@
           }
         }
       }
-    },
-    "Play" : {
-
     },
     "popularGridLabel" : {
       "comment" : "Title for the popular grid",
@@ -308,9 +302,6 @@
           }
         }
       }
-    },
-    "Глава 5" : {
-
     },
     "Код Да Винчи" : {
 

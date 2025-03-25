@@ -108,6 +108,7 @@ private extension LogInView {
     var inputGroup: some View {
         VStack(spacing: 0) {
             inputField(title: emailTitle, text: $email, isSecure: false, isPasswordField: false)
+
             Divider().background(Constants.inputFieldBorderColor).padding(.leading, Constants.sidePadding)
             inputField(title: passwordTitle, text: $password, isSecure: !isPasswordVisible, isPasswordField: true)
         }
@@ -133,6 +134,7 @@ private extension LogInView {
                     .foregroundColor(Constants.inputFieldTitleColor)
                     .frame(maxWidth: .infinity, minHeight: Constants.inputFieldHeight)
                     .multilineTextAlignment(.leading)
+                    .accessibilityIdentifier("securePasswordField")
             } else {
                 TextField("", text: text)
                     .autocapitalization(.none)
@@ -141,6 +143,7 @@ private extension LogInView {
                     .foregroundColor(Constants.inputFieldTitleColor)
                     .frame(maxWidth: .infinity, minHeight: Constants.inputFieldHeight)
                     .multilineTextAlignment(.leading)
+                    .accessibilityIdentifier(isPasswordField ? "visiblePasswordField" : "emailField")
             }
 
             if !text.wrappedValue.isEmpty {
@@ -153,6 +156,7 @@ private extension LogInView {
                             .frame(width: Constants.iconSize, height: Constants.iconSize)
                             .foregroundColor(Constants.inputFieldTitleColor)
                     }
+                    .accessibilityIdentifier("togglePasswordVisibility")
                 } else {
                     Button {
                         text.wrappedValue = ""
@@ -162,6 +166,7 @@ private extension LogInView {
                             .frame(width: Constants.iconSize, height: Constants.iconSize)
                             .foregroundColor(Constants.inputFieldTitleColor)
                     }
+                    .accessibilityIdentifier("clearButton")
                 }
             }
         }
@@ -184,6 +189,7 @@ private extension LogInView {
         .disabled(!isFormValid)
         .frame(maxWidth: .infinity, minHeight: Constants.buttonHeight)
         .padding(.horizontal, Constants.sidePadding)
+        .accessibilityIdentifier("signInButton")
     }
 
     var isFormValid: Bool {
