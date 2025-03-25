@@ -142,5 +142,4 @@ final class ReadingSession: ObservableObject {
     func fetchAllChapters() -> [BookChapter] {
         chunkManager.fetchChapters()
     }
-    
 }
