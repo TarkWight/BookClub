@@ -29,9 +29,50 @@
 		89692B6A2D97992F00663505 /* BookClubUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BookClubUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		898E91842D991D7600C20B03 /* Exceptions for "BookClub" folder in "BookClubTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Constants/AppColors.swift,
+				Resources/Constants/AppFonts.swift,
+				Resources/Constants/AppImages.swift,
+				Resources/Constants/Localizable.xcstrings,
+				Resources/Constants/LocalizedKey.swift,
+				"Resources/Fonts/AlumniSans/AlumniSans-Bold.ttf",
+				"Resources/Fonts/VelaSans/VelaSans-GX.ttf",
+			);
+			target = 89692B5F2D97992F00663505 /* BookClubTests */;
+		};
+		898E91852D991D7600C20B03 /* Exceptions for "BookClub" folder in "BookClubUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Constants/AppColors.swift,
+				Resources/Constants/AppFonts.swift,
+				Resources/Constants/AppImages.swift,
+				Resources/Constants/Localizable.xcstrings,
+				Resources/Constants/LocalizedKey.swift,
+				"Resources/Fonts/AlumniSans/AlumniSans-Bold.ttf",
+				"Resources/Fonts/VelaSans/VelaSans-GX.ttf",
+			);
+			target = 89692B692D97992F00663505 /* BookClubUITests */;
+		};
+		898E91872D991D9300C20B03 /* Exceptions for "BookClub" folder in "BookClub" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Info.plist,
+			);
+			target = 89692B4F2D97992D00663505 /* BookClub */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		89692B522D97992D00663505 /* BookClub */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				898E91872D991D9300C20B03 /* Exceptions for "BookClub" folder in "BookClub" target */,
+				898E91842D991D7600C20B03 /* Exceptions for "BookClub" folder in "BookClubTests" target */,
+				898E91852D991D7600C20B03 /* Exceptions for "BookClub" folder in "BookClubUITests" target */,
+			);
 			path = BookClub;
 			sourceTree = "<group>";
 		};
@@ -424,6 +465,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BookClub/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "HITs Book";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.books";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -460,6 +502,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BookClub/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "HITs Book";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.books";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
