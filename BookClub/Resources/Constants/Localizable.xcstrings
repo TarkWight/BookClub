@@ -1,0 +1,317 @@
+{
+  "sourceLanguage" : "ru",
+  "strings" : {
+    "" : {
+
+    },
+    "“%@”" : {
+
+    },
+    "%@ • %@" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ • %2$@"
+          }
+        }
+      }
+    },
+    "addToBookmarkButtonTitle" : {
+      "comment" : "Title for the add to bookmark button",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "В избранное"
+          }
+        }
+      }
+    },
+    "authorsLabel" : {
+      "comment" : "Title for the authors",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Авторы"
+          }
+        }
+      }
+    },
+    "backButtonTitle" : {
+      "comment" : "Title for the back button",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Назад"
+          }
+        }
+      }
+    },
+    "bookmarksLabel" : {
+      "comment" : "Title for the bookmarks screen",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закладки"
+          }
+        }
+      }
+    },
+    "chaptersLabel" : {
+      "comment" : "Title for the chapters screen",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Оглавление"
+          }
+        }
+      }
+    },
+    "emailTitle" : {
+      "comment" : "Title for email input field",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Почта"
+          }
+        }
+      }
+    },
+    "favoritesLabel" : {
+      "comment" : "Title for the favorites",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Избранные книги"
+          }
+        }
+      }
+    },
+    "fontSizeLabel" : {
+      "comment" : "Title for the font size",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Размер шрифта"
+          }
+        }
+      }
+    },
+    "genresLabel" : {
+      "comment" : "Title for the genres",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Жанры"
+          }
+        }
+      }
+    },
+    "libraryLabel" : {
+      "comment" : "Title for the library screen",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Библиотека"
+          }
+        }
+      }
+    },
+    "listOfContentsLabel" : {
+      "comment" : "Label for the list of contents",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Оглавление"
+          }
+        }
+      }
+    },
+    "loginSubtitle" : {
+      "comment" : "Subtitle of the login screen",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Открой для себя"
+          }
+        }
+      }
+    },
+    "loginTitle" : {
+      "comment" : "Title of the login screen",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Книжный\nмир"
+          }
+        }
+      }
+    },
+    "noveltyCarouselLabel" : {
+      "comment" : "Title for the novelty carousel",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Новинки"
+          }
+        }
+      }
+    },
+    "passwordTitle" : {
+      "comment" : "Title for password input field",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пароль"
+          }
+        }
+      }
+    },
+    "popularGridLabel" : {
+      "comment" : "Title for the popular grid",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Популярные книги"
+          }
+        }
+      }
+    },
+    "progressBarLabel" : {
+      "comment" : "Label for the progress bar",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прочитано"
+          }
+        }
+      }
+    },
+    "ptLabel" : {
+      "comment" : "Title for the pt",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "пт"
+          }
+        }
+      }
+    },
+    "quotesLabel" : {
+      "comment" : "Title for the quotes",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цитаты"
+          }
+        }
+      }
+    },
+    "readButtonTitle" : {
+      "comment" : "Title for the read button",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Читать"
+          }
+        }
+      }
+    },
+    "readingNowLabel" : {
+      "comment" : "Title for the reading now",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Читаете сейчас"
+          }
+        }
+      }
+    },
+    "recentRequestsLabel" : {
+      "comment" : "Title for the recent requests",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Недавние запросы"
+          }
+        }
+      }
+    },
+    "seatchFieldPlaceholder" : {
+      "comment" : "Placeholder for the search field",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Поиск по книгам"
+          }
+        }
+      }
+    },
+    "settingsLabel" : {
+      "comment" : "Title for the settings",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Настройки"
+          }
+        }
+      }
+    },
+    "signInButtonTitle" : {
+      "comment" : "Text for the login button",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Войти"
+          }
+        }
+      }
+    },
+    "stringSpacingLabel" : {
+      "comment" : "Title for the string spacing",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Межстрочное расстояние"
+          }
+        }
+      }
+    },
+    "Дэн Браун" : {
+
+    },
+    "Код Да Винчи" : {
+
+    },
+    "Секретный код скрыт в работах Леонардо да Винчи...\n\nТолько он поможет найти христианские святыни, дающие немыслимые власть и могущество...\n\nКлюч к величайшей тайне, над которой человечество билось веками, наконец может быть найден..." : {
+
+    }
+  },
+  "version" : "1.0"
+}
