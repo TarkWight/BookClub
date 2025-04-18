@@ -10,7 +10,7 @@ import SwiftUI
 struct BookmarksView: View {
     @ObservedObject var router: Router
     @EnvironmentObject var readingSession: ReadingSession
-    
+
     let currentReadingBook = Book(imageName: "Cover1", title: "Код Да Винчи", author: "Дэн Браун")
     let currentChapter = "Глава 5"
     let readingProgress: Double = 0.6
@@ -136,7 +136,7 @@ private extension BookmarksView {
         .cornerRadius(8)
         .padding(.horizontal, 16)
     }
-    
+
     func progress() -> Double {
         let chapters = readingSession.fetchChapters()
         let currentIndex = readingSession.getCurrentChunkIndex()
