@@ -4,6 +4,12 @@
     "addToBookmarkButtonTitle" : {
       "comment" : "Title for the add to bookmark button",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add to Favorites"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15,6 +21,12 @@
     "authorsLabel" : {
       "comment" : "Title for the authors",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Authors"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26,6 +38,12 @@
     "backButtonTitle" : {
       "comment" : "Title for the back button",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -37,6 +55,12 @@
     "bookmarksLabel" : {
       "comment" : "Title for the bookmarks screen",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bookmarks"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -48,6 +72,12 @@
     "chaptersLabel" : {
       "comment" : "Title for the chapters screen",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chapters"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -59,6 +89,12 @@
     "emailTitle" : {
       "comment" : "Title for email input field",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -70,6 +106,12 @@
     "favoritesLabel" : {
       "comment" : "Title for the favorites",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorite books"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -81,6 +123,12 @@
     "fontSizeLabel" : {
       "comment" : "Title for the font size",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Font size"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -92,6 +140,12 @@
     "genresLabel" : {
       "comment" : "Title for the genres",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Genres"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -103,6 +157,12 @@
     "libraryLabel" : {
       "comment" : "Title for the library screen",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Library"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -114,6 +174,12 @@
     "listOfContentsLabel" : {
       "comment" : "Label for the list of contents",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contents"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -125,6 +191,12 @@
     "loginSubtitle" : {
       "comment" : "Subtitle of the login screen",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discover"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -136,6 +208,12 @@
     "loginTitle" : {
       "comment" : "Title of the login screen",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Book\nWorld"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -147,6 +225,12 @@
     "noveltyCarouselLabel" : {
       "comment" : "Title for the novelty carousel",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New releases"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -158,6 +242,12 @@
     "passwordTitle" : {
       "comment" : "Title for password input field",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -169,6 +259,12 @@
     "popularGridLabel" : {
       "comment" : "Title for the popular grid",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popular books"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -180,6 +276,12 @@
     "progressBarLabel" : {
       "comment" : "Label for the progress bar",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -191,6 +293,12 @@
     "ptLabel" : {
       "comment" : "Title for the pt",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pt"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -202,6 +310,12 @@
     "quotesLabel" : {
       "comment" : "Title for the quotes",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quotes"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -213,6 +327,12 @@
     "readButtonTitle" : {
       "comment" : "Title for the read button",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -224,6 +344,12 @@
     "readingNowLabel" : {
       "comment" : "Title for the reading now",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading now"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -235,6 +361,12 @@
     "recentRequestsLabel" : {
       "comment" : "Title for the recent requests",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recent searches"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -246,6 +378,12 @@
     "seatchFieldPlaceholder" : {
       "comment" : "Placeholder for the search field",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search books"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -257,6 +395,12 @@
     "settingsLabel" : {
       "comment" : "Title for the settings",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -268,6 +412,12 @@
     "signInButtonTitle" : {
       "comment" : "Text for the login button",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign In"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -279,6 +429,12 @@
     "stringSpacingLabel" : {
       "comment" : "Title for the string spacing",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Line spacing"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
