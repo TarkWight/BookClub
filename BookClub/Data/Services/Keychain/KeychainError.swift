@@ -9,13 +9,17 @@ import Foundation
 
 enum KeychainError: Error, Equatable {
     case tokenNotFound
+    case identifierNotFound
+    case passwordNotFound
     case unexpectedData
     case unhandledError(OSStatus)
 
     static func == (lhs: KeychainError, rhs: KeychainError) -> Bool {
         switch (lhs, rhs) {
         case (.tokenNotFound, .tokenNotFound),
-                (.unexpectedData, .unexpectedData):
+             (.identifierNotFound, .identifierNotFound),
+             (.passwordNotFound, .passwordNotFound),
+             (.unexpectedData, .unexpectedData):
             return true
         case let (.unhandledError(code1), .unhandledError(code2)):
             return code1 == code2
