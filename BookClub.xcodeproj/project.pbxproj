@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		898CB5D92DE85EE700077024 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 898CB5D82DE85EE700077024 /* Alamofire */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		89AF24BC2DE83B6300F7F697 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				898CB5D92DE85EE700077024 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,6 +131,7 @@
 			);
 			name = BookClub;
 			packageProductDependencies = (
+				898CB5D82DE85EE700077024 /* Alamofire */,
 			);
 			productName = BookClub;
 			productReference = 89AF24A92DE83B6000F7F697 /* BookClub.app */;
@@ -210,6 +216,9 @@
 			);
 			mainGroup = 89AF24A02DE83B6000F7F697;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				898CB5D72DE85EE700077024 /* XCRemoteSwiftPackageReference "Alamofire" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 89AF24AA2DE83B6000F7F697 /* Products */;
 			projectDirPath = "";
@@ -611,6 +620,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		898CB5D72DE85EE700077024 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		898CB5D82DE85EE700077024 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 898CB5D72DE85EE700077024 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 89AF24A12DE83B6000F7F697 /* Project object */;
 }
