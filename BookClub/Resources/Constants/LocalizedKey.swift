@@ -51,3 +51,20 @@ enum LocalizedKey {
     // MARK: - Navigation
     static let backButtonTitle = NSLocalizedString("backButtonTitle", comment: "Title for the back button")
 }
+
+extension LocalizedKey {
+    // MARK: — LoginError
+    static let tokenNotFound = NSLocalizedString("error_tokenNotFound", comment: "")
+    static let identifierNotFound = NSLocalizedString("error_identifierNotFound", comment: "")
+    static let passwordNotFound = NSLocalizedString("error_passwordNotFound", comment: "")
+    static let unexpectedData = NSLocalizedString("error_unexpectedData", comment: "")
+    static let unhandledError = NSLocalizedString("error_unhandledError", comment: "")
+    static let networkError = NSLocalizedString("error_network", comment: "")
+
+    // MARK: — NetworkError
+    static let noNetwork = NSLocalizedString("error_noNetwork", comment: "")
+    static let vpnActive = NSLocalizedString("error_vpnActive", comment: "")
+    static let badStatusCode = NSLocalizedString("error_badStatusCode", comment: "")
+    static let decodingError = NSLocalizedString("error_decodingError", comment: "")
+    static let noData = NSLocalizedString("error_noData", comment: "")
+}
