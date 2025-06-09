@@ -8,5 +8,5 @@
 import Foundation
 
 protocol AuthServiceProtocol: Sendable {
-    func refreshToken() async throws -> String
+    func refreshToken(identifier: String?, password: String?) async throws -> String
 }
