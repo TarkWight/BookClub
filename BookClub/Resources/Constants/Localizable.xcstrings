@@ -1,6 +1,22 @@
 {
   "sourceLanguage" : "ru",
   "strings" : {
+    "" : {
+
+    },
+    "“%@”" : {
+
+    },
+    "%@ • %@" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ • %2$@"
+          }
+        }
+      }
+    },
     "addToBookmarkButtonTitle" : {
       "comment" : "Title for the add to bookmark button",
       "localizations" : {
@@ -99,6 +115,182 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Почта"
+          }
+        }
+      }
+    },
+    "error_badStatusCode" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There's some kind of error on the server!"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "На сервере какая-то ошибка!"
+          }
+        }
+      }
+    },
+    "error_decodingError" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to parse the server response."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось разобрать ответ сервера."
+          }
+        }
+      }
+    },
+    "error_identifierNotFound" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Identifier not found."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Идентификатор не найден."
+          }
+        }
+      }
+    },
+    "error_network" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to connect.\nMost likely VPN or Proxy is enabled. Try disabling it and try again."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось подключиться.\nСкорее всего включён VPN или Proxy. Попробуйте отключить и повторите попытку."
+          }
+        }
+      }
+    },
+    "error_noData" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server returned an empty response."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сервер вернул пустой ответ."
+          }
+        }
+      }
+    },
+    "error_noNetwork" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No internet connection."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нет подключения к интернету."
+          }
+        }
+      }
+    },
+    "error_passwordNotFound" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password not found."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пароль не найден."
+          }
+        }
+      }
+    },
+    "error_tokenNotFound" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Token not found."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Токен не найден."
+          }
+        }
+      }
+    },
+    "error_unexpectedData" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unexpected data."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Неожиданные данные."
+          }
+        }
+      }
+    },
+    "error_unhandledError" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Что-то пошло не так."
+          }
+        }
+      }
+    },
+    "error_vpnActive" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VPN is enabled - disable it and try again."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VPN включён — отключите и попробуйте снова."
           }
         }
       }
@@ -442,6 +634,15 @@
           }
         }
       }
+    },
+    "Дэн Браун" : {
+
+    },
+    "Код Да Винчи" : {
+
+    },
+    "Секретный код скрыт в работах Леонардо да Винчи...\n\nТолько он поможет найти христианские святыни, дающие немыслимые власть и могущество...\n\nКлюч к величайшей тайне, над которой человечество билось веками, наконец может быть найден..." : {
+
     }
   },
   "version" : "1.0"

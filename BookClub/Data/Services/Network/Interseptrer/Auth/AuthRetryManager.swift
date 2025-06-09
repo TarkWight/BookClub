@@ -32,7 +32,7 @@ actor AuthRetryManager {
 
     private func performRefresh() async {
         do {
-            _ = try await authService.refreshToken()
+            _ = try await authService.refreshToken(identifier: nil, password: nil)
             let completions = requestsToRetry
             requestsToRetry.removeAll()
             isRefreshing = false
