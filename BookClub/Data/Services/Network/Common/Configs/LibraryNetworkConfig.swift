@@ -10,7 +10,6 @@ import Foundation
 enum LibraryNetworkConfig: NetworkConfig {
     case list(page: Int, pageSize: Int)
     case newBooks
-    case details(id: Int)
 
     var path: String { "books" }
 
@@ -26,10 +25,6 @@ enum LibraryNetworkConfig: NetworkConfig {
         case .newBooks:
             return .requestUrlParameters([
                 "filter[isNew]": true
-            ])
-        case let .details(id):
-            return .requestUrlParameters([
-                "filter[id]": id
             ])
         }
     }
