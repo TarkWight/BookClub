@@ -27,4 +27,5 @@ enum AppImages {
     static let readingNow = Image("Reading Now")
     static let decrement = Image("Decrement")
     static let increment = Image("Increment")
+    static let error = Image("Error")
 }
