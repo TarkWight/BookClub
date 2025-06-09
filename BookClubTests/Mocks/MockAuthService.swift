@@ -14,7 +14,7 @@ final class MockAuthService: AuthServiceProtocol {
     private(set) var refreshTokenCalled = false
     private(set) var refreshTokenCallCount = 0
 
-    func refreshToken() async throws -> String {
+    func refreshToken(identifier: String?, password: String?) async throws -> String {
         refreshTokenCallCount += 1
         refreshTokenCalled = true
         if shouldSucceed {
