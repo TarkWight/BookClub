@@ -7,7 +7,15 @@
 
 import Foundation
 
+enum AuthStatus: Equatable {
+    case unknown
+    case unauthenticated
+    case authenticated
+}
+
 struct AppState: Equatable {
-  var path: [AppRoute] = []
-  var login: LoginState = .init()
+    var authStatus: AuthStatus = .unauthenticated
+    var path: [AppRoute] = []
+    var login: LoginState = .init()
+    var mainTab: MainTabState = .init()
 }

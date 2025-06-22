@@ -5,8 +5,8 @@
 //  Created by Tark Wight on 01.06.2025.
 //
 
-import Foundation
 import Alamofire
+import Foundation
 
 final class AuthAdapter: RequestAdapter {
     private let keychainService: KeychainServiceProtocol
@@ -21,11 +21,13 @@ final class AuthAdapter: RequestAdapter {
         completion: @escaping (Result<URLRequest, Error>) -> Void
     ) {
         var request = urlRequest
-
         Task {
             do {
                 let token = try await keychainService.retrieveToken()
-                request.headers.add(name: "Authorization", value: "Bearer \(token)")
+                request.headers.add(
+                    name: "Authorization",
+                    value: "Bearer \(token)"
+                )
                 completion(.success(request))
             } catch {
                 completion(.failure(error))
