@@ -7,12 +7,15 @@
 
 import Foundation
 
+@MainActor
 func loginReducer(
     state: inout LoginState,
     action: LoginAction,
     env: LoginEnvironment
 ) -> Effect<LoginAction> {
     switch action {
+
+    // MARK: – Pure state mutations, no side-effects
     case let .emailChanged(email):
         state.email = email
         state.loginError = nil
@@ -27,6 +30,7 @@ func loginReducer(
         state.isPasswordVisible.toggle()
         return .none
 
+    // MARK: – Trigger side-effect via an Effect
     case .didLoginButtonTapped:
         guard !state.isLoading else { return .none }
         state.isLoading = true
@@ -49,10 +53,10 @@ func loginReducer(
             }
         }
 
+    // MARK: – Обработчики результатов
     case .loginSucceeded:
         state.isLoading = false
-        return .fireAndForget {
-        }
+        return .none
 
     case let .loginFailed(error):
         state.isLoading = false
