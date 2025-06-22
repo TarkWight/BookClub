@@ -8,9 +8,5 @@
 import Foundation
 
 struct AuthResponse: Codable, Sendable {
-    let accessToken: String
-
-    private enum CodingKeys: String, CodingKey {
-        case accessToken = "jwt"
-    }
+    let jwt: String
 }
