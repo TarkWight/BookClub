@@ -6,6 +6,7 @@
 //
 
 import XCTest
+
 @testable import BookClub
 
 @MainActor
@@ -19,13 +20,21 @@ final class AuthServiceTests: XCTestCase {
         super.setUp()
         mockKeychain = MockKeychainService()
         mockNetwork = MockNetworkService()
-        sut = AuthService(networkService: mockNetwork, keychainService: mockKeychain)
+        sut = AuthService(
+            networkClient: mockNetwork,
+            keychainService: mockKeychain
+        )
     }
 
-    func test_refreshToken_success_shouldReturnTokenAndSaveToKeychain() async throws {
+    func test_refreshToken_success_shouldReturnTokenAndSaveToKeychain()
+        async throws
+    {
         mockKeychain.stubIdentifier("test_user")
         mockKeychain.stubPassword("pass123")
-        mockNetwork.stubbedResponse = AuthResponse(accessToken: "new-token-xyz")
+
+        // Prepare stubbed JSON for AuthResponse(jwt: "new-token-xyz")
+        let auth = AuthResponse(jwt: "new-token-xyz")
+        mockNetwork.stubbedData = try JSONEncoder().encode(auth)
 
         let token = try await sut.refreshToken()
 
@@ -33,32 +42,36 @@ final class AuthServiceTests: XCTestCase {
         XCTAssertEqual(mockKeychain.savedToken, "new-token-xyz")
     }
 
-    func test_refreshToken_whenEncodingFails_shouldThrow() async {
+    func test_refreshToken_whenDecodingFails_shouldThrowDecodingError() async {
         mockKeychain.stubIdentifier("user")
         mockKeychain.stubPassword("pass")
-        mockNetwork.shouldThrowOnEncode = true
-        mockNetwork.stubbedResponse = AuthResponse(accessToken: "will-never-use")
+
+        // Provide invalid JSON so decoding will fail
+        mockNetwork.stubbedData = Data("not a valid JSON".utf8)
 
         do {
             _ = try await sut.refreshToken()
-            XCTFail("Expected EncodingError")
-        } catch _ as EncodingError {
+            XCTFail("Expected DecodingError")
+        } catch is DecodingError {
             // success
         } catch {
-            XCTFail("Expected EncodingError but got: \(error)")
+            XCTFail("Expected DecodingError but got: \(error)")
         }
     }
 
-    func test_refreshToken_whenNetworkFails_shouldThrow() async {
+    func test_refreshToken_whenNetworkFails_shouldThrowURLError() async {
         mockKeychain.stubIdentifier("test_user")
         mockKeychain.stubPassword("pass")
+
         mockNetwork.shouldThrowOnRequest = true
 
         do {
             _ = try await sut.refreshToken()
-            XCTFail("Expected error")
+            XCTFail("Expected URLError")
+        } catch is URLError {
+            // success
         } catch {
-            XCTAssertTrue(error is URLError)
+            XCTFail("Expected URLError but got: \(error)")
         }
     }
 }
