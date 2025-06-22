@@ -10,6 +10,8 @@ import SwiftUI
 @MainActor
 final class Store<State, Action>: ObservableObject {
     @Published private(set) var state: State
+    var current: State { state }
+
     private let reducer: (inout State, Action) -> Effect<Action>
 
     init(
