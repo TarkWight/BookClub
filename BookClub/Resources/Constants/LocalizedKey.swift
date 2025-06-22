@@ -63,6 +63,7 @@ extension LocalizedKey {
 
     // MARK: — NetworkError
     static let noNetwork = NSLocalizedString("error_noNetwork", comment: "")
+    static let requestFailed = NSLocalizedString("error_requestFailed", comment: "")
     static let vpnActive = NSLocalizedString("error_vpnActive", comment: "")
     static let badStatusCode = NSLocalizedString("error_badStatusCode", comment: "")
     static let decodingError = NSLocalizedString("error_decodingError", comment: "")

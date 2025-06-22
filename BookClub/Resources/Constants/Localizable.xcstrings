@@ -231,6 +231,9 @@
         }
       }
     },
+    "error_requestFailed" : {
+
+    },
     "error_tokenNotFound" : {
       "localizations" : {
         "en" : {
