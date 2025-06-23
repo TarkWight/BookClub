@@ -15,6 +15,7 @@ final class NetworkClient: NetworkClientProtocol {
     }
 
     private let session: Session
+
     init(session: Session) {
         self.session = session
     }
@@ -24,13 +25,22 @@ final class NetworkClient: NetworkClientProtocol {
         decoder: DataDecoder = JSONDecoder()
     ) async throws -> T {
         let urlString = Constants.baseUrl + config.path + "/" + config.endPoint
+        // Build URL safely
+        guard let url = URL(string: urlString) else {
+            throw NetworkError.invalidURL(urlString)
+        }
+        // Log outgoing request
+        print(
+            "[NetworkClient] Requesting: \(config.method.rawValue) \(url.absoluteString)"
+        )
+
         let encoding: ParameterEncoding =
             config.method == .get ? URLEncoding.default : JSONEncoding.default
 
         let data: Data
         do {
             data = try await session.request(
-                urlString,
+                url,
                 method: config.method,
                 parameters: config.parameters,
                 encoding: encoding,
@@ -40,34 +50,58 @@ final class NetworkClient: NetworkClientProtocol {
             .serializingData()
             .value
         } catch let afError as AFError {
-            throw mapAFError(
-                afError,
-                response: afError.responseCode.flatMap { code in
-                    HTTPURLResponse(
-                        url: URL(string: urlString)!,
-                        statusCode: code,
-                        httpVersion: nil,
-                        headerFields: nil
-                    )
-                }
+            // Map AFError to our NetworkError, reusing URL
+            let response = afError.responseCode.flatMap { code in
+                HTTPURLResponse(
+                    url: url,
+                    statusCode: code,
+                    httpVersion: nil,
+                    headerFields: nil
+                )
+            }
+            throw mapAFError(afError, response: response)
+        }
+
+        // Log incoming response
+        if let text = String(data: data, encoding: .utf8) {
+            print(
+                "[NetworkClient] Response from \(url.absoluteString):\n\(text)"
+            )
+        } else {
+            print(
+                "[NetworkClient] Response from \(url.absoluteString): <binary data> (\(data.count) bytes)"
             )
         }
 
         do {
             return try decoder.decode(T.self, from: data)
         } catch {
+            print(
+                "[NetworkClient] Decoding error from \(url.absoluteString): \(error)"
+            )
             throw NetworkError.decodingError(error.localizedDescription)
         }
     }
 
-    func request(_ config: NetworkConfigProtocol) async throws {
+    func request(
+        _ config: NetworkConfigProtocol
+    ) async throws {
         let urlString = Constants.baseUrl + config.path + "/" + config.endPoint
+        // Build URL safely
+        guard let url = URL(string: urlString) else {
+            throw NetworkError.invalidURL(urlString)
+        }
+        // Log outgoing request
+        print(
+            "[NetworkClient] Requesting (void): \(config.method.rawValue) \(url.absoluteString)"
+        )
+
         let encoding: ParameterEncoding =
             config.method == .get ? URLEncoding.default : JSONEncoding.default
 
         do {
             _ = try await session.request(
-                urlString,
+                url,
                 method: config.method,
                 parameters: config.parameters,
                 encoding: encoding,
@@ -76,18 +110,20 @@ final class NetworkClient: NetworkClientProtocol {
             .validate()
             .serializingData()
             .value
-        } catch let afError as AFError {
-            throw mapAFError(
-                afError,
-                response: afError.responseCode.flatMap { code in
-                    HTTPURLResponse(
-                        url: URL(string: urlString)!,
-                        statusCode: code,
-                        httpVersion: nil,
-                        headerFields: nil
-                    )
-                }
+
+            print(
+                "[NetworkClient] Void response from \(url.absoluteString) succeeded"
             )
+        } catch let afError as AFError {
+            let response = afError.responseCode.flatMap { code in
+                HTTPURLResponse(
+                    url: url,
+                    statusCode: code,
+                    httpVersion: nil,
+                    headerFields: nil
+                )
+            }
+            throw mapAFError(afError, response: response)
         }
     }
 
