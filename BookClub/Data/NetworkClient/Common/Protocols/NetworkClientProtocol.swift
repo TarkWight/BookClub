@@ -7,7 +7,7 @@
 
 import Alamofire
 
-protocol NetworkClientProtocol {
+protocol NetworkClientProtocol: Sendable {
     func request<T: Decodable>(
         _ config: NetworkConfigProtocol,
         decoder: DataDecoder
