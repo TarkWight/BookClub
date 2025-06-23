@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+func searchReducer(
+    state: inout SearchState,
+    action: SearchAction,
+    env: SearchEnvironment
+) -> Effect<SearchAction> {
+    // TODO: реализовать поиск
+    return .none
+}
