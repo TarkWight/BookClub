@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol BookStorageServiceProtocol {
+protocol BookStorageServiceProtocol: Sendable {
     func save(_ books: [Book]) async throws
     func fetch(isNew: Bool?) async throws -> [Book]
     func fetch(byID id: Int64) async throws -> Book?
