@@ -22,6 +22,6 @@ enum LibraryAction: Equatable {
     case requestPopularBooks(page: Int)
     case popularBooksResponse(Result<[BookDetailsItem], NetworkError>)
 
-    // MARK: – UI
+    // MARK: – Navigation
     case didSelectBook(documentID: String)
 }
