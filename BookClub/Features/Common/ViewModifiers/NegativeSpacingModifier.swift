@@ -31,9 +31,12 @@ struct NegativeSpacingModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         let screenWidth = UIScreen.main.bounds.width
-        let adaptiveSpacing = spacingType.adaptiveSpacing(screenWidth: screenWidth)
+        let adaptiveSpacing = spacingType.adaptiveSpacing(
+            screenWidth: screenWidth
+        )
 
-        return content
+        return
+            content
             .font(font)
             .foregroundColor(color)
             .padding(.bottom, adaptiveSpacing)
@@ -46,6 +49,12 @@ extension View {
         color: Color,
         spacingType: SpacingType
     ) -> some View {
-        self.modifier(NegativeSpacingModifier(font: font, color: color, spacingType: spacingType))
+        self.modifier(
+            NegativeSpacingModifier(
+                font: font,
+                color: color,
+                spacingType: spacingType
+            )
+        )
     }
 }

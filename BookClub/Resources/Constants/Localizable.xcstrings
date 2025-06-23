@@ -282,6 +282,9 @@
         }
       }
     },
+    "error_urlError" : {
+
+    },
     "error_vpnActive" : {
       "localizations" : {
         "en" : {

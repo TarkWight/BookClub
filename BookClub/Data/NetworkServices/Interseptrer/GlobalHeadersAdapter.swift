@@ -10,6 +10,7 @@ import Foundation
 
 final class GlobalHeadersAdapter: RequestAdapter {
     private let tokenProvider: TokenProvider
+
     init(tokenProvider: TokenProvider) {
         self.tokenProvider = tokenProvider
     }

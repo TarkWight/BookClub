@@ -44,9 +44,9 @@ actor AuthService: AuthServiceProtocol {
         // Resolve password
         let finalPassword: String
         do {
-            if let pw = password {
-                finalPassword = pw
-                try await keychainService.savePassword(pw)
+            if let password = password {
+                finalPassword = password
+                try await keychainService.savePassword(password)
             } else {
                 finalPassword = try await keychainService.retrievePassword()
             }
