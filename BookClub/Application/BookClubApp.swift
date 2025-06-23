@@ -32,10 +32,14 @@ struct BookClubApp: App {
                 )
             ) as NetworkClientProtocol
 
+        // MARK: - Core Data Storage
+        let bookStorage = BookStorageService()
+
         // MARK: - Environment & Store
         let environment = AppEnvironment(
             authService: authService,
-            networkClient: networkClient
+            networkClient: networkClient,
+            bookStorage: bookStorage
         )
         self.store = Store(
             initialState: AppState(),

@@ -11,12 +11,14 @@ struct AppEnvironment {
     let authService: AuthServiceProtocol
     let networkClient: NetworkClientProtocol
 
+    let bookStorage: BookStorageServiceProtocol
+
     var loginEnv: LoginEnvironment {
         LoginEnvironment(authService: authService)
     }
 
     var libraryEnv: LibraryEnvironment {
-        LibraryEnvironment(networkClient: networkClient)
+        LibraryEnvironment(networkClient: networkClient, storage: bookStorage)
     }
 
     var searchEnv: SearchEnvironment {
@@ -31,6 +33,7 @@ struct AppEnvironment {
         MainTabEnvironment(
             libraryEnv: libraryEnv,
             searchEnv: searchEnv,
-            bookmarksEnv: bookmarksEnv)
+            bookmarksEnv: bookmarksEnv
+        )
     }
 }
