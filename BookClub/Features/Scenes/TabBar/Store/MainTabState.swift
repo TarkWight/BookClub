@@ -13,17 +13,6 @@ struct MainTabState: Equatable, Sendable {
     var search: SearchState = .init()
     var bookmarks: BookmarksState = .init()
 }
-struct SearchState: Equatable {}
-enum SearchAction: Equatable {}
-struct SearchEnvironment { /* сюда можно инжектить networkService */  }
-func searchReducer(
-    state: inout SearchState,
-    action: SearchAction,
-    env: SearchEnvironment
-) -> Effect<SearchAction> {
-    // TODO: реализовать поиск
-    return .none
-}
 
 // Bookmarks feature (заглушки)
 struct BookmarksState: Equatable {}
