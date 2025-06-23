@@ -10,7 +10,6 @@ import XCTest
 
 @testable import BookClub
 
-
 final class GlobalHeadersAdapterTests: XCTestCase {
     private var mockProvider: MockTokenProvider!
     private var adapter: GlobalHeadersAdapter!
