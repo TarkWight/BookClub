@@ -16,8 +16,8 @@ enum AuthConfig: NetworkConfigProtocol {
     var method: HTTPMethod { .post }
     var parameters: Parameters? {
         switch self {
-        case let .login(id, pw):
-            return ["identifier": id, "password": pw]
+        case let .login(identifier, password):
+            return ["identifier": identifier, "password": password]
         }
     }
     var headers: HTTPHeaders? { nil }

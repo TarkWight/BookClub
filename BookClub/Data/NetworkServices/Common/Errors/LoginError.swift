@@ -17,15 +17,15 @@ enum LoginError: Error, Equatable {
 
     static func == (lhs: LoginError, rhs: LoginError) -> Bool {
         switch (lhs, rhs) {
-        case let (.network(a), .network(b)):
-            return a == b
+        case let (.network(errA), .network(errB)):
+            return errA == errB
         case (.tokenNotFound, .tokenNotFound),
             (.identifierNotFound, .identifierNotFound),
             (.passwordNotFound, .passwordNotFound),
             (.unexpectedData, .unexpectedData):
             return true
-        case let (.unhandledError(a), .unhandledError(b)):
-            return a == b
+        case let (.unhandledError(errA), .unhandledError(errB)):
+            return errA == errB
         default:
             return false
         }
