@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+struct SearchEnvironment: Sendable {
+    let networkClient: NetworkClientProtocol
+    let storage: BookStorageServiceProtocol
+}
