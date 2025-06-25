@@ -18,7 +18,7 @@ actor RecentSearchService: RecentSearchServiceProtocol {
 
     func add(_ query: String) async throws {
         var array = defaults.stringArray(forKey: key) ?? []
-        array.removeAll() { $0 == query }
+        array.removeAll { $0 == query }
         array.insert(query, at: 0)
         if array.count > limit {
             array.removeLast(array.count - limit)
