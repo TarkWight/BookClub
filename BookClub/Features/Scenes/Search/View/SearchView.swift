@@ -8,14 +8,7 @@
 import SwiftUI
 
 struct SearchView: View {
-    //    @ObservedObject var router: Router
-    @State private var searchText: String = ""
-    @State private var recentQueries: [String] = SearchMock.recentSearches
-    let genres: [String] = SearchMock.genres
-    let authors: [SearchMock.Author] = SearchMock.authors
-    let books: [BookMockModel] = BookMock.getBooks(for: .all)
-
-    @State private var isSearching: Bool = false
+    @ObservedObject var store: Store<SearchState, SearchAction>
 
     var body: some View {
         ZStack {
@@ -23,24 +16,87 @@ struct SearchView: View {
                 .ignoresSafeArea()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
-                    searchField
+                VStack(
+                    alignment: .leading,
+                    spacing: SearchViewConstants.sectionSpacing
+                ) {
 
-                    if isSearching {
+                    searchField
+                        .padding(.horizontal, SearchViewConstants.sidePadding)
+
+                    if store.state.isSearching {
                         searchResultsSection
+                            .padding(
+                                .horizontal,
+                                SearchViewConstants.sidePadding
+                            )
                     } else {
                         recentSearchesSection
+                            .padding(
+                                .horizontal,
+                                SearchViewConstants.sidePadding
+                            )
                         genresSection
+                            .padding(
+                                .horizontal,
+                                SearchViewConstants.sidePadding
+                            )
                         authorsSection
+                            .padding(
+                                .horizontal,
+                                SearchViewConstants.sidePadding
+                            )
                     }
                 }
+            }
+        }
+        .onAppear { store.send(.onAppear) }
+        .refreshable {
+            store.send(.fetchRemoteAuthors)
+            store.send(.fetchRemoteGenres)
+        }
+        .sheet(
+            isPresented: Binding(
+                get: { store.state.lastErrorMessage != nil },
+                set: { isPresented in
+                    if !isPresented {
+                        store.send(.dismissError)
+                    }
+                }
+            )
+        ) {
+            if let msg = store.state.lastErrorMessage {
+                ErrorView(message: msg)
             }
         }
     }
 }
 
-// MARK: - UI Elements
+// MARK: — UI Elements
 extension SearchView {
+    var currentQueryText: String {
+        switch store.state.filter {
+        case .text(let tag): return tag
+        case .genre(let genre): return genre.name
+        case .author(let author): return author.name
+        default: return ""
+        }
+    }
+
+    fileprivate var searchText: Binding<String> {
+        Binding(
+            get: {
+                if case let .text(value) = store.state.filter {
+                    return value
+                } else {
+                    return ""
+                }
+            },
+            set: { newValue in
+                store.send(.didChangeSearchText(newValue))
+            }
+        )
+    }
 
     fileprivate var searchField: some View {
         HStack {
@@ -48,256 +104,284 @@ extension SearchView {
                 .resizable()
                 .renderingMode(.template)
                 .foregroundColor(AppColors.accentMedium)
-                .frame(width: Constants.iconSize, height: Constants.iconSize)
-                .padding(.leading, Constants.sidePadding)
+                .frame(
+                    width: SearchViewConstants.iconSize,
+                    height: SearchViewConstants.iconSize
+                )
 
             TextField(
                 LocalizedKey.searchFieldPlaceholder,
-                text: $searchText,
-                onEditingChanged: { _ in
-                    withAnimation {
-                        isSearching = !searchText.isEmpty
-                    }
-                }
+                text: searchText,
+                onCommit: { store.send(.didTapSearch) }
             )
             .font(AppFonts.body)
             .foregroundColor(AppColors.accentDark)
-            .padding(.leading, Constants.textFieldPadding)
+            .padding(.leading, SearchViewConstants.textFieldPadding)
 
-            if !searchText.isEmpty {
-                Button(
-                    action: {
-                        searchText = ""
-                        withAnimation {
-                            isSearching = false
-                        }
-                    },
-                    label: {
-                        AppImages.close
+            if !searchText.wrappedValue.isEmpty {
+                Button {
+                    store.send(.didClearSearch)
+                } label: {
+                    AppImages.close
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundColor(AppColors.accentDark)
+                        .frame(
+                            width: SearchViewConstants.iconSize,
+                            height: SearchViewConstants.iconSize
+                        )
+                }
+            }
+        }
+        .frame(height: SearchViewConstants.searchFieldHeight)
+        .background(AppColors.white)
+        .overlay(
+            RoundedRectangle(cornerRadius: SearchViewConstants.cornerRadiusBig)
+                .stroke(
+                    AppColors.accentMedium,
+                    lineWidth: SearchViewConstants.borderWidth
+                )
+        )
+    }
+
+    fileprivate var recentSearchesSection: some View {
+        VStack(
+            alignment: .leading,
+            spacing: SearchViewConstants.sectionSpacing
+        ) {
+            if !store.state.recentSearches.isEmpty {
+                Text(LocalizedKey.recentRequestsLabel)
+                    .applyFontH2AccentDarkStyle()
+
+                ForEach(store.state.recentSearches, id: \.self) { query in
+                    HStack {
+                        AppImages.history
                             .resizable()
                             .renderingMode(.template)
                             .foregroundColor(AppColors.accentDark)
                             .frame(
-                                width: Constants.iconSize,
-                                height: Constants.iconSize
+                                width: SearchViewConstants.iconSize,
+                                height: SearchViewConstants.iconSize
                             )
-                            .padding(.trailing, Constants.sidePadding)
+
+                        Text(query)
+                            .foregroundColor(AppColors.accentDark)
+
+                        Spacer()
+
+                        Button {
+                            store.send(.didClearSearch)
+                        } label: {
+                            AppImages.close
+                                .resizable()
+                                .renderingMode(.template)
+                                .foregroundColor(AppColors.accentDark)
+                                .frame(
+                                    width: SearchViewConstants.iconSize,
+                                    height: SearchViewConstants.iconSize
+                                )
+                        }
                     }
-                )
-            }
-        }
-        .frame(height: Constants.searchFieldHeight)
-        .overlay(
-            RoundedRectangle(cornerRadius: Constants.cornerRadiusBig)
-                .stroke(
-                    AppColors.accentMedium,
-                    lineWidth: Constants.borderWidth
-                )
-        )
-        .background(AppColors.white)
-        .padding(.horizontal, Constants.sidePadding)
-    }
-
-    fileprivate var recentSearchesSection: some View {
-        Group {
-            if !recentQueries.isEmpty {
-                Text(LocalizedKey.recentRequestsLabel)
-                    .applyFontH2AccentDarkStyle()
-                    .padding(.horizontal, Constants.sidePadding)
-
-                ForEach(recentQueries, id: \.self) { query in
-                    recentQueryItem(query)
+                    .frame(height: SearchViewConstants.recentQueryHeight)
+                    .background(AppColors.accentLight)
+                    .cornerRadius(SearchViewConstants.cornerRadius)
+                    .onTapGesture {
+                        store.send(.didSelectRecentSearch(query))
+                    }
                 }
             }
         }
     }
 
     fileprivate var genresSection: some View {
-        VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
+        VStack(
+            alignment: .leading,
+            spacing: SearchViewConstants.sectionSpacing
+        ) {
             Text(LocalizedKey.genresLabel)
                 .applyFontH2AccentDarkStyle()
-                .padding(.horizontal, Constants.sidePadding)
 
-            LazyVGrid(columns: [
-                GridItem(.fixed(Constants.genreWidth)),
-                GridItem(.fixed(Constants.genreWidth)),
-            ]) {
-                ForEach(genres, id: \.self) { genre in
-                    genreItem(genre)
+            switch store.state.genres {
+            case .idle, .loading:
+                ProgressView()
+            case .loaded(let items):
+                LazyVGrid(
+                    columns: [
+                        GridItem(.flexible()),
+                        GridItem(.flexible()),
+                    ],
+                    spacing: SearchViewConstants.itemSpacing
+                ) {
+                    ForEach(items) { genre in
+                        Text(genre.name)
+                            .applyFontBodySmallAccentDarkStyle()
+                            .frame(
+                                maxWidth: .infinity,
+                                minHeight: SearchViewConstants.genreHeight
+                            )
+                            .background(AppColors.accentLight)
+                            .cornerRadius(SearchViewConstants.cornerRadius)
+                            .onTapGesture {
+                                store.send(.didSelectGenre(genre))
+                            }
+                    }
                 }
+            case .failure(let message):
+                ErrorView(message: message)
             }
-            .padding(.horizontal, Constants.sidePadding)
         }
     }
 
     fileprivate var authorsSection: some View {
-        VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
+        VStack(
+            alignment: .leading,
+            spacing: SearchViewConstants.sectionSpacing
+        ) {
             Text(LocalizedKey.authorsLabel)
                 .applyFontH2AccentDarkStyle()
-                .padding(.horizontal, Constants.sidePadding)
 
-            ForEach(authors, id: \.name) { author in
-                authorItem(author)
+            switch store.state.authors {
+            case .idle, .loading:
+                ProgressView()
+            case .loaded(let items):
+                ForEach(items) { author in
+                    HStack {
+                        if let url = author.imageUrl.flatMap(URL.init(string:))
+                        {
+                            AsyncImage(url: url) { image in
+                                image.resizable().scaledToFill()
+                            } placeholder: {
+                                Color.gray.opacity(0.3)
+                            }
+                            .frame(
+                                width: SearchViewConstants.authorImageSize,
+                                height: SearchViewConstants.authorImageSize
+                            )
+                            .clipShape(Circle())
+                        }
+                        Text(author.name)
+                            .foregroundColor(AppColors.accentDark)
+                        Spacer()
+                    }
+                    .frame(height: SearchViewConstants.authorRowHeight)
+                    .background(AppColors.accentLight)
+                    .cornerRadius(SearchViewConstants.cornerRadius)
+                    .onTapGesture {
+                        store.send(.didSelectAuthor(author))
+                    }
+                }
+            case .failure(let message):
+                ErrorView(message: message)
             }
         }
     }
 
     fileprivate var searchResultsSection: some View {
-        VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
+        VStack(
+            alignment: .leading,
+            spacing: SearchViewConstants.sectionSpacing
+        ) {
+            switch store.state.searchResults {
+            case .idle:
+                EmptyView()
 
-            ForEach(
-                books.filter {
-                    $0.title.localizedCaseInsensitiveContains(searchText)
-                        || $0.author.localizedCaseInsensitiveContains(
-                            searchText
-                        )
+            case .loading:
+                ProgressView()
+
+            case .loaded(let items):
+                if items.isEmpty {
+                    Text("По запросу «\(currentQueryText)» ничего не найдено")
+                        .foregroundColor(.secondary)
+                        .padding()
+                } else {
+                    ForEach(items) { book in
+                        BookCell(book: book) {
+                            store.send(
+                                .didSelectBook(documentId: book.documentId)
+                            )
+                        }
+                    }
                 }
-            ) { book in
-                bookItem(book)
+
+            case .failure:
+                EmptyView()
             }
         }
     }
 }
 
-// MARK: - UI Items
-extension SearchView {
-    fileprivate func recentQueryItem(_ query: String) -> some View {
-        HStack {
-            AppImages.history
-                .resizable()
-                .renderingMode(.template)
-                .foregroundColor(AppColors.accentDark)
-                .frame(width: Constants.iconSize, height: Constants.iconSize)
-                .padding(.leading, Constants.sidePadding)
+// MARK: — BookCell
+private struct BookCell: View {
+    let book: BookDetailsItem
+    let onTap: () -> Void
 
-            Text(query)
-                .foregroundColor(AppColors.accentDark)
-
-            Spacer()
-
-            Button(
-                action: {
-                    recentQueries.removeAll { $0 == query }
-                },
-                label: {
-                    AppImages.close
-                        .resizable()
-                        .renderingMode(.template)
-                        .foregroundColor(AppColors.accentDark)
-                        .frame(
-                            width: Constants.iconSize,
-                            height: Constants.iconSize
-                        )
-                        .padding(.trailing, Constants.sidePadding)
+    var body: some View {
+        Button(action: onTap) {
+            HStack(
+                alignment: .top,
+                spacing: BookCellConstants.itemSpacing
+            ) {
+                AsyncImage(url: book.coverURL) { image in
+                    image.resizable().scaledToFill()
+                } placeholder: {
+                    Color.gray.opacity(0.3)
                 }
-            )
-        }
-        .frame(height: Constants.recentQueryHeight)
-        .background(AppColors.accentLight)
-        .cornerRadius(Constants.cornerRadius)
-        .padding(.horizontal, Constants.sidePadding)
-        .onTapGesture {
-            searchText = query
-            isSearching = true
-        }
-    }
-
-    fileprivate func genreItem(_ genre: String) -> some View {
-        Text(genre)
-            .applyFontBodySmallAccentDarkStyle()
-            .frame(width: Constants.genreWidth, height: Constants.genreHeight)
-            .background(AppColors.accentLight)
-            .cornerRadius(Constants.cornerRadius)
-            .onTapGesture {
-                searchText = genre
-                isSearching = true
-            }
-    }
-
-    fileprivate func authorItem(_ author: SearchMock.Author) -> some View {
-        HStack {
-            Image(author.imageName)
-                .resizable()
-                .scaledToFill()
                 .frame(
-                    width: Constants.authorImageSize,
-                    height: Constants.authorImageSize
+                    width: BookCellConstants.bookImageWidth,
+                    height: BookCellConstants.bookImageHeight
                 )
-                .clipShape(Circle())
-                .padding(.leading, Constants.sidePadding)
+                .cornerRadius(BookCellConstants.cornerRadius)
 
-            Text(author.name)
-                .foregroundColor(AppColors.accentDark)
-                .padding(.leading, Constants.textFieldPadding)
-
-            Spacer()
-        }
-        .frame(height: Constants.authorRowHeight)
-        .background(AppColors.accentLight)
-        .cornerRadius(Constants.cornerRadius)
-        .padding(.horizontal, Constants.sidePadding)
-        .onTapGesture {
-            searchText = author.name
-            isSearching = true
-        }
-    }
-
-    fileprivate func bookItem(_ book: BookMockModel) -> some View {
-        HStack {
-            Image(book.imageName)
-                .resizable()
-                .scaledToFill()
-                .frame(width: 80, height: 126)
-                .cornerRadius(Constants.cornerRadiusSmall)
-
-            VStack(alignment: .leading) {
-                Text(book.title)
-                    .applyFontH2AccentDarkStyle()
-
-                Text(book.author)
-                    .applyFontBodySmallAccentDarkStyle()
+                VStack(
+                    alignment: .leading,
+                    spacing: BookCellConstants.itemSpacing
+                ) {
+                    Text(book.title)
+                        .applyFontH3AccentDarkStyle()
+                        .lineLimit(2)
+                    Text(book.documentId)
+                        .applyFontFootNoteStyle()
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
             }
-
-            Spacer()
+            .padding(.vertical, BookCellConstants.verticalPadding)
         }
-        .frame(height: Constants.bookRowHeight)
-        .padding(.horizontal, Constants.sidePadding)
-        .onTapGesture {
-            print("router.navigateTo(.bookDetails)")
-        }
+        .buttonStyle(.plain)
     }
 }
 
-// MARK: - Constants
-extension SearchView {
-    fileprivate enum Constants {
-        static let sectionSpacing: CGFloat = 16
-        static let sidePadding: CGFloat = 16
-        static let textFieldPadding: CGFloat = 8
-        static let borderWidth: CGFloat = 1
-        static let cornerRadiusBig: CGFloat = 10
-        static let cornerRadius: CGFloat = 8
-        static let cornerRadiusSmall: CGFloat = 4
-        static let gridSpacing: CGFloat = 8
+// MARK: — SearchView Constants
+private enum SearchViewConstants {
+    static let sectionSpacing: CGFloat = 16
+    static let sidePadding: CGFloat = 16
+    static let textFieldPadding: CGFloat = 8
+    static let borderWidth: CGFloat = 1
+    static let cornerRadiusBig: CGFloat = 10
+    static let cornerRadius: CGFloat = 8
+    static let recentQueryHeight: CGFloat = 56
+    static let genreHeight: CGFloat = 48
+    static let authorRowHeight: CGFloat = 56
+    static let authorImageSize: CGFloat = 40
+    static let iconSize: CGFloat = 20
+    static let itemSpacing: CGFloat = 12
+    static let searchFieldHeight: CGFloat = 44
+}
 
-        static let searchFieldHeight: CGFloat = 44
-        static let recentQueryHeight: CGFloat = 56
-
-        static let genreHeight: CGFloat = 48
-        @MainActor
-        static var genreWidth: CGFloat {
-            (UIScreen.main.bounds.width - (2 * sidePadding) - (gridSpacing * 1))
-                / 2
-        }
-
-        static let bookRowHeight: CGFloat = 126
-
-        static let authorRowHeight: CGFloat = 72
-        static let authorImageSize: CGFloat = 48
-        static let iconSize: CGFloat = 20
-    }
+// MARK: — BookCell Constants
+private enum BookCellConstants {
+    static let bookImageWidth: CGFloat = 60
+    static let bookImageHeight: CGFloat = 90
+    static let cornerRadius: CGFloat = 8
+    static let itemSpacing: CGFloat = 12
+    static let verticalPadding: CGFloat = 8
 }
 
 #Preview {
-    SearchView()
+    SearchView(
+        store: Store<SearchState, SearchAction>(
+            initialState: .init(),
+            reducer: { _, _ in .none }
+        )
+    )
 }
