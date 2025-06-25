@@ -171,4 +171,8 @@ extension LocalizedKey {
     )
     static let noData = NSLocalizedString("error_noData", comment: "")
     static let urlError = NSLocalizedString("error_urlError", comment: "")
+    static let requestTimeout = NSLocalizedString(
+        "error_requestTimeout",
+        comment: ""
+    )
 }
