@@ -11,7 +11,7 @@ import Foundation
 enum AuthConfig: NetworkConfigProtocol {
     case login(identifier: String, password: String)
 
-    var path: String { "auth" }
+    var path: String { "auth/" }
     var endPoint: String { "local" }
     var method: HTTPMethod { .post }
     var parameters: Parameters? {
