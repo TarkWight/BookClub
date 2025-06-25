@@ -22,6 +22,7 @@ enum SearchAction: Equatable {
     case didSelectBook(documentId: String)
 
     // MARK: — Recent Searches
+    case addRecentSearch(String)
     case fetchRecentSearches
     case recentSearchesLoaded([String])
 

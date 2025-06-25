@@ -34,6 +34,16 @@ func searchReducer(
             }
         }
 
+    case .addRecentSearch(let recent):
+        return .merge(
+            .fireAndForget {
+                try? await env.recentSearchService.add(recent)
+            },
+            .task {
+                return .fetchRecentSearches
+            }
+        )
+
     case .recentSearchesLoaded(let recents):
         state.recentSearches = recents
         return .none
@@ -85,6 +95,7 @@ func searchReducer(
         return .none
 
     case .didSelectRecentSearch(let query):
+        state.filter = .text(query)
         state.searchResults = .loading
         return .task {
             do {

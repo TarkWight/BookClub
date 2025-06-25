@@ -16,36 +16,21 @@ struct SearchView: View {
                 .ignoresSafeArea()
 
             ScrollView {
-                VStack(
-                    alignment: .leading,
-                    spacing: SearchViewConstants.sectionSpacing
-                ) {
-
+                VStack(alignment: .leading, spacing: SearchViewConstants.sectionSpacing) {
                     searchField
                         .padding(.horizontal, SearchViewConstants.sidePadding)
 
-                    if store.state.isSearching {
-                        searchResultsSection
-                            .padding(
-                                .horizontal,
-                                SearchViewConstants.sidePadding
-                            )
-                    } else {
+                    switch store.state.searchResults {
+                    case .idle:
                         recentSearchesSection
-                            .padding(
-                                .horizontal,
-                                SearchViewConstants.sidePadding
-                            )
+                            .padding(.horizontal, SearchViewConstants.sidePadding)
                         genresSection
-                            .padding(
-                                .horizontal,
-                                SearchViewConstants.sidePadding
-                            )
+                            .padding(.horizontal, SearchViewConstants.sidePadding)
                         authorsSection
-                            .padding(
-                                .horizontal,
-                                SearchViewConstants.sidePadding
-                            )
+                            .padding(.horizontal, SearchViewConstants.sidePadding)
+                    default:
+                        searchResultsSection
+                            .padding(.horizontal, SearchViewConstants.sidePadding)
                     }
                 }
             }
@@ -90,16 +75,10 @@ extension SearchView {
         Binding(
             get: {
                 switch store.state.filter {
-                case .text(let value):
-                    return value
-                case .genre(let genre):
-                    return genre.name
-                case .author(let author):
-                    return author.name
-                case .empty:
-                    return ""
-                case .none:
-                    return ""
+                case .text(let value): return value
+                case .genre(let genre): return genre.name
+                case .author(let author): return author.name
+                default: return ""
                 }
             },
             set: { newValue in
@@ -114,15 +93,17 @@ extension SearchView {
                 .resizable()
                 .renderingMode(.template)
                 .foregroundColor(AppColors.accentMedium)
-                .frame(
-                    width: SearchViewConstants.iconSize,
-                    height: SearchViewConstants.iconSize
-                )
+                .frame(width: SearchViewConstants.iconSize, height: SearchViewConstants.iconSize)
 
             TextField(
                 LocalizedKey.searchFieldPlaceholder,
                 text: searchText,
-                onCommit: { store.send(.didTapSearch) }
+                onCommit: {
+                    store.send(.didTapSearch)
+                    let query = searchText.wrappedValue.trimmingCharacters(in: .whitespaces)
+                    guard !query.isEmpty else { return }
+                    store.send(.addRecentSearch(query))
+                }
             )
             .font(AppFonts.body)
             .foregroundColor(AppColors.accentDark)
@@ -136,10 +117,7 @@ extension SearchView {
                         .resizable()
                         .renderingMode(.template)
                         .foregroundColor(AppColors.accentDark)
-                        .frame(
-                            width: SearchViewConstants.iconSize,
-                            height: SearchViewConstants.iconSize
-                        )
+                        .frame(width: SearchViewConstants.iconSize, height: SearchViewConstants.iconSize)
                 }
             }
         }
@@ -147,18 +125,12 @@ extension SearchView {
         .background(AppColors.white)
         .overlay(
             RoundedRectangle(cornerRadius: SearchViewConstants.cornerRadiusBig)
-                .stroke(
-                    AppColors.accentMedium,
-                    lineWidth: SearchViewConstants.borderWidth
-                )
+                .stroke(AppColors.accentMedium, lineWidth: SearchViewConstants.borderWidth)
         )
     }
 
     fileprivate var recentSearchesSection: some View {
-        VStack(
-            alignment: .leading,
-            spacing: SearchViewConstants.sectionSpacing
-        ) {
+        VStack(alignment: .leading, spacing: SearchViewConstants.sectionSpacing) {
             if !store.state.recentSearches.isEmpty {
                 Text(LocalizedKey.recentRequestsLabel)
                     .applyFontH2AccentDarkStyle()
@@ -169,28 +141,12 @@ extension SearchView {
                             .resizable()
                             .renderingMode(.template)
                             .foregroundColor(AppColors.accentDark)
-                            .frame(
-                                width: SearchViewConstants.iconSize,
-                                height: SearchViewConstants.iconSize
-                            )
+                            .frame(width: SearchViewConstants.iconSize, height: SearchViewConstants.iconSize)
 
                         Text(query)
                             .foregroundColor(AppColors.accentDark)
 
                         Spacer()
-
-                        Button {
-                            store.send(.didClearSearch)
-                        } label: {
-                            AppImages.close
-                                .resizable()
-                                .renderingMode(.template)
-                                .foregroundColor(AppColors.accentDark)
-                                .frame(
-                                    width: SearchViewConstants.iconSize,
-                                    height: SearchViewConstants.iconSize
-                                )
-                        }
                     }
                     .frame(height: SearchViewConstants.recentQueryHeight)
                     .background(AppColors.accentLight)
@@ -204,10 +160,7 @@ extension SearchView {
     }
 
     fileprivate var genresSection: some View {
-        VStack(
-            alignment: .leading,
-            spacing: SearchViewConstants.sectionSpacing
-        ) {
+        VStack(alignment: .leading, spacing: SearchViewConstants.sectionSpacing) {
             Text(LocalizedKey.genresLabel)
                 .applyFontH2AccentDarkStyle()
 
@@ -215,24 +168,16 @@ extension SearchView {
             case .idle, .loading:
                 ProgressView()
             case .loaded(let items):
-                LazyVGrid(
-                    columns: [
-                        GridItem(.flexible()),
-                        GridItem(.flexible()),
-                    ],
-                    spacing: SearchViewConstants.itemSpacing
-                ) {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: SearchViewConstants.itemSpacing) {
                     ForEach(items) { genre in
                         Text(genre.name)
                             .applyFontBodySmallAccentDarkStyle()
-                            .frame(
-                                maxWidth: .infinity,
-                                minHeight: SearchViewConstants.genreHeight
-                            )
+                            .frame(maxWidth: .infinity, minHeight: SearchViewConstants.genreHeight)
                             .background(AppColors.accentLight)
                             .cornerRadius(SearchViewConstants.cornerRadius)
                             .onTapGesture {
                                 store.send(.didSelectGenre(genre))
+                                store.send(.addRecentSearch(genre.name))
                             }
                     }
                 }
@@ -243,10 +188,7 @@ extension SearchView {
     }
 
     fileprivate var authorsSection: some View {
-        VStack(
-            alignment: .leading,
-            spacing: SearchViewConstants.sectionSpacing
-        ) {
+        VStack(alignment: .leading, spacing: SearchViewConstants.sectionSpacing) {
             Text(LocalizedKey.authorsLabel)
                 .applyFontH2AccentDarkStyle()
 
@@ -256,17 +198,13 @@ extension SearchView {
             case .loaded(let items):
                 ForEach(items) { author in
                     HStack {
-                        if let url = author.imageUrl.flatMap(URL.init(string:))
-                        {
+                        if let url = author.imageUrl.flatMap(URL.init(string:)) {
                             AsyncImage(url: url) { image in
                                 image.resizable().scaledToFill()
                             } placeholder: {
                                 Color.gray.opacity(0.3)
                             }
-                            .frame(
-                                width: SearchViewConstants.authorImageSize,
-                                height: SearchViewConstants.authorImageSize
-                            )
+                            .frame(width: SearchViewConstants.authorImageSize, height: SearchViewConstants.authorImageSize)
                             .clipShape(Circle())
                         }
                         Text(author.name)
@@ -278,6 +216,7 @@ extension SearchView {
                     .cornerRadius(SearchViewConstants.cornerRadius)
                     .onTapGesture {
                         store.send(.didSelectAuthor(author))
+                        store.send(.addRecentSearch(author.name))
                     }
                 }
             case .failure(let message):
@@ -287,17 +226,12 @@ extension SearchView {
     }
 
     fileprivate var searchResultsSection: some View {
-        VStack(
-            alignment: .leading,
-            spacing: SearchViewConstants.sectionSpacing
-        ) {
+        VStack(alignment: .leading, spacing: SearchViewConstants.sectionSpacing) {
             switch store.state.searchResults {
             case .idle:
                 EmptyView()
-
             case .loading:
                 ProgressView()
-
             case .loaded(let items):
                 if items.isEmpty {
                     Text("По запросу «\(currentQueryText)» ничего не найдено")
@@ -306,13 +240,10 @@ extension SearchView {
                 } else {
                     ForEach(items) { book in
                         BookCell(book: book) {
-                            store.send(
-                                .didSelectBook(documentId: book.documentId)
-                            )
+                            store.send(.didSelectBook(documentId: book.documentId))
                         }
                     }
                 }
-
             case .failure:
                 EmptyView()
             }
@@ -327,25 +258,16 @@ private struct BookCell: View {
 
     var body: some View {
         Button(action: onTap) {
-            HStack(
-                alignment: .top,
-                spacing: BookCellConstants.itemSpacing
-            ) {
+            HStack(alignment: .top, spacing: BookCellConstants.itemSpacing) {
                 AsyncImage(url: book.coverURL) { image in
                     image.resizable().scaledToFill()
                 } placeholder: {
                     Color.gray.opacity(0.3)
                 }
-                .frame(
-                    width: BookCellConstants.bookImageWidth,
-                    height: BookCellConstants.bookImageHeight
-                )
+                .frame(width: BookCellConstants.bookImageWidth, height: BookCellConstants.bookImageHeight)
                 .cornerRadius(BookCellConstants.cornerRadius)
 
-                VStack(
-                    alignment: .leading,
-                    spacing: BookCellConstants.itemSpacing
-                ) {
+                VStack(alignment: .leading, spacing: BookCellConstants.itemSpacing) {
                     Text(book.title)
                         .applyFontH3AccentDarkStyle()
                         .lineLimit(2)
