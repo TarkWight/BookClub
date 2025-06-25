@@ -86,9 +86,16 @@ extension SearchView {
     fileprivate var searchText: Binding<String> {
         Binding(
             get: {
-                if case let .text(value) = store.state.filter {
+                switch store.state.filter {
+                case .text(let value):
                     return value
-                } else {
+                case .genre(let genre):
+                    return genre.name
+                case .author(let author):
+                    return author.name
+                case .empty:
+                    return ""
+                case .none:
                     return ""
                 }
             },

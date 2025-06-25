@@ -11,4 +11,5 @@ enum SearchFilter: Equatable, Sendable {
     case text(String)
     case genre(GenreItem)
     case author(AuthorItem)
+    case empty
 }
