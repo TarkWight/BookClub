@@ -6,6 +6,7 @@
 //
 
 import Alamofire
+import CoreData
 import SwiftUI
 
 @main
@@ -13,15 +14,27 @@ struct BookClubApp: App {
     let store: Store<AppState, AppAction>
 
     init() {
-        // MARK: - Services
+        // MARK: — Core Data
+        let container = NSPersistentContainer(name: "BookClub")
+        container.loadPersistentStores { _, error in
+            if let error = error {
+                fatalError("Unresolved Core Data error: \(error)")
+            }
+        }
+        container.viewContext.automaticallyMergesChangesFromParent = true
+
+        // MARK: — Сервисы хранения
+        let bookStorage = BookStorageService(container: container)
+        let genreStorage = GenreStorageService(container: container)
+        let authorStorage = AuthorStorageService(container: container)
+
+        // MARK: — Остальные сервисы
         let keychainService = KeychainService() as KeychainServiceProtocol
         let authService =
             AuthService(
                 networkClient: BookClubApp.makePlainClient(),
                 keychainService: keychainService
             ) as AuthServiceProtocol
-
-        // MARK: - Network Client with Auth
         let networkClient =
             NetworkClient(
                 session: BookClubApp.makeSession(
@@ -31,17 +44,18 @@ struct BookClubApp: App {
                     )
                 )
             ) as NetworkClientProtocol
+        let recentSearchService = RecentSearchService()
 
-        // MARK: - Core Data Storage
-        let bookStorage = BookStorageService()
-
-        // MARK: - Environment & Store
+        // MARK: — Окружение и стор
         let environment = AppEnvironment(
             authService: authService,
             networkClient: networkClient,
-            bookStorage: bookStorage
+            bookStorage: bookStorage,
+            genreStorage: genreStorage,
+            authorStorage: authorStorage,
+            recentSearchService: recentSearchService
         )
-        self.store = Store(
+        store = Store(
             initialState: AppState(),
             reducer: { state, action in
                 appReducer(state: &state, action: action, env: environment)
