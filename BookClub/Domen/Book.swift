@@ -14,7 +14,4 @@ struct Book: Equatable, Sendable {
     let coverURL: URL?
     let illustrationURL: URL?
     let isNew: Bool
-    let createdAt: Date
-    let publishedAt: Date
-    let updatedAt: Date
 }
