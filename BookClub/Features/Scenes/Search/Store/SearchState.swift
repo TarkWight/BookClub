@@ -8,29 +8,17 @@
 import Foundation
 
 struct SearchState: Equatable, Sendable {
-    var genres: Loadable<GenreItem> = .idle
-    var authors: Loadable<AuthorItem> = .idle
-    var recentSearches: Loadable<RecentSearches> = .idle
-    
-    var selectedGenre: String?
-    var selectedAuthor: String?
-    var selectedRecentSearch: String?
-    
-    var selectedBookID: String?
-}
+    var filter: SearchFilter? = nil
 
-struct GenreItem: Identifiable, Equatable, Codable {
-    var id: Int64
-    var name: String
-}
+    var isSearching: Bool { filter != nil }
 
-struct AuthorItem: Identifiable, Equatable, Codable {
-    var id: Int64
-    var name: String
-    var imageUrl: String?
-}
+    var recentSearches: [String] = []
 
-struct RecentSearches: Identifiable, Equatable, Codable {
-    var id: Int64
-    var name: String
+    var genres: Loadable<[GenreItem]> = .idle
+    var authors: Loadable<[AuthorItem]> = .idle
+
+    var searchResults: Loadable<[BookDetailsItem]> = .idle
+
+    var lastErrorMessage: String? = nil
+    var selectedBookID: String? = nil
 }

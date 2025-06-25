@@ -7,7 +7,9 @@
 
 import Foundation
 
-struct SearchEnvironment: Sendable {
+struct SearchEnvironment {
     let networkClient: NetworkClientProtocol
-    let storage: BookStorageServiceProtocol
+    let genreStorage: GenreStorageServiceProtocol
+    let authorStorage: AuthorStorageServiceProtocol
+    let recentSearchService: RecentSearchServiceProtocol
 }

@@ -8,39 +8,44 @@
 import Foundation
 
 enum SearchAction: Equatable {
-    // MARK: – Local storage (DB)
+    // MARK: — Lifecycle
+    case onAppear
+    case dismissError
+
+    // MARK: — UI
+    case didChangeSearchText(String)
+    case didTapSearch
+    case didClearSearch
+    case didSelectRecentSearch(String)
+    case didSelectGenre(GenreItem)
+    case didSelectAuthor(AuthorItem)
+    case didSelectBook(documentId: String)
+
+    // MARK: — Recent Searches
+    case fetchRecentSearches
+    case recentSearchesLoaded([String])
+
+    // MARK: — Local DB (genres/authors)
     case fetchLocalGenres
     case localGenresLoaded([GenreItem])
-
     case fetchLocalAuthors
     case localAuthorsLoaded([AuthorItem])
 
-    case fetchRecentSearches
-    case RecentSearchesLoaded([RecentSearches])
+    // MARK: — Remote (Network): Genres
+    case fetchRemoteGenres
+    case remoteGenresLoaded(Result<[GenreItem], NetworkError>)
 
-    // MARK: – Network (API)
-	case requestFindBooksByName(query: String)
-    case findBooksByNameResponse(Result<[BookDetailsItem], NetworkError>)
+    // MARK: — Remote (Network): Authors
+    case fetchRemoteAuthors
+    case remoteAuthorsLoaded(Result<[AuthorItem], NetworkError>)
 
-    case requestFindBooksByGenre(genreID: String)
-    case findBooksByGenreResponse(Result<[BookDetailsItem], NetworkError>)
-    
-    case requestFindBooksByAuthor(authorID: String)
-    case findBooksByAuthorResponse(Result<[BookDetailsItem], NetworkError>)
+    // MARK: — Remote (Network): Books
+    case fetchBooksByText(String)
+    case booksByTextLoaded(Result<[BookDetailsItem], NetworkError>)
 
-    case requestGetAuthors
-    case findAuthorsResponse(Result<[AuthorItem], NetworkError>)
+    case fetchBooksByGenre(GenreItem)
+    case booksByGenreLoaded(Result<[BookDetailsItem], NetworkError>)
 
-    case requestGetGenres
-    case findGenresResponse(Result<[GenreItem], NetworkError>)
-
-    // MARK: - Part 1 selected
-    case dedSelectAuthor(authorID: String)
-    case dedSelectGenre(genreID: String)
-    case didSelectSearchQuery(query: String)
-    case didSearchQueryClear
-    case didSearchTapped(query: String)
-
-    // MARK: – Part 2 selected
-    case didSelectBook(documentID: String)
+    case fetchBooksByAuthor(AuthorItem)
+    case booksByAuthorLoaded(Result<[BookDetailsItem], NetworkError>)
 }
