@@ -48,6 +48,13 @@ func searchReducer(
         state.recentSearches = recents
         return .none
 
+    case .removeRecentSearch(let query):
+        return .task {
+            try? await env.recentSearchService.remove(query)
+            let recents = (try? await env.recentSearchService.load()) ?? []
+            return .recentSearchesLoaded(recents)
+        }
+
     // MARK: — Local DB (genres/authors)
     case .fetchLocalGenres:
         state.genres = .loading

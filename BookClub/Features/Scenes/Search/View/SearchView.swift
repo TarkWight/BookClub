@@ -16,21 +16,36 @@ struct SearchView: View {
                 .ignoresSafeArea()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: SearchViewConstants.sectionSpacing) {
+                VStack(
+                    alignment: .leading,
+                    spacing: SearchViewConstants.sectionSpacing
+                ) {
                     searchField
                         .padding(.horizontal, SearchViewConstants.sidePadding)
 
                     switch store.state.searchResults {
                     case .idle:
                         recentSearchesSection
-                            .padding(.horizontal, SearchViewConstants.sidePadding)
+                            .padding(
+                                .horizontal,
+                                SearchViewConstants.sidePadding
+                            )
                         genresSection
-                            .padding(.horizontal, SearchViewConstants.sidePadding)
+                            .padding(
+                                .horizontal,
+                                SearchViewConstants.sidePadding
+                            )
                         authorsSection
-                            .padding(.horizontal, SearchViewConstants.sidePadding)
+                            .padding(
+                                .horizontal,
+                                SearchViewConstants.sidePadding
+                            )
                     default:
                         searchResultsSection
-                            .padding(.horizontal, SearchViewConstants.sidePadding)
+                            .padding(
+                                .horizontal,
+                                SearchViewConstants.sidePadding
+                            )
                     }
                 }
             }
@@ -93,14 +108,19 @@ extension SearchView {
                 .resizable()
                 .renderingMode(.template)
                 .foregroundColor(AppColors.accentMedium)
-                .frame(width: SearchViewConstants.iconSize, height: SearchViewConstants.iconSize)
+                .frame(
+                    width: SearchViewConstants.iconSize,
+                    height: SearchViewConstants.iconSize
+                )
 
             TextField(
                 LocalizedKey.searchFieldPlaceholder,
                 text: searchText,
                 onCommit: {
                     store.send(.didTapSearch)
-                    let query = searchText.wrappedValue.trimmingCharacters(in: .whitespaces)
+                    let query = searchText.wrappedValue.trimmingCharacters(
+                        in: .whitespaces
+                    )
                     guard !query.isEmpty else { return }
                     store.send(.addRecentSearch(query))
                 }
@@ -117,7 +137,10 @@ extension SearchView {
                         .resizable()
                         .renderingMode(.template)
                         .foregroundColor(AppColors.accentDark)
-                        .frame(width: SearchViewConstants.iconSize, height: SearchViewConstants.iconSize)
+                        .frame(
+                            width: SearchViewConstants.iconSize,
+                            height: SearchViewConstants.iconSize
+                        )
                 }
             }
         }
@@ -125,7 +148,10 @@ extension SearchView {
         .background(AppColors.white)
         .overlay(
             RoundedRectangle(cornerRadius: SearchViewConstants.cornerRadiusBig)
-                .stroke(AppColors.accentMedium, lineWidth: SearchViewConstants.borderWidth)
+                .stroke(
+                    AppColors.accentMedium,
+                    lineWidth: SearchViewConstants.borderWidth
+                )
         )
     }
 
@@ -141,12 +167,28 @@ extension SearchView {
                             .resizable()
                             .renderingMode(.template)
                             .foregroundColor(AppColors.accentDark)
-                            .frame(width: SearchViewConstants.iconSize, height: SearchViewConstants.iconSize)
+                            .frame(
+                                width: SearchViewConstants.iconSize,
+                                height: SearchViewConstants.iconSize
+                            )
 
                         Text(query)
                             .foregroundColor(AppColors.accentDark)
 
                         Spacer()
+
+                        Button {
+                            store.send(.removeRecentSearch(query))
+                        } label: {
+                            AppImages.close
+                                .resizable()
+                                .renderingMode(.template)
+                                .foregroundColor(AppColors.accentDark)
+                                .frame(
+                                    width: SearchViewConstants.iconSize,
+                                    height: SearchViewConstants.iconSize
+                                )
+                        }
                     }
                     .frame(height: SearchViewConstants.recentQueryHeight)
                     .background(AppColors.accentLight)
@@ -168,11 +210,17 @@ extension SearchView {
             case .idle, .loading:
                 ProgressView()
             case .loaded(let items):
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: SearchViewConstants.itemSpacing) {
+                LazyVGrid(
+                    columns: [GridItem(.flexible()), GridItem(.flexible())],
+                    spacing: SearchViewConstants.itemSpacing
+                ) {
                     ForEach(items) { genre in
                         Text(genre.name)
                             .applyFontBodySmallAccentDarkStyle()
-                            .frame(maxWidth: .infinity, minHeight: SearchViewConstants.genreHeight)
+                            .frame(
+                                maxWidth: .infinity,
+                                minHeight: SearchViewConstants.genreHeight
+                            )
                             .background(AppColors.accentLight)
                             .cornerRadius(SearchViewConstants.cornerRadius)
                             .onTapGesture {
@@ -204,7 +252,10 @@ extension SearchView {
                             } placeholder: {
                                 Color.gray.opacity(0.3)
                             }
-                            .frame(width: SearchViewConstants.authorImageSize, height: SearchViewConstants.authorImageSize)
+                            .frame(
+                                width: SearchViewConstants.authorImageSize,
+                                height: SearchViewConstants.authorImageSize
+                            )
                             .clipShape(Circle())
                         }
                         Text(author.name)
@@ -240,7 +291,9 @@ extension SearchView {
                 } else {
                     ForEach(items) { book in
                         BookCell(book: book) {
-                            store.send(.didSelectBook(documentId: book.documentId))
+                            store.send(
+                                .didSelectBook(documentId: book.documentId)
+                            )
                         }
                     }
                 }
@@ -264,10 +317,16 @@ private struct BookCell: View {
                 } placeholder: {
                     Color.gray.opacity(0.3)
                 }
-                .frame(width: BookCellConstants.bookImageWidth, height: BookCellConstants.bookImageHeight)
+                .frame(
+                    width: BookCellConstants.bookImageWidth,
+                    height: BookCellConstants.bookImageHeight
+                )
                 .cornerRadius(BookCellConstants.cornerRadius)
 
-                VStack(alignment: .leading, spacing: BookCellConstants.itemSpacing) {
+                VStack(
+                    alignment: .leading,
+                    spacing: BookCellConstants.itemSpacing
+                ) {
                     Text(book.title)
                         .applyFontH3AccentDarkStyle()
                         .lineLimit(2)
@@ -295,7 +354,7 @@ private enum SearchViewConstants {
     static let genreHeight: CGFloat = 48
     static let authorRowHeight: CGFloat = 56
     static let authorImageSize: CGFloat = 40
-    static let iconSize: CGFloat = 20
+    static let iconSize: CGFloat = 24
     static let itemSpacing: CGFloat = 12
     static let searchFieldHeight: CGFloat = 44
 }
