@@ -24,6 +24,10 @@ final class Store<State, Action>: ObservableObject {
 
     func send(_ action: Action) {
         let effect = reducer(&state, action)
+        handle(effect)
+    }
+
+    private func handle(_ effect: Effect<Action>) {
         switch effect {
         case .none:
             break
@@ -35,7 +39,14 @@ final class Store<State, Action>: ObservableObject {
             }
 
         case .fireAndForget(let work):
-            Task { await work() }
+            Task {
+                await work()
+            }
+
+        case .batch(let effects):
+            for eff in effects {
+                handle(eff)
+            }
         }
     }
 
@@ -62,8 +73,7 @@ final class Store<State, Action>: ObservableObject {
         )
         Task { @MainActor in
             for await fullState in self.$state.values {
-                let newLocalState = toLocalState(fullState)
-                localStore.state = newLocalState
+                localStore.state = toLocalState(fullState)
             }
         }
         return localStore

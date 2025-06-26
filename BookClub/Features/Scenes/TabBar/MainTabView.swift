@@ -29,10 +29,10 @@ struct MainTabView: View {
             )
         case .search:
             SearchView(
-//                store: store.scope(
-//                    state: \.search,
-//                    action: MainTabAction.search
-//                )
+                store: store.scope(
+                    state: \.search,
+                    action: MainTabAction.search
+                )
             )
         case .bookmarks:
             BookmarksView(

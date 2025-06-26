@@ -21,9 +21,6 @@ extension BookEntity {
     @NSManaged var coverURL: String?
     @NSManaged var illustrationURL: String?
     @NSManaged var isNew: Bool
-    @NSManaged var createdAt: Date
-    @NSManaged var publishedAt: Date
-    @NSManaged var updatedAt: Date
 }
 
 extension BookEntity {
@@ -35,9 +32,6 @@ extension BookEntity {
             coverURL: coverURL.flatMap(URL.init(string:)),
             illustrationURL: illustrationURL.flatMap(URL.init(string:)),
             isNew: isNew,
-            createdAt: createdAt,
-            publishedAt: publishedAt,
-            updatedAt: updatedAt
         )
     }
 }
@@ -49,9 +43,5 @@ extension BookEntity {
         title = book.title
         coverURL = book.coverURL?.absoluteString
         illustrationURL = book.illustrationURL?.absoluteString
-        isNew = book.isNew
-        createdAt = book.createdAt
-        publishedAt = book.publishedAt
-        updatedAt = book.updatedAt
-    }
+        isNew = book.isNew    }
 }

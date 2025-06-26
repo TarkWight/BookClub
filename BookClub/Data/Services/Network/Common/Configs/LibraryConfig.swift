@@ -12,7 +12,7 @@ enum LibraryConfig: NetworkConfigProtocol {
     case list(page: Int, pageSize: Int)
     case newBooks
 
-    var path: String { "books" }
+    var path: String { "books/" }
     var endPoint: String { "" }
     var method: HTTPMethod { .get }
     var parameters: Parameters? {

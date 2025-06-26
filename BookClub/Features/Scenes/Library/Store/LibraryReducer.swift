@@ -39,15 +39,6 @@ func libraryReducer(
                         documentId: book.documentId,
                         title: book.title,
                         coverURL: book.coverURL,
-                        createdAt: ISO8601DateFormatter().string(
-                            from: book.createdAt
-                        ),
-                        updatedAt: ISO8601DateFormatter().string(
-                            from: book.updatedAt
-                        ),
-                        publishedAt: ISO8601DateFormatter().string(
-                            from: book.createdAt
-                        ),
                         isNew: book.isNew,
                         illustrationURL: book.illustrationURL
                     )
@@ -85,15 +76,6 @@ func libraryReducer(
                         documentId: book.documentId,
                         title: book.title,
                         coverURL: book.coverURL,
-                        createdAt: ISO8601DateFormatter().string(
-                            from: book.createdAt
-                        ),
-                        updatedAt: ISO8601DateFormatter().string(
-                            from: book.updatedAt
-                        ),
-                        publishedAt: ISO8601DateFormatter().string(
-                            from: book.createdAt
-                        ),
                         isNew: book.isNew,
                         illustrationURL: book.illustrationURL
                     )
@@ -110,7 +92,27 @@ func libraryReducer(
             "[Library] Updating state with \(items.count) POPULAR local books"
         )
         state.popularBooks = .loaded(items)
-        return .none
+        state.popularBooks = .loaded(items)
+
+        return .fireAndForget {
+            let domainBooks = items.compactMap { item -> Book? in
+                Book(
+                    id: item.id,
+                    documentId: item.documentId,
+                    title: item.title,
+                    coverURL: item.coverURL,
+                    illustrationURL: item.illustrationURL,
+                    isNew: item.isNew
+                )
+            }
+            guard !domainBooks.isEmpty else { return }
+            do {
+                try await env.storage.save(domainBooks)
+                print("[Library] ✓ POPULAR books saved to DB")
+            } catch {
+                print("[Library] ✗ Saving POPULAR books to DB failed: \(error)")
+            }
+        }
 
     // MARK: – Network requests
 
@@ -149,26 +151,13 @@ func libraryReducer(
             return .fireAndForget {
                 let formatter = ISO8601DateFormatter()
                 let domain = items.compactMap { item -> Book? in
-                    guard
-                        let created = formatter.date(from: item.createdAt),
-                        let updated = formatter.date(from: item.updatedAt),
-                        let published = formatter.date(from: item.publishedAt)
-                    else {
-                        print(
-                            "[Library] ✗ Date parsing failed for item \(item.id)"
-                        )
-                        return nil
-                    }
                     return Book(
                         id: item.id,
                         documentId: item.documentId,
                         title: item.title,
                         coverURL: item.coverURL,
                         illustrationURL: item.illustrationURL,
-                        isNew: item.isNew,
-                        createdAt: created,
-                        publishedAt: published,
-                        updatedAt: updated
+                        isNew: item.isNew
                     )
                 }
                 if !domain.isEmpty {
@@ -226,6 +215,27 @@ func libraryReducer(
         case .success(let items):
             print("[Library] State update: POPULAR books loaded successfully")
             state.popularBooks = .loaded(items)
+            return .fireAndForget {
+                let domain = items.map {
+                    Book(
+                        id: $0.id,
+                        documentId: $0.documentId,
+                        title: $0.title,
+                        coverURL: $0.coverURL,
+                        illustrationURL: $0.illustrationURL,
+                        isNew: $0.isNew
+                    )
+                }
+                guard !domain.isEmpty else { return }
+                do {
+                    try await env.storage.save(domain)
+                    print("[Library] ✓ POPULAR books saved to DB")
+                } catch {
+                    print(
+                        "[Library] ✗ Saving POPULAR books to DB failed: \(error)"
+                    )
+                }
+            }
         case .failure(let error):
             print(
                 "[Library] State update: POPULAR books failed with \(error.localizedKey)"
