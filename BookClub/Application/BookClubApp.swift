@@ -86,8 +86,7 @@ struct BookClubApp: App {
     }
 
     private static func makeSession(with interceptor: RequestInterceptor?)
-        -> Session
-    {
+        -> Session {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 60
         config.timeoutIntervalForResource = 60

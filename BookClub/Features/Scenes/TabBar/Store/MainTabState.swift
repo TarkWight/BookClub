@@ -17,12 +17,11 @@ struct MainTabState: Equatable, Sendable {
 // Bookmarks feature (заглушки)
 struct BookmarksState: Equatable {}
 enum BookmarksAction: Equatable {}
-struct BookmarksEnvironment { /* сюда можно инжектить storageService */  }
+struct BookmarksEnvironment {}
 func bookmarksReducer(
     state: inout BookmarksState,
     action: BookmarksAction,
     env: BookmarksEnvironment
 ) -> Effect<BookmarksAction> {
-    // TODO: реализовать закладки
-    return .none
+
 }

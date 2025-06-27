@@ -8,8 +8,6 @@
 import Alamofire
 import Foundation
 
-import Alamofire
-
 enum ReadSessionConfig: NetworkConfigProtocol {
     case getProgresses
     case getChapters(bookId: Int)
