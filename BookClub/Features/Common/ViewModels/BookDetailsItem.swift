@@ -12,9 +12,6 @@ struct BookDetailsItem: Identifiable, Equatable, Codable {
     let documentId: String
     let title: String
     let coverURL: URL?
-    let createdAt: String
-    let updatedAt: String
-    let publishedAt: String
     let isNew: Bool
     let illustrationURL: URL?
 }
@@ -26,9 +23,6 @@ extension BookDetailsItem: HasPlaceholder {
             documentId: .placeholder(length: 5),
             title: .placeholder(length: 20),
             coverURL: nil,
-            createdAt: .placeholder(length: 10),
-            updatedAt: .placeholder(length: 10),
-            publishedAt: .placeholder(length: 10),
             isNew: true,
             illustrationURL: nil
         )

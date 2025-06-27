@@ -10,29 +10,38 @@ import Foundation
 
 enum NetworkError: Error, Equatable {
     case invalidURL(String)
-    case afError(AFError)
-    case urlError(URLError)
+    case notConnectedToInternet
+    case timedOut
+    case networkConnectionLost
+    case otherURL(URLError)
     case unacceptableStatusCode(Int)
     case decodingError(String)
+    case afError(AFError)
 
     static func == (lhs: NetworkError, rhs: NetworkError) -> Bool {
         switch (lhs, rhs) {
-        case let (.invalidURL(lhsURLString), .invalidURL(rhsURLString)):
-            return lhsURLString == rhsURLString
+        case let (.invalidURL(lhsURL), .invalidURL(rhsURL)):
+            return lhsURL == rhsURL
 
-        case let (.afError(lhsAFError), .afError(rhsAFError)):
-            return lhsAFError.errorDescription == rhsAFError.errorDescription
+        case (.notConnectedToInternet, .notConnectedToInternet),
+             (.timedOut, .timedOut),
+             (.networkConnectionLost, .networkConnectionLost):
+            return true
 
-        case let (.urlError(lhsURLError), .urlError(rhsURLError)):
-            return lhsURLError.code == rhsURLError.code
+        case let (.otherURL(lhsError), .otherURL(rhsError)):
+            return lhsError.code == rhsError.code
 
         case let (
-            .unacceptableStatusCode(lhsCode), .unacceptableStatusCode(rhsCode)
+            .unacceptableStatusCode(lhsCode),
+            .unacceptableStatusCode(rhsCode)
         ):
             return lhsCode == rhsCode
 
         case let (.decodingError(lhsMsg), .decodingError(rhsMsg)):
             return lhsMsg == rhsMsg
+
+        case let (.afError(lhsAF), .afError(rhsAF)):
+            return lhsAF.errorDescription == rhsAF.errorDescription
 
         default:
             return false
@@ -46,14 +55,20 @@ extension NetworkError {
         switch self {
         case .invalidURL:
             return LocalizedKey.urlError
-        case .afError:
-            return LocalizedKey.requestFailed
-        case .urlError:
+        case .notConnectedToInternet:
+            return LocalizedKey.noNetwork
+        case .timedOut:
+            return LocalizedKey.requestTimeout
+        case .networkConnectionLost:
+            return LocalizedKey.noNetwork
+        case .otherURL:
             return LocalizedKey.noNetwork
         case .unacceptableStatusCode:
             return LocalizedKey.badStatusCode
         case .decodingError:
             return LocalizedKey.decodingError
+        case .afError:
+            return LocalizedKey.requestFailed
         }
     }
 }

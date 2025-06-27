@@ -34,7 +34,7 @@ struct LibraryView: View {
 
                 case .loaded(let items):
                     NoveltyCarouselView(items: items) { book in
-                        store.send(.didSelectBook(documentID: book.documentId))
+                        store.send(.didSelectBook(documentId: book.documentId))
                     }
                     .frame(height: Constants.carouselHeight)
                     .padding(.horizontal, Constants.sidePadding)
@@ -59,7 +59,7 @@ struct LibraryView: View {
                     LazyVGrid(columns: columns, spacing: Constants.itemSpacing) {
                         ForEach(books) { book in
                             BookCell(book: book) {
-                                store.send(.didSelectBook(documentID: book.documentId))
+                                store.send(.didSelectBook(documentId: book.documentId))
                             }
                         }
                     }
@@ -76,8 +76,8 @@ struct LibraryView: View {
             store.send(.fetchLocalPopularBooks)
         }
         .refreshable {
-            store.send(.fetchLocalNewBooks)
-            store.send(.fetchLocalPopularBooks)
+            store.send(.requestNewBooks)
+            store.send(.requestPopularBooks(page: 1))
         }
     }
 }

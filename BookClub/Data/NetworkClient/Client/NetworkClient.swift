@@ -24,18 +24,18 @@ final class NetworkClient: NetworkClientProtocol {
         _ config: NetworkConfigProtocol,
         decoder: DataDecoder = JSONDecoder()
     ) async throws -> T {
-        let urlString = Constants.baseUrl + config.path + "/" + config.endPoint
-        // Build URL safely
+        let urlString = Constants.baseUrl + config.path + config.endPoint
         guard let url = URL(string: urlString) else {
             throw NetworkError.invalidURL(urlString)
         }
-        // Log outgoing request
         print(
             "[NetworkClient] Requesting: \(config.method.rawValue) \(url.absoluteString)"
         )
 
         let encoding: ParameterEncoding =
-            config.method == .get ? URLEncoding.default : JSONEncoding.default
+            config.method == .get
+            ? URLEncoding.default
+            : JSONEncoding.default
 
         let data: Data
         do {
@@ -50,19 +50,12 @@ final class NetworkClient: NetworkClientProtocol {
             .serializingData()
             .value
         } catch let afError as AFError {
-            // Map AFError to our NetworkError, reusing URL
-            let response = afError.responseCode.flatMap { code in
-                HTTPURLResponse(
-                    url: url,
-                    statusCode: code,
-                    httpVersion: nil,
-                    headerFields: nil
-                )
-            }
-            throw mapAFError(afError, response: response)
+            print(
+                "[NetworkClient] AFError for \(url.absoluteString): \(afError)"
+            )
+            throw mapAFError(afError)
         }
 
-        // Log incoming response
         if let text = String(data: data, encoding: .utf8) {
             print(
                 "[NetworkClient] Response from \(url.absoluteString):\n\(text)"
@@ -83,21 +76,19 @@ final class NetworkClient: NetworkClientProtocol {
         }
     }
 
-    func request(
-        _ config: NetworkConfigProtocol
-    ) async throws {
-        let urlString = Constants.baseUrl + config.path + "/" + config.endPoint
-        // Build URL safely
+    func request(_ config: NetworkConfigProtocol) async throws {
+        let urlString = Constants.baseUrl + config.path + config.endPoint
         guard let url = URL(string: urlString) else {
             throw NetworkError.invalidURL(urlString)
         }
-        // Log outgoing request
         print(
             "[NetworkClient] Requesting (void): \(config.method.rawValue) \(url.absoluteString)"
         )
 
         let encoding: ParameterEncoding =
-            config.method == .get ? URLEncoding.default : JSONEncoding.default
+            config.method == .get
+            ? URLEncoding.default
+            : JSONEncoding.default
 
         do {
             _ = try await session.request(
@@ -115,30 +106,33 @@ final class NetworkClient: NetworkClientProtocol {
                 "[NetworkClient] Void response from \(url.absoluteString) succeeded"
             )
         } catch let afError as AFError {
-            let response = afError.responseCode.flatMap { code in
-                HTTPURLResponse(
-                    url: url,
-                    statusCode: code,
-                    httpVersion: nil,
-                    headerFields: nil
-                )
-            }
-            throw mapAFError(afError, response: response)
+            print(
+                "[NetworkClient] AFError (void) for \(url.absoluteString): \(afError)"
+            )
+            throw mapAFError(afError)
         }
     }
 
-    private func mapAFError(
-        _ error: AFError,
-        response: HTTPURLResponse?
-    ) -> NetworkError {
+    // MARK: — Преобразуем AFError в наш NetworkError
+    private func mapAFError(_ error: AFError) -> NetworkError {
         if let urlErr = error.underlyingError as? URLError {
-            return .urlError(urlErr)
+            switch urlErr.code {
+            case .notConnectedToInternet:
+                return .notConnectedToInternet
+            case .timedOut:
+                return .timedOut
+            case .networkConnectionLost:
+                return .networkConnectionLost
+            default:
+                return .otherURL(urlErr)
+            }
         }
-        if let status = response?.statusCode,
-            !(200...299).contains(status)
-        {
+
+        if let status = error.responseCode,
+            !(200...299).contains(status) {
             return .unacceptableStatusCode(status)
         }
+
         return .afError(error)
     }
 }

@@ -68,11 +68,11 @@ struct RootView: View {
                     action: AppAction.mainTab
                 )
             )
-        case .bookDetails(let bookID):
+        case .bookDetails:
             BookDetailsView( /*bookID: bookID*/)
-        case .reader(let bookID, let chapterID):
+        case .reader:
             ReaderView( /*bookID: bookID, chapterID: chapterID*/)
-        case .chapters(let bookID):
+        case .chapters:
             ChaptersView( /*bookID: bookID*/)
         case .library, .search, .bookmarks:
             EmptyView()

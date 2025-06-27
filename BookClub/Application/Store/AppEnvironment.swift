@@ -13,6 +13,10 @@ struct AppEnvironment {
 
     let bookStorage: BookStorageServiceProtocol
 
+    let genreStorage: GenreStorageServiceProtocol
+    let authorStorage: AuthorStorageServiceProtocol
+    let recentSearchService: RecentSearchServiceProtocol
+
     var loginEnv: LoginEnvironment {
         LoginEnvironment(authService: authService)
     }
@@ -22,7 +26,12 @@ struct AppEnvironment {
     }
 
     var searchEnv: SearchEnvironment {
-        SearchEnvironment()
+        SearchEnvironment(
+            networkClient: networkClient,
+            genreStorage: genreStorage,
+            authorStorage: authorStorage,
+            recentSearchService: recentSearchService
+        )
     }
 
     var bookmarksEnv: BookmarksEnvironment {

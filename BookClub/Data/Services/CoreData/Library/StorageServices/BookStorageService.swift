@@ -10,14 +10,8 @@ import CoreData
 actor BookStorageService: BookStorageServiceProtocol {
     private let container: NSPersistentContainer
 
-    init(modelName: String = "BookClub") {
-        container = NSPersistentContainer(name: modelName)
-        container.loadPersistentStores { _, error in
-            if let error = error {
-                fatalError("Unresolved Core Data error: \(error)")
-            }
-        }
-        container.viewContext.automaticallyMergesChangesFromParent = true
+    init(container: NSPersistentContainer) {
+        self.container = container
     }
 
     func save(_ books: [Book]) async throws {

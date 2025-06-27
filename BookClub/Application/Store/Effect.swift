@@ -11,6 +11,7 @@ enum Effect<Action> {
     case none
     case task(@Sendable () async -> Action)
     case fireAndForget(@Sendable () async -> Void)
+    case batch([Effect<Action>])
 
     func map<GlobalAction>(
         _ transform: @escaping (Action) -> GlobalAction
@@ -29,6 +30,16 @@ enum Effect<Action> {
             return .fireAndForget {
                 await work()
             }
+
+        case .batch(let effects):
+            let mapped = effects.map { $0.map(transform) }
+            return .batch(mapped)
         }
+    }
+}
+
+extension Effect {
+    static func merge(_ effects: Effect<Action>...) -> Effect<Action> {
+        return .batch(effects)
     }
 }

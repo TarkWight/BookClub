@@ -63,8 +63,7 @@ struct NoveltyCarouselView: View {
                                     (currentIndex - 1 + items.count)
                                     % items.count
                             } else if value.translation.width < -Constants
-                                .threshold
-                            {
+                                .threshold {
                                 currentIndex = (currentIndex + 1) % items.count
                             }
                         }
