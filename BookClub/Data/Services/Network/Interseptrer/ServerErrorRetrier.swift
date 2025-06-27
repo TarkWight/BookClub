@@ -28,15 +28,13 @@ final class ServerErrorRetrier: RequestRetrier {
         if case let afErr as AFError = error,
             case let .responseValidationFailed(.unacceptableStatusCode(code)) =
                 afErr,
-            (500...599).contains(code)
-        {
+            (500...599).contains(code) {
             completion(.retry)
             return
         }
         if let urlErr = error as? URLError,
             [.timedOut, .notConnectedToInternet, .networkConnectionLost]
-                .contains(urlErr.code)
-        {
+                .contains(urlErr.code) {
             completion(.retry)
             return
         }

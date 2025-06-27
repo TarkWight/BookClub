@@ -27,8 +27,7 @@ final class AuthServiceTests: XCTestCase {
     }
 
     func test_refreshToken_success_shouldReturnTokenAndSaveToKeychain()
-        async throws
-    {
+        async throws {
         mockKeychain.stubIdentifier("test_user")
         mockKeychain.stubPassword("pass123")
 

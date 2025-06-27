@@ -129,8 +129,7 @@ final class NetworkClient: NetworkClientProtocol {
         }
 
         if let status = error.responseCode,
-            !(200...299).contains(status)
-        {
+            !(200...299).contains(status) {
             return .unacceptableStatusCode(status)
         }
 

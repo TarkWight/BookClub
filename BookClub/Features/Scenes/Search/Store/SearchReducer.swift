@@ -14,9 +14,9 @@ func searchReducer(
     env: SearchEnvironment
 ) -> Effect<SearchAction> {
     switch action {
-
     // MARK: — Lifecycle
     case .onAppear:
+        // kick off loading of recent searches & local metadata
         return .merge(
             .task { .fetchRecentSearches },
             .task { .fetchLocalGenres },
@@ -24,6 +24,86 @@ func searchReducer(
         )
 
     // MARK: — Recent Searches
+    case .fetchRecentSearches,
+        .addRecentSearch,
+        .recentSearchesLoaded,
+        .removeRecentSearch:
+        return recentSearchesReducer(
+            state: &state,
+            action: action,
+            env: env
+        )
+
+    // MARK: — Local DB (genres & authors)
+    case .fetchLocalGenres,
+        .localGenresLoaded,
+        .fetchLocalAuthors,
+        .localAuthorsLoaded:
+        return localMetadataReducer(
+            state: &state,
+            action: action,
+            env: env
+        )
+
+    // MARK: — Search text UI
+    case .didChangeSearchText,
+        .didClearSearch:
+        // pure UI updates, no effects
+        return searchInputReducer(state: &state, action: action)
+
+    // MARK: — Triggering remote book search
+    case .didSelectRecentSearch,
+        .didSelectGenre,
+        .didSelectAuthor,
+        .didTapSearch,
+        .fetchBooksByText,
+        .fetchBooksByGenre,
+        .fetchBooksByAuthor:
+        return searchResultsTriggerReducer(
+            state: &state,
+            action: action,
+            env: env
+        )
+
+    // MARK: — Handling remote book responses
+    case .booksByTextLoaded,
+        .booksByGenreLoaded,
+        .booksByAuthorLoaded:
+        return searchResultsResponseReducer(
+            state: &state,
+            action: action
+        )
+
+    // MARK: — Remote metadata (genres & authors)
+    case .fetchRemoteGenres,
+        .remoteGenresLoaded,
+        .fetchRemoteAuthors,
+        .remoteAuthorsLoaded:
+        return remoteMetadataReducer(
+            state: &state,
+            action: action,
+            env: env
+        )
+
+    // MARK: — Navigation / UI
+    case .didSelectBook(let documentId):
+        state.selectedBookID = documentId
+        return .none
+
+    case .dismissError:
+        state.lastErrorMessage = nil
+        return .none
+    }
+}
+
+// MARK: — Recent Searches Reducer
+
+private func recentSearchesReducer(
+    state: inout SearchState,
+    action: SearchAction,
+    env: SearchEnvironment
+) -> Effect<SearchAction> {
+    switch action {
     case .fetchRecentSearches:
         return .task {
             do {
@@ -36,12 +116,8 @@ func searchReducer(
 
     case .addRecentSearch(let recent):
         return .merge(
-            .fireAndForget {
-                try? await env.recentSearchService.add(recent)
-            },
-            .task {
-                return .fetchRecentSearches
-            }
+            .fireAndForget { try? await env.recentSearchService.add(recent) },
+            .task { .fetchRecentSearches }
         )
 
     case .recentSearchesLoaded(let recents):
@@ -55,7 +131,19 @@ func searchReducer(
             return .recentSearchesLoaded(recents)
         }
 
-    // MARK: — Local DB (genres/authors)
+    default:
+        return .none
+    }
+}
+
+// MARK: — Local Metadata Reducer
+
+private func localMetadataReducer(
+    state: inout SearchState,
+    action: SearchAction,
+    env: SearchEnvironment
+) -> Effect<SearchAction> {
+    switch action {
     case .fetchLocalGenres:
         state.genres = .loading
         return .task {
@@ -86,7 +174,18 @@ func searchReducer(
         state.authors = .loaded(items)
         return .none
 
-    // MARK: — UI
+    default:
+        return .none
+    }
+}
+
+// MARK: — Search Input Reducer
+
+private func searchInputReducer(
+    state: inout SearchState,
+    action: SearchAction
+) -> Effect<SearchAction> {
+    switch action {
     case .didChangeSearchText(let text):
         if text.isEmpty {
             state.filter = nil
@@ -101,173 +200,138 @@ func searchReducer(
         state.searchResults = .idle
         return .none
 
+    default:
+        return .none
+    }
+}
+
+// MARK: — Trigger Remote Search Reducer
+
+private func searchResultsTriggerReducer(
+    state: inout SearchState,
+    action: SearchAction,
+    env: SearchEnvironment
+) -> Effect<SearchAction> {
+    state.searchResults = .loading
+
+    switch action {
     case .didSelectRecentSearch(let query):
         state.filter = .text(query)
-        state.searchResults = .loading
-        return .task {
-            do {
-                let wrapper: StrapiResponse<[BookDetailsItem]> =
-                    try await env.networkClient.request(
-                        SearchConfig.booksByTitle(query: query),
-                        decoder: JSONDecoder()
-                    )
-                return .booksByTextLoaded(.success(wrapper.data))
-            } catch let netErr as NetworkError {
-                return .booksByTextLoaded(.failure(netErr))
-            } catch {
-                let urlErr = (error as? URLError) ?? URLError(.unknown)
-                return .booksByTextLoaded(.failure(.otherURL(urlErr)))
-            }
-        }
+        return performSearch(
+            config: SearchConfig.booksByTitle(query: query),
+            success: SearchAction.booksByTextLoaded,
+            env: env
+        )
 
     case .didSelectGenre(let genre):
         state.filter = .genre(genre)
-        state.searchResults = .loading
-        return .task {
-            do {
-                let wrapper: StrapiResponse<[BookDetailsItem]> =
-                    try await env.networkClient.request(
-                        SearchConfig.booksByGenre(id: Int(genre.id)),
-                        decoder: JSONDecoder()
-                    )
-                return .booksByGenreLoaded(.success(wrapper.data))
-            } catch let netErr as NetworkError {
-                return .booksByGenreLoaded(.failure(netErr))
-            } catch {
-                let urlErr = (error as? URLError) ?? URLError(.unknown)
-                return .booksByGenreLoaded(.failure(.otherURL(urlErr)))
-            }
-        }
+        return performSearch(
+            config: SearchConfig.booksByGenre(id: Int(genre.id)),
+            success: SearchAction.booksByGenreLoaded,
+            env: env
+        )
 
     case .didSelectAuthor(let author):
         state.filter = .author(author)
-        state.searchResults = .loading
-        return .task {
-            do {
-                let wrapper: StrapiResponse<[BookDetailsItem]> =
-                    try await env.networkClient.request(
-                        SearchConfig.booksByAuthor(id: Int(author.id)),
-                        decoder: JSONDecoder()
-                    )
-                return .booksByAuthorLoaded(.success(wrapper.data))
-            } catch let netErr as NetworkError {
-                return .booksByAuthorLoaded(.failure(netErr))
-            } catch {
-                let urlErr = (error as? URLError) ?? URLError(.unknown)
-                return .booksByAuthorLoaded(.failure(.otherURL(urlErr)))
-            }
-        }
+        return performSearch(
+            config: SearchConfig.booksByAuthor(id: Int(author.id)),
+            success: SearchAction.booksByAuthorLoaded,
+            env: env
+        )
 
     case .didTapSearch:
-        guard case let .text(query) = state.filter else { return .none }
-        state.searchResults = .loading
-        return .task {
-            do {
-                let wrapper: StrapiResponse<[BookDetailsItem]> =
-                    try await env.networkClient.request(
-                        SearchConfig.booksByTitle(query: query),
-                        decoder: JSONDecoder()
-                    )
-                return .booksByTextLoaded(.success(wrapper.data))
-            } catch let netErr as NetworkError {
-                return .booksByTextLoaded(.failure(netErr))
-            } catch {
-                let urlErr = (error as? URLError) ?? URLError(.unknown)
-                return .booksByTextLoaded(.failure(.otherURL(urlErr)))
-            }
+        guard case let .text(query) = state.filter else {
+            return .none
         }
+        return performSearch(
+            config: SearchConfig.booksByTitle(query: query),
+            success: SearchAction.booksByTextLoaded,
+            env: env
+        )
 
-    case .didSelectBook(let documentId):
-        state.selectedBookID = documentId
-        return .none
-
-    // MARK: — Network Responses
-    case .booksByTextLoaded(let result):
-        switch result {
-        case .success(let items):
-            state.searchResults = .loaded(items)
-        case .failure(let err):
-            state.searchResults = .failure(err.localizedKey)
-        }
-        return .none
-
-    case .booksByGenreLoaded(let result):
-        switch result {
-        case .success(let items):
-            state.searchResults = .loaded(items)
-        case .failure(let err):
-            state.searchResults = .failure(err.localizedKey)
-        }
-        return .none
-
-    case .booksByAuthorLoaded(let result):
-        switch result {
-        case .success(let items):
-            state.searchResults = .loaded(items)
-        case .failure(let err):
-            state.searchResults = .failure(err.localizedKey)
-        }
-        return .none
-
-    // MARK: — Explicit request cases
     case .fetchBooksByText(let query):
-        state.searchResults = .loading
-        return .task {
-            do {
-                let wrapper: StrapiResponse<[BookDetailsItem]> =
-                    try await env.networkClient.request(
-                        SearchConfig.booksByTitle(query: query),
-                        decoder: JSONDecoder()
-                    )
-                return .booksByTextLoaded(.success(wrapper.data))
-            } catch let netErr as NetworkError {
-                return .booksByTextLoaded(.failure(netErr))
-            } catch {
-                let urlErr = (error as? URLError) ?? URLError(.unknown)
-                return .booksByTextLoaded(.failure(.otherURL(urlErr)))
-            }
-        }
+        return performSearch(
+            config: SearchConfig.booksByTitle(query: query),
+            success: SearchAction.booksByTextLoaded,
+            env: env
+        )
 
     case .fetchBooksByGenre(let genre):
-        state.searchResults = .loading
-        return .task {
-            do {
-                let wrapper: StrapiResponse<[BookDetailsItem]> =
-                    try await env.networkClient.request(
-                        SearchConfig.booksByGenre(id: Int(genre.id)),
-                        decoder: JSONDecoder()
-                    )
-                return .booksByGenreLoaded(.success(wrapper.data))
-            } catch let netErr as NetworkError {
-                return .booksByGenreLoaded(.failure(netErr))
-            } catch {
-                let urlErr = (error as? URLError) ?? URLError(.unknown)
-                return .booksByGenreLoaded(.failure(.otherURL(urlErr)))
-            }
-        }
+        return performSearch(
+            config: SearchConfig.booksByGenre(id: Int(genre.id)),
+            success: SearchAction.booksByGenreLoaded,
+            env: env
+        )
 
     case .fetchBooksByAuthor(let author):
-        state.searchResults = .loading
-        return .task {
-            do {
-                let wrapper: StrapiResponse<[BookDetailsItem]> =
-                    try await env.networkClient.request(
-                        SearchConfig.booksByAuthor(id: Int(author.id)),
-                        decoder: JSONDecoder()
-                    )
-                return .booksByAuthorLoaded(.success(wrapper.data))
-            } catch let netErr as NetworkError {
-                return .booksByAuthorLoaded(.failure(netErr))
-            } catch {
-                let urlErr = (error as? URLError) ?? URLError(.unknown)
-                return .booksByAuthorLoaded(.failure(.otherURL(urlErr)))
-            }
-        }
+        return performSearch(
+            config: SearchConfig.booksByAuthor(id: Int(author.id)),
+            success: SearchAction.booksByAuthorLoaded,
+            env: env
+        )
 
-    case .dismissError:
-        state.lastErrorMessage = nil
+    default:
+        return .none
+    }
+}
+
+private func performSearch(
+    config: SearchConfig,
+    success: @escaping (Result<[BookDetailsItem], NetworkError>) ->
+        SearchAction,
+    env: SearchEnvironment
+) -> Effect<SearchAction> {
+    .task {
+        do {
+            let wrapper: StrapiResponse<[BookDetailsItem]> =
+                try await env.networkClient.request(
+                    config,
+                    decoder: JSONDecoder()
+                )
+            return success(.success(wrapper.data))
+        } catch let netErr as NetworkError {
+            return success(.failure(netErr))
+        } catch {
+            let urlErr = (error as? URLError) ?? URLError(.unknown)
+            return success(.failure(.otherURL(urlErr)))
+        }
+    }
+}
+
+// MARK: — Handle Remote Response Reducer
+
+@MainActor
+private func searchResultsResponseReducer(
+    state: inout SearchState,
+    action: SearchAction
+) -> Effect<SearchAction> {
+    switch action {
+    case .booksByTextLoaded(let result),
+        .booksByGenreLoaded(let result),
+        .booksByAuthorLoaded(let result):
+        switch result {
+        case .success(let items):
+            state.searchResults = .loaded(items)
+        case .failure(let err):
+            state.searchResults = .failure(err.localizedKey)
+            state.lastErrorMessage = err.localizedKey
+        }
         return .none
 
+    default:
+        return .none
+    }
+}
+
+// MARK: — Remote Metadata Reducer
+
+@MainActor
+private func remoteMetadataReducer(
+    state: inout SearchState,
+    action: SearchAction,
+    env: SearchEnvironment
+) -> Effect<SearchAction> {
+    switch action {
     case .fetchRemoteGenres:
         state.genres = .loading
         return .task {
@@ -291,10 +355,7 @@ func searchReducer(
         case .success(let items):
             state.genres = .loaded(items)
             return .fireAndForget {
-                do {
-                    try await env.genreStorage.save(items)
-                } catch {
-                }
+                try? await env.genreStorage.save(items)
             }
         case .failure(let err):
             state.genres = .failure(err.localizedKey)
@@ -324,15 +385,14 @@ func searchReducer(
         case .success(let items):
             state.authors = .loaded(items)
             return .fireAndForget {
-                do {
-                    try await env.authorStorage.save(items)
-                } catch {
-                    print("Не удалось сохранить авторов в БД: \(error)")
-                }
+                try? await env.authorStorage.save(items)
             }
         case .failure(let err):
             state.authors = .failure(err.localizedKey)
             return .none
         }
+
+    default:
+        return .none
     }
 }

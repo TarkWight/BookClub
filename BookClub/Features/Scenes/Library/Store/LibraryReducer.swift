@@ -15,129 +15,128 @@ func libraryReducer(
     env: LibraryEnvironment
 ) -> Effect<LibraryAction> {
     switch action {
+    // MARK: — Local DB: New Books
+    case .fetchLocalNewBooks,
+        .localNewBooksLoaded:
+        return localNewBooksReducer(state: &state, action: action, env: env)
 
-    // MARK: – Load from local DB
+    // MARK: — Local DB: Popular Books
+    case .fetchLocalPopularBooks,
+        .localPopularBooksLoaded:
+        return localPopularBooksReducer(state: &state, action: action, env: env)
 
+    // MARK: — Network: Request New Books & Response
+    case .requestNewBooks,
+        .newBooksResponse:
+        return networkNewBooksReducer(state: &state, action: action, env: env)
+
+    // MARK: — Network: Request Popular Books & Response
+    case .requestPopularBooks,
+        .popularBooksResponse:
+        return networkPopularBooksReducer(
+            state: &state,
+            action: action,
+            env: env
+        )
+
+    // MARK: — UI
+    case .didSelectBook(let documentId):
+        state.selectedBookID = documentId
+        return .none
+    }
+}
+
+// MARK: — Local New Books Reducer
+
+private func localNewBooksReducer(
+    state: inout LibraryState,
+    action: LibraryAction,
+    env: LibraryEnvironment
+) -> Effect<LibraryAction> {
+    switch action {
     case .fetchLocalNewBooks:
         guard case .idle = state.newBooks else { return .none }
-        print("[Library] Fetching NEW books from local DB…")
         state.newBooks = .loading
-
         return .task {
             do {
                 let books = try await env.storage.fetch(isNew: true)
                 if books.isEmpty {
-                    print(
-                        "[Library] No NEW books locally, falling back to network"
-                    )
                     return .requestNewBooks
                 }
-                print("[Library] ✓ Loaded \(books.count) NEW books locally")
-                let items = books.map { book in
-                    BookDetailsItem(
-                        id: book.id,
-                        documentId: book.documentId,
-                        title: book.title,
-                        coverURL: book.coverURL,
-                        isNew: book.isNew,
-                        illustrationURL: book.illustrationURL
-                    )
-                }
+                let items = books.map { $0.toDetailsItem() }
                 return .localNewBooksLoaded(items)
             } catch {
-                print("[Library] ✗ Local NEW-books fetch failed: \(error)")
                 return .requestNewBooks
             }
         }
 
     case .localNewBooksLoaded(let items):
-        print("[Library] Updating state with \(items.count) NEW local books")
         state.newBooks = .loaded(items)
         return .none
 
+    default:
+        return .none
+    }
+}
+
+// MARK: — Local Popular Books Reducer
+
+private func localPopularBooksReducer(
+    state: inout LibraryState,
+    action: LibraryAction,
+    env: LibraryEnvironment
+) -> Effect<LibraryAction> {
+    switch action {
     case .fetchLocalPopularBooks:
         guard case .idle = state.popularBooks else { return .none }
-        print("[Library] Fetching POPULAR books from local DB…")
         state.popularBooks = .loading
-
         return .task {
             do {
                 let books = try await env.storage.fetch(isNew: false)
                 if books.isEmpty {
-                    print(
-                        "[Library] No POPULAR books locally, falling back to network"
-                    )
                     return .requestPopularBooks(page: 1)
                 }
-                print("[Library] ✓ Loaded \(books.count) POPULAR books locally")
-                let items = books.map { book in
-                    BookDetailsItem(
-                        id: book.id,
-                        documentId: book.documentId,
-                        title: book.title,
-                        coverURL: book.coverURL,
-                        isNew: book.isNew,
-                        illustrationURL: book.illustrationURL
-                    )
-                }
+                let items = books.map { $0.toDetailsItem() }
                 return .localPopularBooksLoaded(items)
             } catch {
-                print("[Library] ✗ Local POPULAR-books fetch failed: \(error)")
                 return .requestPopularBooks(page: 1)
             }
         }
 
     case .localPopularBooksLoaded(let items):
-        print(
-            "[Library] Updating state with \(items.count) POPULAR local books"
-        )
         state.popularBooks = .loaded(items)
-        state.popularBooks = .loaded(items)
-
         return .fireAndForget {
-            let domainBooks = items.compactMap { item -> Book? in
-                Book(
-                    id: item.id,
-                    documentId: item.documentId,
-                    title: item.title,
-                    coverURL: item.coverURL,
-                    illustrationURL: item.illustrationURL,
-                    isNew: item.isNew
-                )
-            }
-            guard !domainBooks.isEmpty else { return }
-            do {
-                try await env.storage.save(domainBooks)
-                print("[Library] ✓ POPULAR books saved to DB")
-            } catch {
-                print("[Library] ✗ Saving POPULAR books to DB failed: \(error)")
-            }
+            let domain = items.map { Book(from: $0) }
+            guard !domain.isEmpty else { return }
+            try? await env.storage.save(domain)
         }
 
-    // MARK: – Network requests
+    default:
+        return .none
+    }
+}
 
+// MARK: — Network New Books Reducer
+
+@MainActor private func networkNewBooksReducer(
+    state: inout LibraryState,
+    action: LibraryAction,
+    env: LibraryEnvironment
+) -> Effect<LibraryAction> {
+    switch action {
     case .requestNewBooks:
-        print("[Library] Requesting NEW books from network…")
         state.newBooks = .loading
-
         return .task {
-            print("[Network] GET \(LibraryConfig.newBooks)")
             do {
                 let wrapper: StrapiResponse<[BookDetailsItem]> =
                     try await env.networkClient.request(
                         LibraryConfig.newBooks,
                         decoder: JSONDecoder()
                     )
-                let items = wrapper.data
-                print("[Network] ✓ NEW books received: count=\(items.count)")
-                return .newBooksResponse(.success(items))
-            } catch let error as NetworkError {
-                print(
-                    "[Network] ✗ NEW books failed with NetworkError: \(error)"
-                )
-                return .newBooksResponse(.failure(error))
+                return .newBooksResponse(.success(wrapper.data))
+            } catch let err as NetworkError {
+                return .newBooksResponse(.failure(err))
             } catch {
-                print("[Network] ✗ NEW books unexpected error: \(error)")
                 let wrapped = AFError.sessionInvalidated(error: error)
                 return .newBooksResponse(.failure(.afError(wrapped)))
             }
@@ -146,65 +145,43 @@ func libraryReducer(
     case .newBooksResponse(let result):
         switch result {
         case .success(let items):
-            print("[Library] State update: NEW books loaded successfully")
             state.newBooks = .loaded(items)
             return .fireAndForget {
-                let formatter = ISO8601DateFormatter()
-                let domain = items.compactMap { item -> Book? in
-                    return Book(
-                        id: item.id,
-                        documentId: item.documentId,
-                        title: item.title,
-                        coverURL: item.coverURL,
-                        illustrationURL: item.illustrationURL,
-                        isNew: item.isNew
-                    )
-                }
-                if !domain.isEmpty {
-                    do {
-                        try await env.storage.save(domain)
-                        print("[Library] ✓ NEW books saved to DB")
-                    } catch {
-                        print(
-                            "[Library] ✗ Saving NEW books to DB failed: \(error)"
-                        )
-                    }
-                }
+                let domain = items.map { Book(from: $0) }
+                guard !domain.isEmpty else { return }
+                try? await env.storage.save(domain)
             }
         case .failure(let error):
-            print(
-                "[Library] State update: NEW books failed with \(error.localizedKey)"
-            )
             state.newBooks = .failure(error.localizedKey)
             return .none
         }
 
-    case .requestPopularBooks(let page):
-        print("[Library] Requesting POPULAR books from network (page \(page))…")
-        state.popularBooks = .loading
+    default:
+        return .none
+    }
+}
 
+// MARK: — Network Popular Books Reducer
+
+@MainActor private func networkPopularBooksReducer(
+    state: inout LibraryState,
+    action: LibraryAction,
+    env: LibraryEnvironment
+) -> Effect<LibraryAction> {
+    switch action {
+    case .requestPopularBooks(let page):
+        state.popularBooks = .loading
         return .task {
-            print(
-                "[Network] GET \(LibraryConfig.list(page: page, pageSize: 10))"
-            )
             do {
                 let wrapper: StrapiResponse<[BookDetailsItem]> =
                     try await env.networkClient.request(
                         LibraryConfig.list(page: page, pageSize: 10),
                         decoder: JSONDecoder()
                     )
-                let items = wrapper.data
-                print(
-                    "[Network] ✓ POPULAR books received: count=\(items.count)"
-                )
-                return .popularBooksResponse(.success(items))
-            } catch let error as NetworkError {
-                print(
-                    "[Network] ✗ POPULAR books failed with NetworkError: \(error)"
-                )
-                return .popularBooksResponse(.failure(error))
+                return .popularBooksResponse(.success(wrapper.data))
+            } catch let err as NetworkError {
+                return .popularBooksResponse(.failure(err))
             } catch {
-                print("[Network] ✗ POPULAR books unexpected error: \(error)")
                 let wrapped = AFError.sessionInvalidated(error: error)
                 return .popularBooksResponse(.failure(.afError(wrapped)))
             }
@@ -213,40 +190,52 @@ func libraryReducer(
     case .popularBooksResponse(let result):
         switch result {
         case .success(let items):
-            print("[Library] State update: POPULAR books loaded successfully")
             state.popularBooks = .loaded(items)
             return .fireAndForget {
-                let domain = items.map {
-                    Book(
-                        id: $0.id,
-                        documentId: $0.documentId,
-                        title: $0.title,
-                        coverURL: $0.coverURL,
-                        illustrationURL: $0.illustrationURL,
-                        isNew: $0.isNew
-                    )
-                }
+                let domain = items.map { Book(from: $0) }
                 guard !domain.isEmpty else { return }
-                do {
-                    try await env.storage.save(domain)
-                    print("[Library] ✓ POPULAR books saved to DB")
-                } catch {
-                    print(
-                        "[Library] ✗ Saving POPULAR books to DB failed: \(error)"
-                    )
-                }
+                try? await env.storage.save(domain)
             }
         case .failure(let error):
-            print(
-                "[Library] State update: POPULAR books failed with \(error.localizedKey)"
-            )
             state.popularBooks = .failure(error.localizedKey)
+            return .none
         }
-        return .none
 
-    case .didSelectBook(let documentId):
-        print("[Library] Book selected: \(documentId)")
-        state.selectedBookID = documentId
+    default:
         return .none
+    }
+}
+
+// MARK: — Helpers: Domain Mapping
+
+extension Book {
+    fileprivate func toDetailsItem() -> BookDetailsItem {
+        BookDetailsItem(
+            id: id,
+            documentId: documentId,
+            title: title,
+            coverURL: coverURL,
+            isNew: isNew,
+            illustrationURL: illustrationURL
+        )
+    }
+}
+
+extension BookDetailsItem {
+    fileprivate init(fromStored item: Book) {
+        self = item.toDetailsItem()
+    }
+}
+
+extension Book {
+    fileprivate init(from details: BookDetailsItem) {
+        self.init(
+            id: details.id,
+            documentId: details.documentId,
+            title: details.title,
+            coverURL: details.coverURL,
+            illustrationURL: details.illustrationURL,
+            isNew: details.isNew
+        )
     }
 }
