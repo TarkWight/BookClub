@@ -58,9 +58,6 @@ func appReducer(
         switch tabAction {
         case .library(.didSelectBook):
             state.path.append(.bookDetails)
-        case .bookDetails(.configure):
-            // the configure action already updated state, but navigation also follows
-            state.path.append(.bookDetails)
         case .bookDetails(.openChapter):
             state.path.removeLast()
         case .bookDetails(.startReadingTapped), .readSelected:
