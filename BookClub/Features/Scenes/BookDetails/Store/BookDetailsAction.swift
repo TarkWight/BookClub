@@ -8,15 +8,7 @@
 import Foundation
 
 enum BookDetailsAction: Equatable {
-    case configure(
-         bookId: Int,
-         documentId: String,
-         title: String,
-         author: String,
-         description: String,
-         coverURL: URL?
-       )
-
+    case configure(BookDetailsPayload)
     case onAppear
 
     case chaptersLoaded(Result<[ChapterSummary], NetworkError>)
@@ -34,4 +26,13 @@ enum BookDetailsAction: Equatable {
     case openChapter(order: Int)
 
     case backButtonTapped
+}
+
+struct BookDetailsPayload: Equatable {
+    let bookId: Int
+    let documentId: String
+    let title: String
+    let author: String
+    let description: String
+    let coverURL: URL?
 }

@@ -16,20 +16,13 @@ func bookDetailsReducer(
 ) -> Effect<BookDetailsAction> {
     switch action {
 
-    case let .configure(
-        bookId,
-        documentId,
-        title,
-        author,
-        description,
-        coverURL
-    ):
-        state.bookId = bookId
-        state.bookDocumentId = documentId
-        state.title = title
-        state.author = author
-        state.description = description
-        state.coverURL = coverURL
+    case let .configure(payload):
+        state.bookId = payload.bookId
+        state.bookDocumentId = payload.documentId
+        state.title = payload.title
+        state.author = payload.author
+        state.description = payload.description
+        state.coverURL = payload.coverURL
         return .none
 
     case .onAppear:

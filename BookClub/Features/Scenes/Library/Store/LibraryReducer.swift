@@ -51,7 +51,7 @@ func libraryReducer(
 
         state.bookDetails = .init()
 
-        let cfg = BookDetailsAction.configure(
+        let payload = BookDetailsPayload(
             bookId: Int(item.id),
             documentId: item.documentId,
             title: item.title,
@@ -61,9 +61,9 @@ func libraryReducer(
         )
 
         return .batch([
-               .task { .bookDetails(cfg) },
-               .task { .bookDetails(.onAppear) }
-           ])
+            .task { .bookDetails(.configure(payload)) },
+            .task { .bookDetails(.onAppear) },
+        ])
 
     case .bookDetails:
         return .none
