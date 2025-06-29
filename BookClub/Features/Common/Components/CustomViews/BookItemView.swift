@@ -8,21 +8,19 @@
 import SwiftUI
 
 struct BookItemView: View {
-    let book: BookMockModel
-
     var body: some View {
         HStack {
-            Image(book.imageName)
+            Image("Cover1")
                 .resizable()
                 .scaledToFill()
                 .frame(width: 80, height: 126)
                 .cornerRadius(4)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(book.title)
+                Text(LocalizedKey.bookTitlePlaceholder)
                     .applyFontH2AccentDarkStyle()
 
-                Text(book.author)
+                Text(LocalizedKey.authorPlaceholder)
                     .applyFontBodySmallAccentDarkStyle()
             }
             Spacer()

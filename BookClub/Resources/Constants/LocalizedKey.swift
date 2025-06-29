@@ -71,10 +71,6 @@ enum LocalizedKey {
         comment: "Label for the list of contents"
     )
 
-    static let chaptersPlaceholder = NSLocalizedString(
-        "chaptersPlaceholder",
-        comment: "Label for the empty list of chapters"
-    )
     // MARK: - Reader Screen
     static let readerSettingsLabel = NSLocalizedString(
         "settingsLabel",
@@ -100,10 +96,6 @@ enum LocalizedKey {
     )
 
     // MARK: - Search Screen
-    static let searchFieldPlaceholder = NSLocalizedString(
-        "seatchFieldPlaceholder",
-        comment: "Placeholder for the search field"
-    )
     static let recentRequestsLabel = NSLocalizedString(
         "recentRequestsLabel",
         comment: "Title for the recent requests"
@@ -148,7 +140,23 @@ extension LocalizedKey {
         "authorPlaceholder",
         comment: ""
     )
+
+    static let bookTitlePlaceholder = NSLocalizedString(
+        "bookTitlePlaceholder",
+        comment: ""
+    )
+
+    static let searchFieldPlaceholder = NSLocalizedString(
+        "seatchFieldPlaceholder",
+        comment: "Placeholder for the search field"
+    )
+
+    static let chaptersPlaceholder = NSLocalizedString(
+        "chaptersPlaceholder",
+        comment: "Label for the empty list of chapters"
+    )
 }
+
 extension LocalizedKey {
     // MARK: — LoginError
     static let tokenNotFound = NSLocalizedString(
