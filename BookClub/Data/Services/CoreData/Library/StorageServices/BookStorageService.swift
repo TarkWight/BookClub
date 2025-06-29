@@ -8,6 +8,7 @@
 import CoreData
 
 actor BookStorageService: BookStorageServiceProtocol {
+
     private let container: NSPersistentContainer
 
     init(container: NSPersistentContainer) {
@@ -23,6 +24,7 @@ actor BookStorageService: BookStorageServiceProtocol {
                     (try context.fetch(req)).first
                     ?? BookEntity(context: context)
                 entity.update(from: book)
+                entity.authorName = book.authorName
             }
             if context.hasChanges {
                 try context.save()
@@ -71,4 +73,18 @@ actor BookStorageService: BookStorageServiceProtocol {
             try context.save()
         }
     }
+
+  func setFavorite(
+    documentId: String,
+    to isFav: Bool
+  ) async throws {
+    try await container.performBackgroundTask { ctx in
+      let req: NSFetchRequest<BookEntity> = BookEntity.fetchRequest()
+      req.predicate = NSPredicate(format: "documentId == %@", documentId)
+      if let book = try ctx.fetch(req).first {
+        book.isFavorite = isFav
+        try ctx.save()
+      }
+    }
+  }
 }
