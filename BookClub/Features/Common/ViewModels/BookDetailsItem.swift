@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 struct BookDetailsItem: Identifiable, Equatable, Codable {
     let id: Int64
     let documentId: String
@@ -14,9 +15,12 @@ struct BookDetailsItem: Identifiable, Equatable, Codable {
     let coverURL: URL?
     let isNew: Bool
     let illustrationURL: URL?
+    let isFavorite: Bool?
+    let authorName: String?
+    let description: String
 }
 
-extension BookDetailsItem: HasPlaceholder {
+extension BookDetailsItem: @preconcurrency HasPlaceholder {
     static func placeholder(id: String) -> BookDetailsItem {
         .init(
             id: Int64(id.hashValue),
@@ -24,7 +28,10 @@ extension BookDetailsItem: HasPlaceholder {
             title: .placeholder(length: 20),
             coverURL: nil,
             isNew: true,
-            illustrationURL: nil
+            illustrationURL: nil,
+            isFavorite: false,
+            authorName: .authorPlaceholder(),
+            description: .placeholder(length: 50)
         )
     }
 
