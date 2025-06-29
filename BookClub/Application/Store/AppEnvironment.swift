@@ -10,8 +10,10 @@ import Foundation
 struct AppEnvironment {
     let authService: AuthServiceProtocol
     let networkClient: NetworkClientProtocol
+    let readingSession: ReadingSessionProtocol
 
     let bookStorage: BookStorageServiceProtocol
+    let chapterStorage: ChapterStorageServiceProtocol
 
     let genreStorage: GenreStorageServiceProtocol
     let authorStorage: AuthorStorageServiceProtocol
@@ -38,11 +40,20 @@ struct AppEnvironment {
         BookmarksEnvironment()
     }
 
+    var bookDetailsEnv: BookDetailsEnvironment {
+        BookDetailsEnvironment(
+            chapterStorage: chapterStorage,
+            readingSession: readingSession,
+            networkClient: networkClient
+        )
+    }
+
     var mainTabEnv: MainTabEnvironment {
         MainTabEnvironment(
             libraryEnv: libraryEnv,
             searchEnv: searchEnv,
-            bookmarksEnv: bookmarksEnv
+            bookmarksEnv: bookmarksEnv,
+            bookDetailsEnv: bookDetailsEnv
         )
     }
 }

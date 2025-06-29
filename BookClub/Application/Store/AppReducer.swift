@@ -29,12 +29,10 @@ func appReducer(
         state.path = []
         return .none
 
-    // MARK: — navigation
-    case let .pathChanged(path):
+    case .pathChanged(let path):
         state.path = path
         return .none
 
-    // MARK: — login flow
     case .login(.loginSucceeded):
         state.path = [.mainTab]
         return .none
@@ -47,13 +45,32 @@ func appReducer(
         )
         .map(AppAction.login)
 
-    // MARK: — mainTab flow
-    case .mainTab(let action):
-        return mainTabReducer(
+    case .mainTab(let tabAction):
+        // First, run the MainTab reducer to update nested state
+        let effect = mainTabReducer(
             state: &state.mainTab,
-            action: action,
+            action: tabAction,
             env: env.mainTabEnv
         )
         .map(AppAction.mainTab)
+
+        // Then handle navigation based on the specific MainTabAction
+        switch tabAction {
+        case .library(.didSelectBook):
+            state.path.append(.bookDetails)
+        case .bookDetails(.configure):
+            // the configure action already updated state, but navigation also follows
+            state.path.append(.bookDetails)
+        case .bookDetails(.openChapter):
+            state.path.removeLast()
+        case .bookDetails(.startReadingTapped), .readSelected:
+            state.path.append(.reader)
+        case .logoutTapped:
+            // handle logout navigation if needed
+            break
+        default:
+            break
+        }
+        return effect
     }
 }
