@@ -12,6 +12,7 @@ enum MainTabAction: Equatable {
     case library(LibraryAction)
     case search(SearchAction)
     case bookmarks(BookmarksAction)
+    case bookDetails(BookDetailsAction)
     case readSelected
     case logoutTapped
 }

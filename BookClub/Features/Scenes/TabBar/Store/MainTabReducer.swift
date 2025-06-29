@@ -21,11 +21,19 @@ func mainTabReducer(
 
     case .library(let libAction):
         return libraryReducer(
-            state: &state.library,
-            action: libAction,
-            env: env.libraryEnv
+          state:   &state.library,
+          action:  libAction,
+          env:     env.libraryEnv
         )
-        .map(MainTabAction.library)
+        .map { inner in
+          switch inner {
+          case .bookDetails(let bdAction):
+            return .bookDetails(bdAction)
+          default:
+            return .library(inner)
+          }
+        }
+
     case .search(let searchAction):
         return searchReducer(
             state: &state.search,
@@ -33,6 +41,14 @@ func mainTabReducer(
             env: env.searchEnv
         )
         .map(MainTabAction.search)
+
+    case .bookDetails(let bookDetailsAction):
+        return bookDetailsReducer(
+            state: &state.bookDetails,
+            action: bookDetailsAction,
+            env: env.bookDetailsEnv
+        )
+        .map(MainTabAction.bookDetails)
 
     case .bookmarks(let bookmarksAction):
         return bookmarksReducer(
