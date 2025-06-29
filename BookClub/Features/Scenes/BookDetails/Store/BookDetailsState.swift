@@ -23,6 +23,7 @@ struct BookDetailsState: Equatable {
     var coverURL: URL?
 
     var bookDownload: Loadable<[ChapterDTO]> = .idle
+    var isDownloaded: Bool = false
 
     var featureDidClose: Bool = false
 }

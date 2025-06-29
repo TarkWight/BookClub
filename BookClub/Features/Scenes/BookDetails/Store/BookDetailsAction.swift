@@ -12,6 +12,8 @@ enum BookDetailsAction: Equatable {
     case onAppear
 
     case chaptersLoaded(Result<[ChapterSummary], NetworkError>)
+    case cacheStatusLoaded(Bool)
+
     case progressLoaded(Result<Double, NetworkError>)
     case favoriteStatusLoaded(Result<FavoriteStatus, NetworkError>)
 

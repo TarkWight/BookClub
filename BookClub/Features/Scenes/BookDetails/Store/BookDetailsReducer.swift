@@ -28,9 +28,18 @@ func bookDetailsReducer(
     case .onAppear:
         return onAppearEffects(state: state, env: env)
 
-    case let .chaptersLoaded(.success(chaps)):
-        state.chapters = chaps
-        return .none
+    case let .chaptersLoaded(.success(chapters)):
+        state.chapters = chapters
+        let dicumentId = state.bookDocumentId
+        return .task {
+            do {
+                let cached = try await env.chapterStorage
+                    .isBookCached(documentId: dicumentId)
+                return .cacheStatusLoaded(cached)
+            } catch {
+                return .cacheStatusLoaded(false)
+            }
+        }
 
     case .chaptersLoaded(.failure):
         return .none
@@ -107,6 +116,25 @@ func bookDetailsReducer(
         return .none
 
     case .backButtonTapped:
+        return .none
+
+    case let .cacheStatusLoaded(cached):
+        state.isDownloaded = cached
+        if cached {
+            let documetId = state.bookDocumentId
+            return .task {
+                do {
+                    let fullChapters = try await env.chapterStorage
+                        .fetchChapters(forDocumentId: documetId)
+                    return .downloadBookResponse(.success(fullChapters))
+                } catch let netErr as NetworkError {
+                    return .downloadBookResponse(.failure(netErr))
+                } catch {
+                    let afErr = AFError.sessionInvalidated(error: error)
+                    return .downloadBookResponse(.failure(.afError(afErr)))
+                }
+            }
+        }
         return .none
     }
 }

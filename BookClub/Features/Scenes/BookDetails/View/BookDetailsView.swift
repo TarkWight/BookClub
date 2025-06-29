@@ -72,13 +72,15 @@ struct BookDetailsView: View {
     // MARK: – Action Buttons
     private var actionButtons: some View {
         HStack(spacing: Constants.buttonSpacing) {
-            let isDownloaded = store.state.bookDownload.isLoaded
+            let isDownloaded = store.state.isDownloaded
             ActionButton(
                 title: isDownloaded ? LocalizedKey.readButtonTitle : LocalizedKey.downloadButtonTitle,
                 icon: isDownloaded ? AppImages.play : AppImages.download,
                 isPrimary: true
             ) {
-                store.send(isDownloaded ? .startReadingTapped : .downloadBookTapped)
+                store.send(
+                    isDownloaded ? .startReadingTapped : .downloadBookTapped
+                )
             }
 
             ActionButton(
@@ -115,14 +117,14 @@ struct BookDetailsView: View {
 
     private var readingProgress: some View {
         Group {
-               if store.state.progress > 0 {
-                   VStack(alignment: .leading) {
-                       Text(LocalizedKey.progressBarLabel)
-                           .applyFontH2AccentDarkStyle()
-                       ProgressBarView(progress: store.state.progress)
-                   }
-               }
-           }
+            if store.state.progress > 0 {
+                VStack(alignment: .leading) {
+                    Text(LocalizedKey.progressBarLabel)
+                        .applyFontH2AccentDarkStyle()
+                    ProgressBarView(progress: store.state.progress)
+                }
+            }
+        }
     }
 
     // MARK: – Chapters List
