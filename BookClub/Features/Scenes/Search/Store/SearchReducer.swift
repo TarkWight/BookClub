@@ -16,7 +16,6 @@ func searchReducer(
     switch action {
     // MARK: — Lifecycle
     case .onAppear:
-        // kick off loading of recent searches & local metadata
         return .merge(
             .task { .fetchRecentSearches },
             .task { .fetchLocalGenres },
