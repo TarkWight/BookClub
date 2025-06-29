@@ -194,4 +194,5 @@ extension LocalizedKey {
         "error_requestTimeout",
         comment: ""
     )
+    static let notCached = NSLocalizedString("error_notCached", comment: "")
 }
