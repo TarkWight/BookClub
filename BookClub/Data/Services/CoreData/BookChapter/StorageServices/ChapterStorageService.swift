@@ -23,7 +23,8 @@ final class ChapterStorageService: ChapterStorageServiceProtocol {
     }
 
     func fetchChapters(forDocumentId documentId: String) async throws
-        -> [ChapterDTO] {
+        -> [ChapterDTO]
+    {
         let bgContext = makeBackgroundContext()
         return try await bgContext.perform {
             let req: NSFetchRequest<ChapterEntity> =
@@ -41,7 +42,8 @@ final class ChapterStorageService: ChapterStorageServiceProtocol {
     }
 
     func fetchChapterSummaries(forDocumentId documentId: String) async throws
-        -> [ChapterSummary] {
+        -> [ChapterSummary]
+    {
         let bgContext = makeBackgroundContext()
         return try await bgContext.perform {
             let request = NSFetchRequest<NSDictionary>(
@@ -148,12 +150,14 @@ final class ChapterStorageService: ChapterStorageServiceProtocol {
         forDocumentId documentId: String
     ) async throws {
         let context = makeBackgroundContext()
+
         try await context.perform {
             let bookReq: NSFetchRequest<BookEntity> = BookEntity.fetchRequest()
             bookReq.predicate = NSPredicate(
                 format: "documentId == %@",
                 documentId
             )
+
             guard let book = try context.fetch(bookReq).first else {
                 throw NSError(domain: "Book not found in CoreData", code: 0)
             }
@@ -161,6 +165,8 @@ final class ChapterStorageService: ChapterStorageServiceProtocol {
             for old in book.chapterList {
                 context.delete(old)
             }
+
+            book.removeAllChapters()
 
             for dto in chapters {
                 let entity = ChapterEntity(context: context)
@@ -170,10 +176,15 @@ final class ChapterStorageService: ChapterStorageServiceProtocol {
                 entity.title = dto.title
                 entity.text = dto.text
                 entity.statusRaw = ChapterStatus.notStarted.rawValue
-                entity.bookEntity = book
-            }
 
-            try context.save()
+                entity.bookEntity = book
+                book.addToChapters(entity)
+            }
+            do {
+                try context.save()
+            } catch let error as NSError {
+                throw error
+            }
         }
     }
 }

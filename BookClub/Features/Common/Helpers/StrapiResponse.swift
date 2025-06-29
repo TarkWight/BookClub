@@ -27,5 +27,5 @@ struct ChapterNetworkItem: Decodable {
   let documentId: String
   let title: String
   let order: Int
-  let text: String?
+  let text: String
 }
