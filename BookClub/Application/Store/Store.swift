@@ -10,9 +10,10 @@ import SwiftUI
 @MainActor
 final class Store<State, Action>: ObservableObject {
     @Published private(set) var state: State
-    var current: State { state }
-
     private let reducer: (inout State, Action) -> Effect<Action>
+
+    // Keep track of running tasks to allow cancellation
+    private var runningTasks: [AnyHashable: Task<Void, Never>] = [:]
 
     init(
         initialState: State,
@@ -32,15 +33,29 @@ final class Store<State, Action>: ObservableObject {
         case .none:
             break
 
-        case .task(let work):
-            Task {
-                let next = await work()
-                await MainActor.run { self.send(next) }
-            }
+        case let .cancel(id):
+            // cancel and remove any running task for this id
+            runningTasks[id]?.cancel()
+            runningTasks.removeValue(forKey: id)
 
-        case .fireAndForget(let work):
-            Task {
-                await work()
+        case let .task(id, work):
+            // cancel existing task with same id
+            runningTasks[id]?.cancel()
+            // start new task
+            let task = Task { [weak self] in
+                let action = await work()
+                await MainActor.run { self?.send(action) }
+            }
+            runningTasks[id] = task
+
+        case let .fireAndForget(id, work):
+            // fire and forget tasks need not be tracked if id is nil, else track
+            if let id = id {
+                runningTasks[id]?.cancel()
+                let task = Task { await work() }
+                runningTasks[id] = task
+            } else {
+                Task { await work() }
             }
 
         case .batch(let effects):

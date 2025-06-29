@@ -7,6 +7,10 @@
 
 import Foundation
 
+private enum CancellationID {
+    static let libraryOnDisappear = "LibraryOnDisappear"
+}
+
 @MainActor
 func mainTabReducer(
     state: inout MainTabState,
@@ -15,9 +19,15 @@ func mainTabReducer(
 ) -> Effect<MainTabAction> {
     switch action {
 
-    case .tabSelected(let tab):
-        state.selectedTab = tab
-        return .none
+    case .tabSelected(let newTab):
+        let leaveLibrary: Effect<MainTabAction> =
+            state.selectedTab == .library && newTab != .library
+            ? .fireAndForget(id: CancellationID.libraryOnDisappear) { }
+                .map { _ in .library(.onDisappear) }
+            : .none
+
+        state.selectedTab = newTab
+        return leaveLibrary
 
     case .library(let libAction):
         return libraryReducer(
@@ -59,11 +69,9 @@ func mainTabReducer(
         .map(MainTabAction.bookmarks)
 
     case .readSelected:
-        // Навигация обрабатывается на уровне AppReducer через MainTabAction.readSelected
-        return .fireAndForget {}
+        return .fireAndForget(id: nil) {}
 
     case .logoutTapped:
-        // Аналогично — прокидываем MainTabAction.logoutTapped наверх
-        return .fireAndForget {}
+        return .fireAndForget(id: nil) {}
     }
 }

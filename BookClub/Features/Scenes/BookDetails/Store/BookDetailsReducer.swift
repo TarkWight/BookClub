@@ -8,6 +8,10 @@
 import Alamofire
 import Foundation
 
+private enum CancellationID {
+  static let onAppear = "BookDetailsOnAppear"
+}
+
 @MainActor
 func bookDetailsReducer(
     state: inout BookDetailsState,
@@ -26,12 +30,14 @@ func bookDetailsReducer(
         return .none
 
     case .onAppear:
+        guard !state.didLoadOnAppear else { return .none }
+        state.didLoadOnAppear = true
         return onAppearEffects(state: state, env: env)
 
     case let .chaptersLoaded(.success(chapters)):
         state.chapters = chapters
         let dicumentId = state.bookDocumentId
-        return .task {
+        return .task(id: CancellationID.onAppear) {
             do {
                 let cached = try await env.chapterStorage
                     .isBookCached(documentId: dicumentId)
@@ -122,7 +128,7 @@ func bookDetailsReducer(
         state.isDownloaded = cached
         if cached {
             let documetId = state.bookDocumentId
-            return .task {
+            return .task(id: CancellationID.onAppear) {
                 do {
                     let fullChapters = try await env.chapterStorage
                         .fetchChapters(forDocumentId: documetId)
@@ -136,6 +142,9 @@ func bookDetailsReducer(
             }
         }
         return .none
+
+    case .onDisappear:
+        return .cancel(id: CancellationID.onAppear)
     }
 }
 
@@ -148,7 +157,9 @@ private func onAppearEffects(
     let docId = state.bookDocumentId
     let numId = state.bookId
 
-    let loadChapters: Effect<BookDetailsAction> = .task {
+    let loadChapters: Effect<BookDetailsAction> = .task(
+        id: CancellationID.onAppear
+      ) {
         do {
             let chaps = try await env.chapterStorage.fetchChapterSummaries(
                 forDocumentId: docId
@@ -162,7 +173,9 @@ private func onAppearEffects(
         }
     }
 
-    let loadProgress: Effect<BookDetailsAction> = .task {
+    let loadProgress: Effect<BookDetailsAction> = .task(
+        id: CancellationID.onAppear
+      ) {
         do {
             let prog = try await env.chapterStorage.computeProgress(
                 forBook: docId
@@ -176,7 +189,9 @@ private func onAppearEffects(
         }
     }
 
-    let loadFavStatus: Effect<BookDetailsAction> = .task {
+    let loadFavStatus: Effect<BookDetailsAction> = .task(
+    id: CancellationID.onAppear
+  ) {
         do {
             let resp: FavoritesListResponse =
                 try await env.networkClient.request(
@@ -197,7 +212,9 @@ private func onAppearEffects(
         }
     }
 
-    let checkBookCache: Effect<BookDetailsAction> = .task {
+    let checkBookCache: Effect<BookDetailsAction> = .task(
+    id: CancellationID.onAppear
+  ) {
         do {
             if try await env.chapterStorage.isBookCached(documentId: docId) {
                 let chapters = try await env.chapterStorage.fetchChapters(
@@ -227,7 +244,7 @@ private func favoriteToggleEffects(
     let bookId = state.bookId
     let existing = state.favoriteId
 
-    return .task {
+    return .task(id: CancellationID.onAppear) {
         do {
             if willBeFav {
                 let resp: FavoriteCreateResponse =
@@ -261,7 +278,7 @@ private func downloadBookEffects(
     let bookId = state.bookId
     let docId = state.bookDocumentId
 
-    return .task {
+    return .task(id: CancellationID.onAppear) {
         do {
             if try await env.chapterStorage.isBookCached(documentId: docId) {
                 let chapters = try await env.chapterStorage.fetchChapters(
@@ -336,7 +353,7 @@ extension Effect where Action == BookDetailsAction {
         documentId: String,
         env: BookDetailsEnvironment
     ) -> Effect {
-        .fireAndForget {
+        .fireAndForget(id: CancellationID.onAppear) {
             await env.readingSession.startReading(
                 documentId: documentId,
                 chapterOrder: order
@@ -350,7 +367,7 @@ extension Effect where Action == BookDetailsAction {
         env: BookDetailsEnvironment
     ) -> Effect {
         let first = chaps.first?.order ?? 1
-        return .fireAndForget {
+        return .fireAndForget(id: CancellationID.onAppear) {
             await env.readingSession.startReading(
                 documentId: documentId,
                 chapterOrder: first

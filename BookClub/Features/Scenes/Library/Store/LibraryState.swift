@@ -12,4 +12,5 @@ struct LibraryState: Equatable, Sendable {
     var newBooks: Loadable<[BookDetailsItem]> = .idle
     var popularBooks: Loadable<[BookDetailsItem]> = .idle
     var selectedBookID: String?
+    var didLoadOnAppear: Bool = false
 }

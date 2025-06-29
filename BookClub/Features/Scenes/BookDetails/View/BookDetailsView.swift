@@ -135,30 +135,27 @@ struct BookDetailsView: View {
                 .applyFontH2AccentDarkStyle()
 
             switch store.state.bookDownload {
-            case .loaded:
+            case .loaded where !store.state.chapters.isEmpty:
                 ForEach(store.state.chapters) { chapter in
                     HStack {
                         Text(chapter.title)
                             .font(.body)
                             .foregroundColor(AppColors.accentDark)
                         Spacer()
-                        (chapter.order == store.state.selectedChapterOrder
+                        let isCurrent = chapter.order == store.state.selectedChapterOrder
+                        let icon = isCurrent
                             ? AppImages.readingNow
-                            : (chapter.status == .completed
-                                ? AppImages.read
-                                : AppImages.readingNow))
+                            : (chapter.status == .completed ? AppImages.read : AppImages.readingNow)
+                        icon
                             .resizable()
-                            .frame(
-                                width: Constants.chapterIconSize,
-                                height: Constants.chapterIconSize
-                            )
+                            .frame(width: Constants.chapterIconSize,
+                                   height: Constants.chapterIconSize)
                             .foregroundColor(
-                                chapter.order
-                                    == store.state.selectedChapterOrder
+                                isCurrent
                                     ? AppColors.accentDark
                                     : (chapter.status == .completed
                                         ? AppColors.accentMedium
-                                        : AppColors.background)
+                                        : AppColors.accentMedium)
                             )
                     }
                     .frame(height: Constants.chapterRowHeight)
@@ -167,13 +164,26 @@ struct BookDetailsView: View {
                     }
                 }
 
-            case .idle, .loading, .failure:
+            case .loaded:
+                // загружено, но список пуст
+                Text(LocalizedKey.chaptersPlaceholder)
+                    .font(.body)
+                    .foregroundColor(AppColors.accentMedium)
+                    .padding(.top, 8)
+
+            case .loading:
+                ProgressView()
+                    .padding(.top, 8)
+
+            case .idle, .failure:
+                // ещё не пытались загрузить или неудача
                 Text(LocalizedKey.chaptersPlaceholder)
                     .font(.body)
                     .foregroundColor(AppColors.accentMedium)
                     .padding(.top, 8)
             }
         }
+        .padding(.horizontal, Constants.sidePadding)
     }
 }
 

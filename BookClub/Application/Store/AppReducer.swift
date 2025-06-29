@@ -1,4 +1,3 @@
-//
 //  AppReducer.swift
 //  BookClub
 //
@@ -15,7 +14,7 @@ func appReducer(
 ) -> Effect<AppAction> {
     switch action {
     case .appStarted:
-        return .task {
+        return .task(id: UUID()) {
             do {
                 _ = try await env.authService.retrieveToken()
                 return .authStatusChanged(.authenticated)

@@ -8,6 +8,8 @@
 import Foundation
 
 struct BookDetailsState: Equatable {
+    var didLoadOnAppear = false
+
     var bookId: Int = 0
     var bookDocumentId: String = ""
     var title: String = ""

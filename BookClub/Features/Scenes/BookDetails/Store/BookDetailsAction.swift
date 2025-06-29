@@ -10,6 +10,7 @@ import Foundation
 enum BookDetailsAction: Equatable {
     case configure(BookDetailsPayload)
     case onAppear
+    case onDisappear
 
     case chaptersLoaded(Result<[ChapterSummary], NetworkError>)
     case cacheStatusLoaded(Bool)
