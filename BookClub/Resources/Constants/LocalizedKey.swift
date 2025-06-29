@@ -71,6 +71,10 @@ enum LocalizedKey {
         comment: "Label for the list of contents"
     )
 
+    static let chaptersPlaceholder = NSLocalizedString(
+        "chaptersPlaceholder",
+        comment: "Label for the empty list of chapters"
+    )
     // MARK: - Reader Screen
     static let readerSettingsLabel = NSLocalizedString(
         "settingsLabel",

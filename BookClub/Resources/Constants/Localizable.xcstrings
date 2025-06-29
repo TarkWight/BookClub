@@ -118,6 +118,23 @@
         }
       }
     },
+    "chaptersPlaceholder" : {
+      "comment" : "Label for the empty list of chapters",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contents are available after downloading the book"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Содержание доступно после загрузки книги"
+          }
+        }
+      }
+    },
     "downloadButtonTitle" : {
       "comment" : "Title fot the download book button",
       "localizations" : {

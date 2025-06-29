@@ -36,50 +36,45 @@ struct BookDetailsView: View {
     // MARK: – Header
 
     private var headerImage: some View {
-           ZStack(alignment: .topLeading) {
-               // Если есть URL обложки — грузим её асинхронно
-               if let url = store.state.coverURL {
-                   AsyncImage(url: url) { phase in
-                       switch phase {
-                       case .empty:
-                           // Placeholder
-                           Color.gray.opacity(0.2)
-                       case .success(let image):
-                           image
-                               .resizable()
-                               .scaledToFill()
-                       case .failure:
-                           // Паддинг-запасной вариант
-                           Color.red.opacity(0.1)
-                       @unknown default:
-                           Color.gray
-                       }
-                   }
-                   .frame(height: Constants.coverHeight)
-                   .clipped()
-                   .applyBookDetailsGradientMask()
-               } else {
-                   // Фолбэк: локальная картинка
-                   AppImages.error
-                       .resizable()
-                       .aspectRatio(contentMode: .fill)
-                       .frame(height: Constants.coverHeight)
-                       .applyBookDetailsGradientMask()
-                       .clipped()
-               }
+        ZStack(alignment: .topLeading) {
+            if let url = store.state.coverURL {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        Color.gray.opacity(0.2)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    case .failure:
+                        Color.red.opacity(0.1)
+                    @unknown default:
+                        Color.gray
+                    }
+                }
+                .frame(height: Constants.coverHeight)
+                .clipped()
+                .applyBookDetailsGradientMask()
+            } else {
+                AppImages.error
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(height: Constants.coverHeight)
+                    .applyBookDetailsGradientMask()
+                    .clipped()
+            }
 
-               BackButtonView(
+            BackButtonView(
                 action: { store.send(.backButtonTapped) },
-                   color: .light
-               )
-               .padding(.top, Constants.topPadding)
-           }
-       }
+                color: .light
+            )
+            .padding(.top, Constants.topPadding)
+        }
+    }
     // MARK: – Action Buttons
 
     private var actionButtons: some View {
         HStack(spacing: Constants.buttonSpacing) {
-            // Read / Download
             let downloadState = store.state.bookDownload
             ActionButton(
                 title: downloadState == .loaded([])
@@ -97,7 +92,6 @@ struct BookDetailsView: View {
                 }
             }
 
-            // Favorite toggle
             ActionButton(
                 title: store.state.isFavorite
                     ? LocalizedKey.removeFromFavoritesTitle
@@ -145,34 +139,44 @@ struct BookDetailsView: View {
             Text(LocalizedKey.listOfContentsLabel)
                 .applyFontH2AccentDarkStyle()
 
-            ForEach(store.state.chapters) { chapter in
-                HStack {
-                    Text(chapter.title)
-                        .font(.body)
-                        .foregroundColor(AppColors.accentDark)
-                    Spacer()
-                    (chapter.order == store.state.selectedChapterOrder
-                        ? AppImages.readingNow
-                        : (chapter.status == .completed
-                            ? AppImages.read
-                            : AppImages.readingNow))
-                        .resizable()
-                        .frame(
-                            width: Constants.chapterIconSize,
-                            height: Constants.chapterIconSize
-                        )
-                        .foregroundColor(
-                            chapter.order == store.state.selectedChapterOrder
-                                ? AppColors.accentDark
-                                : (chapter.status == .completed
-                                    ? AppColors.accentMedium
-                                    : AppColors.background)
-                        )
+            switch store.state.bookDownload {
+            case .loaded:
+                ForEach(store.state.chapters) { chapter in
+                    HStack {
+                        Text(chapter.title)
+                            .font(.body)
+                            .foregroundColor(AppColors.accentDark)
+                        Spacer()
+                        (chapter.order == store.state.selectedChapterOrder
+                            ? AppImages.readingNow
+                            : (chapter.status == .completed
+                                ? AppImages.read
+                                : AppImages.readingNow))
+                            .resizable()
+                            .frame(
+                                width: Constants.chapterIconSize,
+                                height: Constants.chapterIconSize
+                            )
+                            .foregroundColor(
+                                chapter.order
+                                    == store.state.selectedChapterOrder
+                                    ? AppColors.accentDark
+                                    : (chapter.status == .completed
+                                        ? AppColors.accentMedium
+                                        : AppColors.background)
+                            )
+                    }
+                    .frame(height: Constants.chapterRowHeight)
+                    .onTapGesture {
+                        store.send(.chapterTapped(order: chapter.order))
+                    }
                 }
-                .frame(height: Constants.chapterRowHeight)
-                .onTapGesture {
-                    store.send(.chapterTapped(order: chapter.order))
-                }
+
+            case .idle, .loading, .failure:
+                Text(LocalizedKey.chaptersPlaceholder)
+                    .font(.body)
+                    .foregroundColor(AppColors.accentMedium)
+                    .padding(.top, 8)
             }
         }
     }
