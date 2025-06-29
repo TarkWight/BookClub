@@ -178,6 +178,7 @@ final class ChapterStorageService: ChapterStorageServiceProtocol {
                 entity.statusRaw = ChapterStatus.notStarted.rawValue
 
                 entity.bookEntity = book
+                entity.documentId = book.documentId
                 book.addToChapters(entity)
             }
             do {
@@ -185,6 +186,20 @@ final class ChapterStorageService: ChapterStorageServiceProtocol {
             } catch let error as NSError {
                 throw error
             }
+        }
+    }
+
+    func isBookCached(documentId: String) async throws -> Bool {
+        let ctx = makeBackgroundContext()
+        return try await ctx.perform {
+            let req: NSFetchRequest<ChapterEntity> =
+                ChapterEntity.fetchRequest()
+            req.predicate = NSPredicate(
+                format: "bookEntity.documentId == %@",
+                documentId
+            )
+            req.fetchLimit = 1
+            return try ctx.count(for: req) > 0
         }
     }
 }

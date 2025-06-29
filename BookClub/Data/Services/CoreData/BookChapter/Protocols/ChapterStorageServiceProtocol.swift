@@ -40,4 +40,6 @@ protocol ChapterStorageServiceProtocol: Sendable {
         _ chapters: [ChapterDTO],
         forDocumentId documentId: String
     ) async throws
+
+    func isBookCached(documentId: String) async throws -> Bool
 }
