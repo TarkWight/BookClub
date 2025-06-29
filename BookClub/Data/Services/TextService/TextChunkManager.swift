@@ -5,155 +5,123 @@
 //  Created by Tark Wight on 22.03.2025.
 //
 
-import SwiftUI
+import Foundation
 
-final class TextChunkManager: ObservableObject, TextChunkManagerProtocol {
-    // MARK: - Properties
+final class TextChunkManager: TextChunkManagerProtocol, @unchecked Sendable {
+    private let chapterStorage: ChapterStorageServiceProtocol
+    private let cache = NSCache<NSString, ChunkBox>()
 
-    private let chunkSize: Int
-    private let cacheDirectory: URL
-    private let chaptersFileName = "chapters.json"
+    private class ChunkBox: NSObject {
+        let chunk: TextChunk
 
-    private var cache: [Int: TextChunk] = [:]
-    private var chapters: [BookChapter] = []
-
-    @Published private(set) var currentChunkIndexValue = 0
-    @Published private(set) var currentChunks: [TextChunk] = []
-
-    // MARK: - Init
-
-    init(chunkSize: Int = 2000) {
-        self.chunkSize = chunkSize
-
-        if let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            self.cacheDirectory = documents.appendingPathComponent("BookChunks", isDirectory: true)
-        } else {
-            fatalError("Unable to find documents directory")
+        init(_ chunk: TextChunk) {
+            self.chunk = chunk
         }
 
-        setup()
     }
 
-    private func setup() {
-        createDirectoryIfNeeded()
-        loadChaptersFromDisk()
+    private var documentId: String = ""
+    private var chapterOrder: Int = 0
+    private var charCount: Int = 0
+    private var fullText: String = ""
+    private var totalChunks: Int = 0
+
+    private(set) var currentChunkIndex: Int = 0
+
+    var hasNext: Bool { currentChunkIndex + 1 < totalChunks }
+    var hasPrevious: Bool { currentChunkIndex > 0 }
+
+    init(chapterStorage: ChapterStorageServiceProtocol) {
+        self.chapterStorage = chapterStorage
+        cache.countLimit = 50
     }
 
-    // MARK: - Public API
+    func resetToChapter(
+        documentId: String,
+        chapterOrder: Int,
+        charCountPerChunk: Int
+    ) async throws {
+        self.documentId = documentId
+        self.chapterOrder = chapterOrder
+        self.charCount = charCountPerChunk
+        self.currentChunkIndex = 0
 
-    func loadInitialChunk() throws -> TextChunk {
-        currentChunkIndexValue = chapters.first?.chunkIndex ?? 0
-        try  preloadChunks(from: currentChunkIndexValue)
-        return try requireChunk(at: currentChunkIndexValue)
+        // TODO: - Вспомнить, зачем он здесь
+        //        _ = try await chapterStorage.fetchChapterSummaries(
+        //            forDocumentId: documentId
+        //        )
+
+        let fullDTO = try await chapterStorage.fetchChapters(
+            forDocumentId: documentId
+        )
+        let dto = fullDTO.first { $0.order == chapterOrder }
+
+        self.fullText = dto?.text ?? ""
+        self.totalChunks = Int(ceil(Double(fullText.count) / Double(charCount)))
+        cache.removeAllObjects()
     }
 
-    func loadNextChunk()  throws -> TextChunk {
-        let nextIndex = currentChunkIndexValue + 1
-        guard nextIndex < totalChunks() else {
-            throw ChunkLoaderError.chunkNotFound(nextIndex)
+    func loadInitialChunk() async throws -> TextChunk {
+        try await makeChunk(at: 0)
+    }
+
+    func loadNextChunk() async throws -> TextChunk {
+        let next = currentChunkIndex + 1
+        guard next < totalChunks else {
+            throw ChunkLoaderError.chunkNotFound(next)
         }
-        currentChunkIndexValue = nextIndex
-        try  preloadChunks(from: currentChunkIndexValue)
-        return try requireChunk(at: currentChunkIndexValue)
+        return try await makeChunk(at: next)
     }
 
-    func loadPreviousChunk()  throws -> TextChunk {
-        let previousIndex = currentChunkIndexValue - 1
-        guard previousIndex >= 0 else {
-            throw ChunkLoaderError.chunkNotFound(previousIndex)
+    func loadPreviousChunk() async throws -> TextChunk {
+        let prev = currentChunkIndex - 1
+        guard prev >= 0 else {
+            throw ChunkLoaderError.chunkNotFound(prev)
         }
-        currentChunkIndexValue = previousIndex
-        try  preloadChunks(from: currentChunkIndexValue)
-        return try requireChunk(at: currentChunkIndexValue)
+        return try await makeChunk(at: prev)
     }
 
-    func loadChunk(for chapter: BookChapter)  throws -> TextChunk {
-        currentChunkIndexValue = chapter.chunkIndex
-        try  preloadChunks(from: currentChunkIndexValue)
-        return try requireChunk(at: currentChunkIndexValue)
-    }
+    // MARK: — Private methods
 
-    func currentChapterTitle() -> String? {
-        chapters.last(where: { $0.chunkIndex <= currentChunkIndexValue })?.title
-    }
+    private func makeChunk(at index: Int) async throws -> TextChunk {
+        let key = "b\(documentId)_c\(chapterOrder)_i\(index)" as NSString
 
-    func fetchChapters() -> [BookChapter] {
-        chapters
-    }
-
-    func allChaptersWithStatus() -> [BookChapter] {
-        chapters
-    }
-
-    func totalChunks() -> Int {
-        let files = (try? FileManager.default.contentsOfDirectory(atPath: cacheDirectory.path)) ?? []
-        return files.filter { $0.hasPrefix("chunk_") && $0.hasSuffix(".txt") }.count
-    }
-
-    func hasPrevious() -> Bool {
-        currentChunkIndexValue > 0
-    }
-
-    func hasNext() -> Bool {
-        let total = totalChunks()
-        return currentChunkIndexValue + 1 < total
-    }
-
-    func getCurrentChunkIndex() -> Int {
-        currentChunkIndexValue
-    }
-
-    func setCurrentChunkIndex(_ index: Int) {
-        self.currentChunkIndexValue = index
-    }
-
-    // MARK: - Private Helpers
-
-    private func loadChunk(at index: Int)  throws -> TextChunk {
-        let fileURL = cacheDirectory.appendingPathComponent("chunk_\(index).txt")
-        guard FileManager.default.fileExists(atPath: fileURL.path) else {
-            throw NSError(domain: "Chunk not found", code: 404, userInfo: nil)
-        }
-        let content = try String(contentsOf: fileURL, encoding: .utf8)
-        return TextChunk(index: index, text: content)
-    }
-
-    private func preloadChunks(from index: Int)  throws {
-        let total = totalChunks()
-        let indices = [index - 1, index, index + 1, index + 2].filter { $0 >= 0 && $0 < total }
-
-        let toRemove = cache.keys.filter { !indices.contains($0) }
-        for i in toRemove {
-            cache.removeValue(forKey: i)
+        if let box = cache.object(forKey: key) {
+            let chunk = box.chunk
+            currentChunkIndex = index
+            preloadNeighbors(around: index)
+            return chunk
         }
 
-        for i in indices where cache[i] == nil {
-            let chunk = try  loadChunk(at: i)
-            cache[i] = chunk
-        }
-    }
-
-    private func requireChunk(at index: Int) throws -> TextChunk {
-        guard let chunk = cache[index] else {
+        let start = index * charCount
+        guard start < fullText.count else {
             throw ChunkLoaderError.chunkNotFound(index)
         }
+        let end = min(fullText.count, start + charCount)
+        let slice = String(
+            fullText
+                .dropFirst(start)
+                .prefix(end - start)
+        )
+
+        let chunk = TextChunk(
+            id: key as String,
+            documentId: documentId,
+            chapterOrder: chapterOrder,
+            index: index,
+            text: slice
+        )
+
+        cache.setObject(ChunkBox(chunk), forKey: key)
+        currentChunkIndex = index
+        preloadNeighbors(around: index)
         return chunk
     }
 
-    private func loadChaptersFromDisk() {
-        let fileURL = cacheDirectory.appendingPathComponent(chaptersFileName)
-        guard FileManager.default.fileExists(atPath: fileURL.path),
-              let data = try? Data(contentsOf: fileURL),
-              let decoded = try? JSONDecoder().decode([BookChapter].self, from: data) else {
-            self.chapters = []
-            return
-        }
-        self.chapters = decoded
-    }
-
-    private func createDirectoryIfNeeded() {
-        if !FileManager.default.fileExists(atPath: cacheDirectory.path) {
-            try? FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
+    private func preloadNeighbors(around index: Int) {
+        for i in [index - 1, index + 1] {
+            guard i >= 0, i < totalChunks else { continue }
+            Task { _ = try? await makeChunk(at: i) }
         }
     }
 }
