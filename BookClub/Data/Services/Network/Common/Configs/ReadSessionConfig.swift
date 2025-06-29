@@ -61,6 +61,6 @@ enum ReadSessionConfig: NetworkConfigProtocol {
     }
 
     var headers: HTTPHeaders? {
-        nil
+        ["Accept": "application/json"]
     }
 }
