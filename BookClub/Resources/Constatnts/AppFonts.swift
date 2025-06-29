@@ -24,4 +24,31 @@ enum AppFonts {
         let size = min(baseSize, screenWidth * scaleFactor)
         return Font.custom(name, size: size)
     }
+
+    static func estimateCharCountPerChunk(
+           chunkScreens: Int = 2,
+           lineSpacing: CGFloat
+       ) -> Int {
+           let screenWidth = UIScreen.main.bounds.width
+           let baseSize: CGFloat = 14
+           let scaleFactor: CGFloat = 1
+           let fontSize = min(baseSize, screenWidth * scaleFactor)
+
+           let font = UIFont(name: "Georgia", size: fontSize)
+               ?? UIFont.systemFont(ofSize: fontSize)
+
+           let fullLineHeight = font.lineHeight + lineSpacing
+           let screenHeight = UIScreen.main.bounds.height
+           let linesPerScreen = floor(screenHeight / fullLineHeight)
+
+           let sample = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+           let sampleWidth = (sample as NSString)
+               .size(withAttributes: [.font: font]).width
+           let avgCharWidth = sampleWidth / CGFloat(sample.count)
+
+           let charsPerLine = floor(screenWidth / avgCharWidth)
+
+           let totalChars = linesPerScreen * charsPerLine * CGFloat(chunkScreens)
+           return Int(totalChars)
+       }
 }

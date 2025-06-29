@@ -46,13 +46,21 @@ enum LocalizedKey {
     )
 
     // MARK: - Book Details Screen
+    static let downloadButtonTitle = NSLocalizedString(
+        "downloadButtonTitle",
+        comment: "Title fot the download book button"
+    )
     static let readButtonTitle = NSLocalizedString(
         "readButtonTitle",
         comment: "Title for the read button"
     )
+    static let removeFromFavoritesTitle = NSLocalizedString(
+        "removeFromFavoritesTitle",
+        comment: "Title for the delete from favorite to bookmark button"
+    )
     static let addToBookmarkButtonTitle = NSLocalizedString(
         "addToBookmarkButtonTitle",
-        comment: "Title for the add to bookmark button"
+        comment: "Title for the add favorite to bookmark button"
     )
     static let progressBarLabel = NSLocalizedString(
         "progressBarLabel",
@@ -130,6 +138,13 @@ enum LocalizedKey {
     )
 }
 
+extension LocalizedKey {
+    // MARK: - Placeholders
+    static let authorPlaceholder = NSLocalizedString(
+        "authorPlaceholder",
+        comment: ""
+    )
+}
 extension LocalizedKey {
     // MARK: — LoginError
     static let tokenNotFound = NSLocalizedString(

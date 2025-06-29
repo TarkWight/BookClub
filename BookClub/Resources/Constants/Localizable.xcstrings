@@ -18,7 +18,7 @@
       }
     },
     "addToBookmarkButtonTitle" : {
-      "comment" : "Title for the add to bookmark button",
+      "comment" : "Title for the add favorite to bookmark button",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -30,6 +30,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "В избранное"
+          }
+        }
+      }
+    },
+    "authorPlaceholder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown author"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Автор неизвестен"
           }
         }
       }
@@ -98,6 +114,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Оглавление"
+          }
+        }
+      }
+    },
+    "downloadButtonTitle" : {
+      "comment" : "Title fot the download book button",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Загрузить книгу"
           }
         }
       }
@@ -355,6 +388,9 @@
         }
       }
     },
+    "Hello, World!" : {
+
+    },
     "libraryLabel" : {
       "comment" : "Title for the library screen",
       "localizations" : {
@@ -456,6 +492,9 @@
           }
         }
       }
+    },
+    "Play" : {
+
     },
     "popularGridLabel" : {
       "comment" : "Title for the popular grid",
@@ -576,6 +615,23 @@
         }
       }
     },
+    "removeFromFavoritesTitle" : {
+      "comment" : "Title for the delete from favorite to bookmark button",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove from favorite"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удалить из избранного"
+          }
+        }
+      }
+    },
     "seatchFieldPlaceholder" : {
       "comment" : "Placeholder for the search field",
       "localizations" : {
@@ -644,17 +700,15 @@
         }
       }
     },
-    "Дэн Браун" : {
-
-    },
-    "Код Да Винчи" : {
-
-    },
     "По запросу «%@» ничего не найдено" : {
-
-    },
-    "Секретный код скрыт в работах Леонардо да Винчи...\n\nТолько он поможет найти христианские святыни, дающие немыслимые власть и могущество...\n\nКлюч к величайшей тайне, над которой человечество билось веками, наконец может быть найден..." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing found for the search query \"%@\""
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
