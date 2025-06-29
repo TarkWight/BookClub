@@ -46,7 +46,6 @@ func appReducer(
         .map(AppAction.login)
 
     case .mainTab(let tabAction):
-        // First, run the MainTab reducer to update nested state
         let effect = mainTabReducer(
             state: &state.mainTab,
             action: tabAction,
@@ -54,7 +53,6 @@ func appReducer(
         )
         .map(AppAction.mainTab)
 
-        // Then handle navigation based on the specific MainTabAction
         switch tabAction {
         case .library(.didSelectBook):
             state.path.append(.bookDetails)
@@ -63,7 +61,6 @@ func appReducer(
         case .bookDetails(.startReadingTapped), .readSelected:
             state.path.append(.reader)
         case .logoutTapped:
-            // handle logout navigation if needed
             break
         default:
             break
