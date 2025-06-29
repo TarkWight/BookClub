@@ -17,12 +17,9 @@ func bookDetailsReducer(
     switch action {
 
     case let .configure(
-        bookId,
-        documentId,
-        title,
-        author,
-        description,
-        coverURL
+        bookId, documentId,
+        title, author,
+        description, coverURL
     ):
         state.bookId = bookId
         state.bookDocumentId = documentId
@@ -30,69 +27,13 @@ func bookDetailsReducer(
         state.author = author
         state.description = description
         state.coverURL = coverURL
-        print(
-            "[BookDetailsReducer].configure | bookId = \(bookId), documentId = \(documentId)"
-        )
         return .none
 
     case .onAppear:
-        let documentId = state.bookDocumentId
-        let numericBookId = state.bookId
+        return onAppearEffects(state: state, env: env)
 
-        return .batch([
-            .task {
-                do {
-                    let chapterSummaries = try await env.chapterStorage
-                        .fetchChapterSummaries(forDocumentId: documentId)
-                    return .chaptersLoaded(.success(chapterSummaries))
-                } catch let err as NetworkError {
-                    return .chaptersLoaded(.failure(err))
-                } catch {
-                    let wrapper = AFError.sessionInvalidated(error: error)
-                    return .chaptersLoaded(.failure(.afError(wrapper)))
-                }
-            },
-
-            .task {
-                do {
-                    let progressValue = try await env.chapterStorage
-                        .computeProgress(forBook: documentId)
-                    return .progressLoaded(.success(progressValue))
-                } catch let err as NetworkError {
-                    return .progressLoaded(.failure(err))
-                } catch {
-                    let wrapper = AFError.sessionInvalidated(error: error)
-                    return .progressLoaded(.failure(.afError(wrapper)))
-                }
-            },
-
-            .task {
-                do {
-                    let response: FavoritesListResponse =
-                        try await env.networkClient
-                        .request(
-                            BookDetailsConfig.getFavorites,
-                            decoder: JSONDecoder()
-                        )
-                    let matching = response.data.first {
-                        $0.bookId == numericBookId
-                    }
-                    let status = FavoriteStatus(
-                        isFavorite: matching != nil,
-                        favoriteId: matching.map { String($0.id) }
-                    )
-                    return .favoriteStatusLoaded(.success(status))
-                } catch let err as NetworkError {
-                    return .favoriteStatusLoaded(.failure(err))
-                } catch {
-                    let wrapper = AFError.sessionInvalidated(error: error)
-                    return .favoriteStatusLoaded(.failure(.afError(wrapper)))
-                }
-            },
-        ])
-
-    case let .chaptersLoaded(.success(chapters)):
-        state.chapters = chapters
+    case let .chaptersLoaded(.success(chaps)):
+        state.chapters = chaps
         return .none
 
     case .chaptersLoaded(.failure):
@@ -101,7 +42,6 @@ func bookDetailsReducer(
     case let .progressLoaded(.success(value)):
         state.progress = value
         return .none
-
     case .progressLoaded(.failure):
         return .none
 
@@ -114,39 +54,7 @@ func bookDetailsReducer(
         return .none
 
     case .toggleFavoriteTapped:
-        let willBeFav = !state.isFavorite
-        state.isFavorite = willBeFav
-        let bookId = state.bookId
-        let existingFavId = state.favoriteId
-
-        return .task {
-            do {
-                if willBeFav {
-                    let resp: FavoriteCreateResponse =
-                        try await env.networkClient
-                        .request(
-                            BookDetailsConfig.addToFavorites(bookId: bookId),
-                            decoder: JSONDecoder()
-                        )
-                    return .favoriteToggled(.success(String(resp.data.id)))
-                } else if let fid = existingFavId {
-                    try await env.networkClient
-                        .request(
-                            BookDetailsConfig.removeFromFavorites(
-                                favoriteId: fid
-                            )
-                        )
-                    return .favoriteToggled(.success(nil))
-                } else {
-                    return .favoriteToggled(.success(nil))
-                }
-            } catch let err as NetworkError {
-                return .favoriteToggled(.failure(err))
-            } catch {
-                let wrapper = AFError.sessionInvalidated(error: error)
-                return .favoriteToggled(.failure(.afError(wrapper)))
-            }
-        }
+        return favoriteToggleEffects(state: &state, env: env)
 
     case let .favoriteToggled(.success(newId)):
         state.favoriteId = newId
@@ -157,51 +65,15 @@ func bookDetailsReducer(
         return .none
 
     case .downloadBookTapped:
-        state.bookDownload = .loading
-        let bookId = state.bookId
-        let documentId = state.bookDocumentId
-
-        return .task {
-            do {
-                let wrapper: StrapiResponse<[ChapterNetworkItem]> =
-                    try await env.networkClient.request(
-                        BookDetailsConfig.getBookChapters(bookId: bookId),
-                        decoder: JSONDecoder()
-                    )
-                let chapterDTOs = wrapper.data.map { net in
-                    ChapterDTO(
-                        id: net.id,
-                        documentId: net.documentId,
-                        order: net.order,
-                        title: net.title,
-                        text: net.text,
-                        status: .notStarted
-                    )
-                }
-                try await env.chapterStorage.saveFullChapters(
-                    chapterDTOs,
-                    forDocumentId: documentId
-                )
-                return .downloadBookResponse(.success(chapterDTOs))
-            } catch let netErr as NetworkError {
-                return .downloadBookResponse(.failure(netErr))
-            } catch {
-                let afErr = AFError.sessionInvalidated(error: error)
-                return .downloadBookResponse(.failure(.afError(afErr)))
-            }
-        }
+        return downloadBookEffects(state: &state, env: env)
 
     case let .downloadBookResponse(.success(chaps)):
         state.bookDownload = .loaded(chaps)
-        let docId = state.bookDocumentId
-        let firstOrder = chaps.first?.order ?? 1
-
-        return .fireAndForget {
-            await env.readingSession.startReading(
-                documentId: docId,
-                chapterOrder: firstOrder
-            )
-        }
+        return .startReadingAfterDownload(
+            chaps: chaps,
+            documentId: state.bookDocumentId,
+            env: env
+        )
 
     case let .downloadBookResponse(.failure(err)):
         state.bookDownload = .failure(err.localizedKey)
@@ -213,39 +85,217 @@ func bookDetailsReducer(
             let nextOrder =
                 state.chapters.first { $0.status != .completed }?.order ?? 1
             state.selectedChapterOrder = nextOrder
-            let docId = state.bookDocumentId
-
-            return .fireAndForget {
-                await env.readingSession.startReading(
-                    documentId: docId,
-                    chapterOrder: nextOrder
-                )
-            }
+            return .startReading(
+                order: nextOrder,
+                documentId: state.bookDocumentId,
+                env: env
+            )
         case .idle, .loading, .failure:
             return bookDetailsReducer(
-                state: &state,
-                action: .downloadBookTapped,
-                env: env
+                state: &state, action: .downloadBookTapped, env: env
             )
         }
 
     case let .chapterTapped(order):
         state.selectedChapterOrder = order
-        let docId = state.bookDocumentId
-
-        return .fireAndForget {
-            await env.readingSession.startReading(
-                documentId: docId,
-                chapterOrder: order
-            )
-        }
+        return .startReading(
+            order: order,
+            documentId: state.bookDocumentId,
+            env: env
+        )
 
     case .openChapter:
         state.selectedChapterOrder = nil
         return .none
 
     case .backButtonTapped:
-        //        state.featureDidClose = true
         return .none
+    }
+}
+
+// MARK: — Private helpers
+
+private func onAppearEffects(
+    state: BookDetailsState,
+    env: BookDetailsEnvironment
+) -> Effect<BookDetailsAction> {
+    let docId = state.bookDocumentId
+    let numId = state.bookId
+
+    let loadChapters: Effect<BookDetailsAction> = .task {
+        do {
+            let chaps = try await env.chapterStorage.fetchChapterSummaries(
+                forDocumentId: docId
+            )
+            return .chaptersLoaded(.success(chaps))
+        } catch let net as NetworkError {
+            return .chaptersLoaded(.failure(net))
+        } catch {
+            let wrapper = AFError.sessionInvalidated(error: error)
+            return .chaptersLoaded(.failure(.afError(wrapper)))
+        }
+    }
+
+    let loadProgress: Effect<BookDetailsAction> = .task {
+        do {
+            let prog = try await env.chapterStorage.computeProgress(
+                forBook: docId
+            )
+            return .progressLoaded(.success(prog))
+        } catch let net as NetworkError {
+            return .progressLoaded(.failure(net))
+        } catch {
+            let wrapper = AFError.sessionInvalidated(error: error)
+            return .progressLoaded(.failure(.afError(wrapper)))
+        }
+    }
+
+    let loadFavStatus: Effect<BookDetailsAction> = .task {
+        do {
+            let resp: FavoritesListResponse =
+                try await env.networkClient.request(
+                    BookDetailsConfig.getFavorites,
+                    decoder: JSONDecoder()
+                )
+            let match = resp.data.first { $0.bookId == numId }
+            let status = FavoriteStatus(
+                isFavorite: match != nil,
+                favoriteId: match.map { String($0.id) }
+            )
+            return .favoriteStatusLoaded(.success(status))
+        } catch let net as NetworkError {
+            return .favoriteStatusLoaded(.failure(net))
+        } catch {
+            let wrapper = AFError.sessionInvalidated(error: error)
+            return .favoriteStatusLoaded(.failure(.afError(wrapper)))
+        }
+    }
+
+    return .batch([loadChapters, loadProgress, loadFavStatus])
+}
+
+private func favoriteToggleEffects(
+    state: inout BookDetailsState,
+    env: BookDetailsEnvironment
+) -> Effect<BookDetailsAction> {
+    let willBeFav = !state.isFavorite
+    state.isFavorite = willBeFav
+    let bookId = state.bookId
+    let existing = state.favoriteId
+
+    return .task {
+        do {
+            if willBeFav {
+                let resp: FavoriteCreateResponse =
+                    try await env.networkClient.request(
+                        BookDetailsConfig.addToFavorites(bookId: bookId),
+                        decoder: JSONDecoder()
+                    )
+                return .favoriteToggled(.success(String(resp.data.id)))
+            } else if let fid = existing {
+                try await env.networkClient.request(
+                    BookDetailsConfig.removeFromFavorites(favoriteId: fid)
+                )
+                return .favoriteToggled(.success(nil))
+            } else {
+                return .favoriteToggled(.success(nil))
+            }
+        } catch let net as NetworkError {
+            return .favoriteToggled(.failure(net))
+        } catch {
+            let wrapper = AFError.sessionInvalidated(error: error)
+            return .favoriteToggled(.failure(.afError(wrapper)))
+        }
+    }
+}
+
+private func downloadBookEffects(
+    state: inout BookDetailsState,
+    env: BookDetailsEnvironment
+) -> Effect<BookDetailsAction> {
+    state.bookDownload = .loading
+    let bookId = state.bookId
+    let docId = state.bookDocumentId
+
+    return .task {
+        do {
+            let wrapper: StrapiResponse<[ChapterNetworkItem]> =
+                try await env.networkClient.request(
+                    BookDetailsConfig.getBookChapters(bookId: bookId),
+                    decoder: JSONDecoder()
+                )
+            let dtos = wrapper.data.map { net in
+                ChapterDTO(
+                    id: net.id,
+                    documentId: net.documentId,
+                    order: net.order,
+                    title: net.title,
+                    text: net.text,
+                    status: .notStarted
+                )
+            }
+            try await env.chapterStorage.saveFullChapters(
+                dtos,
+                forDocumentId: docId
+            )
+            return .downloadBookResponse(.success(dtos))
+        } catch let net as NetworkError {
+            return .downloadBookResponse(.failure(net))
+        } catch {
+            let wrapper = AFError.sessionInvalidated(error: error)
+            return .downloadBookResponse(.failure(.afError(wrapper)))
+        }
+    }
+}
+
+@MainActor
+private func startReadingEffects(
+    state: inout BookDetailsState,
+    env: BookDetailsEnvironment
+) -> Effect<BookDetailsAction> {
+    switch state.bookDownload {
+    case .loaded:
+        let next = state.chapters.first { $0.status != .completed }?.order ?? 1
+        state.selectedChapterOrder = next
+        return .startReading(
+            order: next,
+            documentId: state.bookDocumentId,
+            env: env
+        )
+    case .idle, .loading, .failure:
+        return bookDetailsReducer(
+            state: &state,
+            action: .downloadBookTapped,
+            env: env
+        )
+    }
+}
+
+extension Effect where Action == BookDetailsAction {
+    fileprivate static func startReading(
+        order: Int,
+        documentId: String,
+        env: BookDetailsEnvironment
+    ) -> Effect {
+        .fireAndForget {
+            await env.readingSession.startReading(
+                documentId: documentId,
+                chapterOrder: order
+            )
+        }
+    }
+
+    fileprivate static func startReadingAfterDownload(
+        chaps: [ChapterDTO],
+        documentId: String,
+        env: BookDetailsEnvironment
+    ) -> Effect {
+        let first = chaps.first?.order ?? 1
+        return .fireAndForget {
+            await env.readingSession.startReading(
+                documentId: documentId,
+                chapterOrder: first
+            )
+        }
     }
 }
