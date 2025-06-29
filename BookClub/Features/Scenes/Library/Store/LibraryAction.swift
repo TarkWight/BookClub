@@ -23,5 +23,7 @@ enum LibraryAction: Equatable {
     case popularBooksResponse(Result<[BookDetailsItem], NetworkError>)
 
     // MARK: – Navigation
+    case bookDetails(BookDetailsAction)
     case didSelectBook(documentId: String)
+    case didConfigureBookDetails(BookDetailsAction)
 }

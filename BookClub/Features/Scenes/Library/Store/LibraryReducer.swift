@@ -40,10 +40,39 @@ func libraryReducer(
         )
 
     // MARK: — UI
+
     case .didSelectBook(let documentId):
-        state.selectedBookID = documentId
+        var all: [BookDetailsItem] = []
+        if case .loaded(let arr) = state.newBooks { all += arr }
+        if case .loaded(let arr) = state.popularBooks { all += arr }
+
+        guard let item = all.first(where: { $0.documentId == documentId })
+        else {
+            return .none
+        }
+
+        state.bookDetails = .init()
+
+        let cfg = BookDetailsAction.configure(
+            bookId: Int(item.id),
+            documentId: item.documentId,
+            title: item.title,
+            author: item.authorName ?? LocalizedKey.authorPlaceholder,
+            description: item.description,
+            coverURL: item.coverURL
+        )
+
+        return .task { .bookDetails(cfg) }
+
+    case .bookDetails:
         return .none
+
+    case .didConfigureBookDetails(let cfgAction):
+        return .task {
+            .bookDetails(cfgAction)
+        }
     }
+
 }
 
 // MARK: — Local New Books Reducer
@@ -216,7 +245,10 @@ extension Book {
             title: title,
             coverURL: coverURL,
             isNew: isNew,
-            illustrationURL: illustrationURL
+            illustrationURL: illustrationURL,
+            isFavorite: isFavorite,
+            authorName: authorName,
+            description: description
         )
     }
 }
@@ -235,7 +267,10 @@ extension Book {
             title: details.title,
             coverURL: details.coverURL,
             illustrationURL: details.illustrationURL,
-            isNew: details.isNew
+            isFavorite: details.isFavorite,
+            isNew: details.isNew,
+            authorName: details.authorName,
+            description: details.description
         )
     }
 }
