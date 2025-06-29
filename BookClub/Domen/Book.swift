@@ -13,5 +13,8 @@ struct Book: Equatable, Sendable {
     let title: String
     let coverURL: URL?
     let illustrationURL: URL?
+    let isFavorite: Bool?
     let isNew: Bool
+    let authorName: String?
+    let description: String
 }
