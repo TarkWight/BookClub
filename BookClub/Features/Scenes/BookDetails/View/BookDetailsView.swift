@@ -28,6 +28,7 @@ struct BookDetailsView: View {
             }
             .ignoresSafeArea(edges: .top)
         }
+        .navigationBarBackButtonHidden(true)
     }
 
     // MARK: – Header

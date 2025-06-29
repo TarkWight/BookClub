@@ -56,7 +56,7 @@ func appReducer(
         switch tabAction {
         case .library(.didSelectBook):
             state.path.append(.bookDetails)
-        case .bookDetails(.openChapter):
+        case .bookDetails(.backButtonTapped):
             state.path.removeLast()
         case .bookDetails(.startReadingTapped), .readSelected:
             state.path.append(.reader)
