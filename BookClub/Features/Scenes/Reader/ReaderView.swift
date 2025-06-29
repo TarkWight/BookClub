@@ -9,36 +9,36 @@ import SwiftUI
 
 struct ReaderView: View {
     @EnvironmentObject var session: ReadingSession
-//    @ObservedObject var router: Router
-//    @Binding var isChaptersPresented: Bool
+    //    @ObservedObject var router: Router
+    //    @Binding var isChaptersPresented: Bool
 
     @State private var isPlaying = false
     @State private var isSettingsPresented = false
 
     var body: some View {
         VStack {
-            Label ("Hello, World!", systemImage: "book")
+            Label("Hello, World!", systemImage: "book")
             Button("Play") {
                 isPlaying.toggle()
             }
         }
-//        ZStack {
-//            backgroundColor
-//            content
-//        }
-//        .sheet(isPresented: $isChaptersPresented) {
-//            ChaptersView(isPresented: $isChaptersPresented)
-//        }
-//        .sheet(isPresented: $isSettingsPresented) {
-//            settingsSheet
-//                .presentationDetents([.height(Constants.settingsSheetHeight)])
-//        }
+        //        ZStack {
+        //            backgroundColor
+        //            content
+        //        }
+        //        .sheet(isPresented: $isChaptersPresented) {
+        //            ChaptersView(isPresented: $isChaptersPresented)
+        //        }
+        //        .sheet(isPresented: $isSettingsPresented) {
+        //            settingsSheet
+        //                .presentationDetents([.height(Constants.settingsSheetHeight)])
+        //        }
     }
 }
 
-//// MARK: - content, scrollView, chunkList
+// MARK: - content, scrollView, chunkList
 //
-//private extension ReaderView {
+// private extension ReaderView {
 //    var content: some View {
 //        VStack(spacing: 0) {
 //            header
@@ -80,17 +80,17 @@ struct ReaderView: View {
 //            .padding(.bottom, Constants.sidePadding + Constants.toolbarHeight)
 //        }
 //    }
-//}
+// }
 //
-//// MARK: - UI Components
-//private extension ReaderView {
+// MARK: - UI Components
+// private extension ReaderView {
 //    var backgroundColor: some View {
 //        Color(AppColors.background)
 //            .ignoresSafeArea()
 //    }
-//}
+// }
 //
-//private extension ReaderView {
+// private extension ReaderView {
 //    var header: some View {
 //        HStack {
 //            BackButtonView(action: { print("router.navigateTo(.mainTab)") }, color: .dark)
@@ -219,10 +219,10 @@ struct ReaderView: View {
 //            }
 //        }
 //    }
-//}
+// }
 //
-//// MARK: - Icon Button Component
-//struct ReaderIconButton: View {
+// MARK: - Icon Button Component
+// struct ReaderIconButton: View {
 //    let image: Image
 //    let action: () -> Void
 //
@@ -236,10 +236,10 @@ struct ReaderView: View {
 //        }
 //        .frame(width: ReaderView.Constants.controlButtonSize, height: ReaderView.Constants.controlButtonSize)
 //    }
-//}
+// }
 //
-//// MARK: - Constants
-//private extension ReaderView {
+// MARK: - Constants
+// private extension ReaderView {
 //    enum Constants {
 //        /// Layout
 //        static let sidePadding: CGFloat = 16
@@ -266,9 +266,9 @@ struct ReaderView: View {
 //        static let dividerWidth: CGFloat = 1
 //        static let dividerHeight: CGFloat = 18
 //    }
-//}
+// }
 //
-////#Preview {
-////    ReaderView(/*isChaptersPresented: .constant(false)*/)
-////        .environmentObject(ReadingSession(chunkManager: TextChunkManager()))
-////}
+// #Preview {
+//    ReaderView(/*isChaptersPresented: .constant(false)*/)
+//        .environmentObject(ReadingSession(chunkManager: TextChunkManager()))
+// }

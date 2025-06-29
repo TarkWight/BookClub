@@ -45,8 +45,9 @@ struct BookmarksView: View {
     }
 }
 //
-//// MARK: - Subviews
-//private extension BookmarksView {
+// MARK: - Subviews
+//
+// private extension BookmarksView {
 //
 //    var readingNowSection: some View {
 //        VStack(alignment: .leading, spacing: 12) {
@@ -138,13 +139,14 @@ struct BookmarksView: View {
 //    }
 //
 //    func progress() -> Double {
-////        let chapters = $readingSession.fetchChapters
-////        let currentIndex = $readingSession.getCurrentChunkIndex
-////        let readCount = chapters.filter { $0.chunkIndex < currentIndex }.count
-////        return Double(readCount) / Double(chapters.count)
+//        let chapters = $readingSession.fetchChapters
+//        let currentIndex = $readingSession.getCurrentChunkIndex
+//        let readCount = chapters.filter { $0.chunkIndex < currentIndex }.count
+//        return Double(readCount) / Double(chapters.count)
 //        return 0.3
 //    }
-//}
+// }
+//
 
 // MARK: - Models
 struct Quote: Identifiable {
