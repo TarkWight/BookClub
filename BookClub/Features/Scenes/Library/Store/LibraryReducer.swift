@@ -47,9 +47,7 @@ func libraryReducer(
         if case .loaded(let arr) = state.popularBooks { all += arr }
 
         guard let item = all.first(where: { $0.documentId == documentId })
-        else {
-            return .none
-        }
+        else { return .none }
 
         state.bookDetails = .init()
 

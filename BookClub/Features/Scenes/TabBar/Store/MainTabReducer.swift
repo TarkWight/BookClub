@@ -21,17 +21,17 @@ func mainTabReducer(
 
     case .library(let libAction):
         return libraryReducer(
-          state:   &state.library,
-          action:  libAction,
-          env:     env.libraryEnv
+            state: &state.library,
+            action: libAction,
+            env: env.libraryEnv
         )
         .map { inner in
-          switch inner {
-          case .bookDetails(let bdAction):
-            return .bookDetails(bdAction)
-          default:
-            return .library(inner)
-          }
+            switch inner {
+            case .bookDetails(let bdAction):
+                return .bookDetails(bdAction)
+            default:
+                return .library(inner)
+            }
         }
 
     case .search(let searchAction):
