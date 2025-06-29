@@ -25,26 +25,26 @@ struct ChaptersView: View {
 
                 Divider()
 
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 12) {
-                        ForEach(session.fetchChapters()) { chapter in
-                            Button {
-                                Task {
-                                    await session.startFromChapter(chapter)
-//                                    isPresented = false
-                                }
-                            } label: {
-                                HStack {
-                                    Text(chapter.title)
-                                        .foregroundColor(AppColors.accentDark)
-                                    Spacer()
-                                }
-                                .padding(.vertical, 8)
-                            }
-                        }
-                    }
-                    .padding(.top, 8)
-                }
+//                ScrollView {
+//                    VStack(alignment: .leading, spacing: 12) {
+//                        ForEach(session.fetchChapters()) { chapter in
+//                            Button {
+//                                Task {
+//                                    await session.startFromChapter(chapter)
+////                                    isPresented = false
+//                                }
+//                            } label: {
+//                                HStack {
+//                                    Text(chapter.title)
+//                                        .foregroundColor(AppColors.accentDark)
+//                                    Spacer()
+//                                }
+//                                .padding(.vertical, 8)
+//                            }
+//                        }
+//                    }
+//                    .padding(.top, 8)
+//                }
 
                 Spacer()
             }
@@ -55,8 +55,8 @@ struct ChaptersView: View {
         }
     }
 }
-
-#Preview {
-    ChaptersView(/*isPresented: .constant(true)*/)
-        .environmentObject(ReadingSession(chunkManager: TextChunkManager()))
-}
+//
+//#Preview {
+//    ChaptersView(/*isPresented: .constant(true)*/)
+//        .environmentObject(ReadingSession(chunkManager: TextChunkManager()))
+//}
