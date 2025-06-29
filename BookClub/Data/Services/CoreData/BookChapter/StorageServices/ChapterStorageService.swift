@@ -29,7 +29,7 @@ final class ChapterStorageService: ChapterStorageServiceProtocol {
             let req: NSFetchRequest<ChapterEntity> =
                 ChapterEntity.fetchRequest()
             req.predicate = NSPredicate(
-                format: "bookEntity.documentId == %d",
+                format: "bookEntity.documentId == %@",
                 documentId
             )
             req.sortDescriptors = [
@@ -49,7 +49,7 @@ final class ChapterStorageService: ChapterStorageServiceProtocol {
             )
             request.resultType = .dictionaryResultType
             request.predicate = NSPredicate(
-                format: "bookEntity.documentId == %d",
+                format: "bookEntity.documentId == %@",
                 documentId
             )
             request.sortDescriptors = [
