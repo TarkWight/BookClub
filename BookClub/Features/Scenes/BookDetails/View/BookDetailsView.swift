@@ -113,11 +113,15 @@ struct BookDetailsView: View {
     // MARK: – Progress
 
     private var readingProgress: some View {
-        VStack(alignment: .leading) {
-            Text(LocalizedKey.progressBarLabel)
-                .applyFontH2AccentDarkStyle()
-            ProgressBarView(progress: store.state.progress)
-        }
+        Group {
+               if store.state.progress > 0 {
+                   VStack(alignment: .leading) {
+                       Text(LocalizedKey.progressBarLabel)
+                           .applyFontH2AccentDarkStyle()
+                       ProgressBarView(progress: store.state.progress)
+                   }
+               }
+           }
     }
 
     // MARK: – Chapters List
