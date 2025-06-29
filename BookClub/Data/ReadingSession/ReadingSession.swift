@@ -86,8 +86,7 @@ final class ReadingSession: ReadingSessionProtocol, ObservableObject {
             await highlightingService.prepareHighlighting(for: chunk.text)
             isAutoScrolling = true
             Task {
-                await highlightingService.start(interval: 2) {
-                    [weak self] idx in
+                await highlightingService.start(interval: 2) { [weak self] idx in
                     guard let self = self else { return }
                     highlightedSentence = idx
                 }

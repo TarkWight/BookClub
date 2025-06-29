@@ -46,11 +46,6 @@ final class TextChunkManager: TextChunkManagerProtocol, @unchecked Sendable {
         self.charCount = charCountPerChunk
         self.currentChunkIndex = 0
 
-        // TODO: - Вспомнить, зачем он здесь
-        //        _ = try await chapterStorage.fetchChapterSummaries(
-        //            forDocumentId: documentId
-        //        )
-
         let fullDTO = try await chapterStorage.fetchChapters(
             forDocumentId: documentId
         )

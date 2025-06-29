@@ -23,8 +23,7 @@ final class ChapterStorageService: ChapterStorageServiceProtocol {
     }
 
     func fetchChapters(forDocumentId documentId: String) async throws
-        -> [ChapterDTO]
-    {
+        -> [ChapterDTO] {
         let bgContext = makeBackgroundContext()
         return try await bgContext.perform {
             let req: NSFetchRequest<ChapterEntity> =
@@ -42,8 +41,7 @@ final class ChapterStorageService: ChapterStorageServiceProtocol {
     }
 
     func fetchChapterSummaries(forDocumentId documentId: String) async throws
-        -> [ChapterSummary]
-    {
+        -> [ChapterSummary] {
         let bgContext = makeBackgroundContext()
         return try await bgContext.perform {
             let request = NSFetchRequest<NSDictionary>(
