@@ -19,7 +19,7 @@ extension ChapterEntity {
     @NSManaged var documentId: String
     @NSManaged public var order: Int32
     @NSManaged public var title: String
-    @NSManaged public var text: String?
+    @NSManaged public var text: String
     @NSManaged public var statusRaw: Int16
     @NSManaged public var bookEntity: BookEntity
 }

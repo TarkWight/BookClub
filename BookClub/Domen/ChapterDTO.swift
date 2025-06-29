@@ -12,6 +12,6 @@ struct ChapterDTO: Identifiable, Codable, Equatable {
     let documentId: String
     let order: Int
     let title: String
-    let text: String?
+    let text: String
     let status: ChapterStatus
 }

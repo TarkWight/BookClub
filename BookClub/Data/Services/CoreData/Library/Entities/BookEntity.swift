@@ -67,3 +67,12 @@ extension BookEntity {
     @objc(removeChaptersObject:)
     @NSManaged public func removeFromChapters(_ value: ChapterEntity)
 }
+
+extension BookEntity {
+    func removeAllChapters() {
+        guard let chapters = chapters as? Set<ChapterEntity> else { return }
+        for chapter in chapters {
+            removeFromChapters(chapter)
+        }
+    }
+}
