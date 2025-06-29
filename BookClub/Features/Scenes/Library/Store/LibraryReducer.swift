@@ -60,7 +60,10 @@ func libraryReducer(
             coverURL: item.coverURL
         )
 
-        return .task { .bookDetails(cfg) }
+        return .batch([
+               .task { .bookDetails(cfg) },
+               .task { .bookDetails(.onAppear) }
+           ])
 
     case .bookDetails:
         return .none

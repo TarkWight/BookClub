@@ -28,9 +28,6 @@ struct BookDetailsView: View {
             }
             .ignoresSafeArea(edges: .top)
         }
-        .onAppear {
-            store.send(.onAppear)
-        }
     }
 
     // MARK: – Header
@@ -72,24 +69,15 @@ struct BookDetailsView: View {
         }
     }
     // MARK: – Action Buttons
-
     private var actionButtons: some View {
         HStack(spacing: Constants.buttonSpacing) {
-            let downloadState = store.state.bookDownload
+            let isDownloaded = store.state.bookDownload.isLoaded
             ActionButton(
-                title: downloadState == .loaded([])
-                    ? LocalizedKey.readButtonTitle
-                    : LocalizedKey.downloadButtonTitle,
-                icon: downloadState == .loaded([])
-                    ? AppImages.play : AppImages.download,
+                title: isDownloaded ? LocalizedKey.readButtonTitle : LocalizedKey.downloadButtonTitle,
+                icon: isDownloaded ? AppImages.play : AppImages.download,
                 isPrimary: true
             ) {
-                switch store.state.bookDownload {
-                case .loaded:
-                    store.send(.startReadingTapped)
-                case .idle, .loading, .failure:
-                    store.send(.downloadBookTapped)
-                }
+                store.send(isDownloaded ? .startReadingTapped : .downloadBookTapped)
             }
 
             ActionButton(

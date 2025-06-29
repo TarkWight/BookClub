@@ -17,9 +17,12 @@ func bookDetailsReducer(
     switch action {
 
     case let .configure(
-        bookId, documentId,
-        title, author,
-        description, coverURL
+        bookId,
+        documentId,
+        title,
+        author,
+        description,
+        coverURL
     ):
         state.bookId = bookId
         state.bookDocumentId = documentId
@@ -92,7 +95,9 @@ func bookDetailsReducer(
             )
         case .idle, .loading, .failure:
             return bookDetailsReducer(
-                state: &state, action: .downloadBookTapped, env: env
+                state: &state,
+                action: .downloadBookTapped,
+                env: env
             )
         }
 
@@ -171,7 +176,25 @@ private func onAppearEffects(
         }
     }
 
-    return .batch([loadChapters, loadProgress, loadFavStatus])
+    let checkBookCache: Effect<BookDetailsAction> = .task {
+        do {
+            if try await env.chapterStorage.isBookCached(documentId: docId) {
+                let chapters = try await env.chapterStorage.fetchChapters(
+                    forDocumentId: docId
+                )
+                return .downloadBookResponse(.success(chapters))
+            } else {
+                return .downloadBookResponse(.failure(.notCached))
+            }
+        } catch let net as NetworkError {
+            return .downloadBookResponse(.failure(net))
+        } catch {
+            let wrapper = AFError.sessionInvalidated(error: error)
+            return .downloadBookResponse(.failure(.afError(wrapper)))
+        }
+    }
+
+    return .batch([loadChapters, loadProgress, loadFavStatus, checkBookCache])
 }
 
 private func favoriteToggleEffects(
@@ -219,11 +242,19 @@ private func downloadBookEffects(
 
     return .task {
         do {
+            if try await env.chapterStorage.isBookCached(documentId: docId) {
+                let chapters = try await env.chapterStorage.fetchChapters(
+                    forDocumentId: docId
+                )
+                return .downloadBookResponse(.success(chapters))
+            }
+
             let wrapper: StrapiResponse<[ChapterNetworkItem]> =
                 try await env.networkClient.request(
                     BookDetailsConfig.getBookChapters(bookId: bookId),
                     decoder: JSONDecoder()
                 )
+
             let dtos = wrapper.data.map { net in
                 ChapterDTO(
                     id: net.id,
@@ -234,11 +265,18 @@ private func downloadBookEffects(
                     status: .notStarted
                 )
             }
-            try await env.chapterStorage.saveFullChapters(
-                dtos,
-                forDocumentId: docId
-            )
+
+            do {
+                try await env.chapterStorage.saveFullChapters(
+                    dtos,
+                    forDocumentId: docId
+                )
+            } catch {
+                throw error
+            }
+
             return .downloadBookResponse(.success(dtos))
+
         } catch let net as NetworkError {
             return .downloadBookResponse(.failure(net))
         } catch {
