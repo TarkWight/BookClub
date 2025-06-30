@@ -50,8 +50,8 @@ final class ReadingSession: ReadingSessionProtocol, ObservableObject {
 
         if let summary =
             try? await chapterStorage
-            .fetchChapterSummaries(forDocumentId: documentId)
-            .first(where: { $0.order == chapterOrder }) {
+                .fetchChapterSummaries(forDocumentId: documentId)
+                .first(where: { $0.order == chapterOrder }) {
             chapterTitle = summary.title
         }
 
@@ -69,13 +69,14 @@ final class ReadingSession: ReadingSessionProtocol, ObservableObject {
     // MARK: - Chunk Loading
     func onChunkAppear(_ chunk: TextChunk) async {
         guard chunk.index == chunkManager.currentChunkIndex,
-            chunkManager.hasNext
+              chunkManager.hasNext
         else { return }
         if let next = try? await chunkManager.loadNextChunk() {
             currentChunks.append(next)
         }
     }
 
+    // MARK: - Auto Scroll
     // MARK: - Auto Scroll
     func toggleAutoScroll() async {
         if isAutoScrolling {
@@ -85,15 +86,14 @@ final class ReadingSession: ReadingSessionProtocol, ObservableObject {
         } else if let chunk = currentChunks.last {
             await highlightingService.prepareHighlighting(for: chunk.text)
             isAutoScrolling = true
-            Task {
-                await highlightingService.start(interval: 2) { [weak self] idx in
-                    guard let self = self else { return }
-                    highlightedSentence = idx
-                }
+            // Сразу ждем старта, чтобы startCalls инкрементировался до возврата
+            await highlightingService.start(interval: 2) { [weak self] idx in
+                self?.highlightedSentence = idx
             }
         }
     }
 
+    // MARK: - User Scroll
     func userDidScroll() async {
         if isAutoScrolling {
             await highlightingService.stop()
