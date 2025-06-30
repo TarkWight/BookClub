@@ -13,6 +13,7 @@ enum LoginError: Error, Equatable {
     case identifierNotFound
     case passwordNotFound
     case unexpectedData
+    case invalidCredentials
     case unhandledError(OSStatus)
 
     static func == (lhs: LoginError, rhs: LoginError) -> Bool {
@@ -22,7 +23,8 @@ enum LoginError: Error, Equatable {
         case (.tokenNotFound, .tokenNotFound),
             (.identifierNotFound, .identifierNotFound),
             (.passwordNotFound, .passwordNotFound),
-            (.unexpectedData, .unexpectedData):
+            (.unexpectedData, .unexpectedData),
+            (.invalidCredentials, .invalidCredentials):
             return true
         case let (.unhandledError(errA), .unhandledError(errB)):
             return errA == errB
@@ -42,6 +44,7 @@ extension LoginError {
         case .passwordNotFound: return LocalizedKey.passwordNotFound
         case .unexpectedData: return LocalizedKey.unexpectedData
         case .unhandledError: return LocalizedKey.unhandledError
+        case .invalidCredentials: return LocalizedKey.invalidCredentials
         }
     }
 }
