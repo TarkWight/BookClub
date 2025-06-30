@@ -22,3 +22,4 @@ struct FavoritesListResponse: Codable {
     let data: [FavoriteItem]
     let meta: Meta
 }
+

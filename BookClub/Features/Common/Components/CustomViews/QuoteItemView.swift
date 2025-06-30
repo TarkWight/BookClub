@@ -7,6 +7,15 @@
 
 import SwiftUI
 
+// MARK: — Простая модель для View
+struct Quote: Identifiable {
+    let id: Int
+    let text: String
+    let book: String
+    let author: String
+}
+
+
 struct QuoteItemView: View {
     let quote: Quote
 
