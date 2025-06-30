@@ -8,7 +8,7 @@
 import Foundation
 
 struct ReadingProgressNetworkItem: Codable {
-  let id: Int64
-  let documentId: String
-  let progress: Double
+    let documentId: String
+    let value: Double
+    let chapterId: Int64
 }

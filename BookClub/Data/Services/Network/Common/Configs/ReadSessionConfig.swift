@@ -28,13 +28,13 @@ enum ReadSessionConfig: NetworkConfigProtocol {
     var endPoint: String {
         switch self {
         case .getProgresses:
-            return path
+            return ""
         case .getChapters(let bookId):
-            return "\(path)?filters[book][id][$eq]=\(bookId)"
+            return "?filters[book][id][$eq]=\(bookId)"
         case .createProgress:
-            return path
+            return ""
         case .updateProgress(let id, _):
-            return "/progresses/\(id)"
+            return "\(id)"
         }
     }
 

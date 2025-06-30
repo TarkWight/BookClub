@@ -243,41 +243,50 @@ private func loadReadingProgressEffect(
     bookId: String?
 ) -> Effect<BookmarksAction> {
     .task(id: CancellationID.progress) {
-        guard let doc = bookId else {
-            return .readingProgressLoaded(.success([:]))
-        }
         do {
-            let prog = try await env.chapterStorage.computeProgress(
-                forBook: doc
-            )
-            print("[Effect] got local progress:", prog)
-            return .readingProgressLoaded(.success([doc: prog]))
-        } catch {
-            print("[Effect] no local progress → fetching from network")
-            do {
-                let wrapper: StrapiResponse<[ReadingProgressNetworkItem]> =
-                    try await env.networkClient.request(
-                        ReadSessionConfig.getProgresses,
-                        decoder: JSONDecoder()
-                    )
-                let dict = Dictionary(
-                    uniqueKeysWithValues: wrapper.data.map {
-                        ($0.documentId, $0.progress)
-                    }
+            print("[Effect] fetching reading progress from network")
+            let wrapper: StrapiResponse<[ReadingProgressNetworkItem]> =
+                try await env.networkClient.request(
+                    ReadSessionConfig.getProgresses,
+                    decoder: JSONDecoder()
                 )
-                print("[Effect] fetched progress from network:", dict)
-                return .readingProgressLoaded(.success(dict))
-            } catch let net as NetworkError {
-                print("[Effect] progress network error:", net)
-                return .readingProgressLoaded(.failure(net))
-            } catch {
-                let afErr = AFError.sessionInvalidated(error: error)
-                print("[Effect] progress unexpected error:", error)
-                return .readingProgressLoaded(.failure(.afError(afErr)))
+
+            let items = wrapper.data
+            print("[Effect] got \(items.count) progress items from network")
+
+            let allChapters = try await env.chapterStorage.fetchChapters(forDocumentId: "l9n16lz4rky9talx9ckytly7")
+            let chapterToBook: [Int64: String] = Dictionary(
+                uniqueKeysWithValues: allChapters.map { chapter in
+                    (chapter.id, chapter.documentId)
+                }
+            )
+
+            var progressPerBook: [String: [Double]] = [:]
+
+            for item in items {
+                if let bookDocId = chapterToBook[item.chapterId] {
+                    progressPerBook[bookDocId, default: []].append(item.value)
+                }
             }
+
+            let averaged: [String: Double] = progressPerBook.mapValues { values in
+                values.reduce(0, +) / Double(values.count)
+            }
+
+            print("[Effect] aggregated reading progress:", averaged)
+            return .readingProgressLoaded(.success(averaged))
+
+        } catch let net as NetworkError {
+            print("[Effect] progress network error:", net)
+            return .readingProgressLoaded(.failure(net))
+        } catch {
+            let afErr = AFError.sessionInvalidated(error: error)
+            print("[Effect] progress unexpected error:", error)
+            return .readingProgressLoaded(.failure(.afError(afErr)))
         }
     }
 }
+
 private func loadFavoritesEffect(
     env: BookmarksEnvironment
 ) -> Effect<BookmarksAction> {
