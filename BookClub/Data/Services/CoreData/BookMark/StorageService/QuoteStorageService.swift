@@ -21,8 +21,7 @@ actor QuoteStorageService: QuoteStorageServiceProtocol {
     }
 
     func fetchQuotes(forBookId bookId: Int64? = nil) async throws
-        -> [QuoteEntity]
-    {
+        -> [QuoteEntity] {
         let ctx = container.viewContext
         return try await ctx.perform {
             let req: NSFetchRequest<QuoteEntity> = QuoteEntity.fetchRequest()
@@ -38,24 +37,26 @@ actor QuoteStorageService: QuoteStorageServiceProtocol {
         let ctx = makeContext()
         try await ctx.perform {
             for dto in quotes {
-                let req: NSFetchRequest<QuoteEntity> =
-                    QuoteEntity.fetchRequest()
+                let req: NSFetchRequest<QuoteEntity> = QuoteEntity.fetchRequest()
                 req.predicate = NSPredicate(format: "id == %d", dto.id)
                 req.fetchLimit = 1
-                let existing = try ctx.fetch(req).first
-                let entity = existing ?? QuoteEntity(context: ctx)
+
+                let entity = (try ctx.fetch(req).first) ?? QuoteEntity(context: ctx)
                 entity.id = dto.id
                 entity.documentId = dto.documentId
                 entity.text = dto.text
 
-                let bookReq: NSFetchRequest<BookEntity> =
-                    BookEntity.fetchRequest()
+                let bookReq: NSFetchRequest<BookEntity> = BookEntity.fetchRequest()
                 bookReq.predicate = NSPredicate(format: "id == %d", dto.bookId)
                 bookReq.fetchLimit = 1
-                if let bookId = try ctx.fetch(bookReq).first?.id {
-                    entity.bookId = bookId
+
+                if let bookEntity = try ctx.fetch(bookReq).first {
+                    entity.book = bookEntity
+                } else {
+
                 }
             }
+
             if ctx.hasChanges {
                 try ctx.save()
             }

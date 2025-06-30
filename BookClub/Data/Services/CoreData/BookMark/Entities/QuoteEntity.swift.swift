@@ -19,6 +19,7 @@ extension QuoteEntity {
     @NSManaged var documentId: String
     @NSManaged var text: String
     @NSManaged var bookId: Int64
+    @NSManaged var book: BookEntity?
 }
 
 extension QuoteEntity {
