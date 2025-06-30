@@ -53,7 +53,7 @@ func appReducer(
         .map(AppAction.mainTab)
 
         switch tabAction {
-        case .library(.didSelectBook):
+        case .library(.didSelectBook), .search(.didSelectBook):
             state.path.append(.bookDetails)
         case .bookDetails(.backButtonTapped):
             state.path.removeLast()
