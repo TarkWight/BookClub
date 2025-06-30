@@ -116,20 +116,20 @@ final class TextChunkManager: TextChunkManagerProtocol, @unchecked Sendable {
 
             Task { [weak self] in
                 guard let self = self else { return }
-                let start = i * self.charCount
-                guard start < self.fullText.count else { return }
-                let end = min(self.fullText.count, start + self.charCount)
+                let start = i * charCount
+                guard start < fullText.count else { return }
+                let end = min(fullText.count, start + charCount)
                 let slice = String(
-                    self.fullText.dropFirst(start).prefix(end - start)
+                    fullText.dropFirst(start).prefix(end - start)
                 )
                 let chunk = TextChunk(
                     id: key as String,
-                    documentId: self.documentId,
-                    chapterOrder: self.chapterOrder,
+                    documentId: documentId,
+                    chapterOrder: chapterOrder,
                     index: i,
                     text: slice
                 )
-                self.cache.setObject(ChunkBox(chunk), forKey: key)
+                cache.setObject(ChunkBox(chunk), forKey: key)
             }
         }
     }

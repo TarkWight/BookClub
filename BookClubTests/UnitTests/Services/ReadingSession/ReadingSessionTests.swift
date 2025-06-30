@@ -12,31 +12,34 @@ import XCTest
 
 // MARK: — Заглушки для зависимостей
 
-private final class StubChapterStorageForReading: ChapterStorageServiceProtocol
-{
+private final class StubChapterStorageForReading: ChapterStorageServiceProtocol {
     let summaries: [ChapterSummary]
-    init(summaries: [ChapterSummary]) { self.summaries = summaries }
+
+    init(summaries: [ChapterSummary]) {
+        self.summaries = summaries
+    }
+
     func fetchChapterSummaries(forDocumentId documentId: String) async throws
-        -> [ChapterSummary]
-    {
+        -> [ChapterSummary] {
         summaries
     }
+
     // остальные методы не используются
     func fetchChapters(forDocumentId: String) async throws -> [ChapterDTO] {
         []
     }
     func setStatus(chapterOrder: Int, inBook: String, to: ChapterStatus)
-        async throws
-    {}
+        async throws {}
+
     func markAllPreviousAndCurrentCompleted(upTo: Int, inBook: String)
-        async throws
-    {}
-    func markAllFromAndAfterNotStarted(from: Int, inBook: String) async throws {
-    }
+        async throws {}
+
+    func markAllFromAndAfterNotStarted(from: Int, inBook: String) async throws {}
+
     func computeProgress(forBook: String) async throws -> Double { 0 }
     func saveFullChapters(_ chapters: [ChapterDTO], forDocumentId: String)
-        async throws
-    {}
+        async throws {}
+
     func isBookCached(documentId: String) async throws -> Bool { false }
 }
 
@@ -79,8 +82,7 @@ private final class StubHighlightingService: TextHighlightingServiceProtocol {
         prepareCalls += 1
     }
     func start(interval: TimeInterval, onHighlight: @escaping (Int) -> Void)
-        async
-    {
+        async {
         startCalls += 1
     }
     func stop() async {

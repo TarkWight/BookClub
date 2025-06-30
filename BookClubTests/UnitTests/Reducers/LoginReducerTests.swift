@@ -14,10 +14,11 @@ final class LoginReducerTests: XCTestCase {
 
     struct DummyAuth: AuthServiceProtocol {
         var shouldSucceedRefresh: Bool
+
         func retrieveToken() async throws -> String { fatalError() }
+
         func refreshToken(identifier: String?, password: String?) async throws
-            -> String
-        {
+            -> String {
             if shouldSucceedRefresh {
                 return "ok"
             } else {

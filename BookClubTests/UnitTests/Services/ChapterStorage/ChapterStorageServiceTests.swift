@@ -47,16 +47,16 @@ final class ChapterStorageServiceTests: XCTestCase {
         book.bookDescription = "Описание"
 
         for i in 1...3 {
-            let ch = ChapterEntity(context: ctx)
-            ch.id = Int64(i)
-            ch.documentId = "doc1"
-            ch.order = Int32(i)
-            ch.title = "Глава \(i)"
-            ch.text = "Текст \(i)"
-            ch.statusRaw =
+            let chapterEntity = ChapterEntity(context: ctx)
+            chapterEntity.id = Int64(i)
+            chapterEntity.documentId = "doc1"
+            chapterEntity.order = Int32(i)
+            chapterEntity.title = "Глава \(i)"
+            chapterEntity.text = "Текст \(i)"
+            chapterEntity.statusRaw =
                 (i <= 2 ? ChapterStatus.completed : ChapterStatus.notStarted)
                 .rawValue
-            ch.bookEntity = book
+            chapterEntity.bookEntity = book
         }
 
         try ctx.save()
@@ -308,7 +308,7 @@ extension ChapterStorageServiceTests {
         try populateTestData()
         let dtos = try await service.fetchChapters(forDocumentId: "doc1")
         do {
-            let _ = try? await service.saveFullChapters(
+            _ = try? await service.saveFullChapters(
                 dtos,
                 forDocumentId: "doc1"
             )
