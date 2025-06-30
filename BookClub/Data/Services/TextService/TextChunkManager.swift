@@ -17,7 +17,6 @@ final class TextChunkManager: TextChunkManagerProtocol, @unchecked Sendable {
         init(_ chunk: TextChunk) {
             self.chunk = chunk
         }
-
     }
 
     private var documentId: String = ""
@@ -57,66 +56,85 @@ final class TextChunkManager: TextChunkManagerProtocol, @unchecked Sendable {
     }
 
     func loadInitialChunk() async throws -> TextChunk {
-        try await makeChunk(at: 0)
+        guard let chunk = makeChunk(at: 0) else {
+            throw ChunkLoaderError.chunkNotFound(0)
+        }
+        currentChunkIndex = 0
+        preloadNeighbors(around: 0)
+        return chunk
     }
 
     func loadNextChunk() async throws -> TextChunk {
         let next = currentChunkIndex + 1
-        guard next < totalChunks else {
+        guard let chunk = makeChunk(at: next) else {
             throw ChunkLoaderError.chunkNotFound(next)
         }
-        return try await makeChunk(at: next)
+        currentChunkIndex = next
+        preloadNeighbors(around: next)
+        return chunk
     }
 
     func loadPreviousChunk() async throws -> TextChunk {
         let prev = currentChunkIndex - 1
-        guard prev >= 0 else {
+        guard let chunk = makeChunk(at: prev) else {
             throw ChunkLoaderError.chunkNotFound(prev)
         }
-        return try await makeChunk(at: prev)
+        currentChunkIndex = prev
+        preloadNeighbors(around: prev)
+        return chunk
     }
 
     // MARK: — Private methods
 
-    private func makeChunk(at index: Int) async throws -> TextChunk {
-        let key = "b\(documentId)_c\(chapterOrder)_i\(index)" as NSString
-
+    private func makeChunk(at index: Int) -> TextChunk? {
+        guard index >= 0, index < totalChunks else { return nil }
+        let key = cacheKey(for: index)
         if let box = cache.object(forKey: key) {
-            let chunk = box.chunk
-            currentChunkIndex = index
-            preloadNeighbors(around: index)
+            return box.chunk
+        } else {
+            let start = index * charCount
+            guard start < fullText.count else { return nil }
+            let end = min(fullText.count, start + charCount)
+            let slice = String(fullText.dropFirst(start).prefix(end - start))
+            let chunk = TextChunk(
+                id: key as String,
+                documentId: documentId,
+                chapterOrder: chapterOrder,
+                index: index,
+                text: slice
+            )
+            cache.setObject(ChunkBox(chunk), forKey: key)
             return chunk
         }
-
-        let start = index * charCount
-        guard start < fullText.count else {
-            throw ChunkLoaderError.chunkNotFound(index)
-        }
-        let end = min(fullText.count, start + charCount)
-        let slice = String(
-            fullText
-                .dropFirst(start)
-                .prefix(end - start)
-        )
-
-        let chunk = TextChunk(
-            id: key as String,
-            documentId: documentId,
-            chapterOrder: chapterOrder,
-            index: index,
-            text: slice
-        )
-
-        cache.setObject(ChunkBox(chunk), forKey: key)
-        currentChunkIndex = index
-        preloadNeighbors(around: index)
-        return chunk
     }
 
     private func preloadNeighbors(around index: Int) {
         for i in [index - 1, index + 1] {
             guard i >= 0, i < totalChunks else { continue }
-            Task { _ = try? await makeChunk(at: i) }
+            let key = cacheKey(for: i)
+            guard cache.object(forKey: key) == nil else { continue }
+
+            Task { [weak self] in
+                guard let self = self else { return }
+                let start = i * self.charCount
+                guard start < self.fullText.count else { return }
+                let end = min(self.fullText.count, start + self.charCount)
+                let slice = String(
+                    self.fullText.dropFirst(start).prefix(end - start)
+                )
+                let chunk = TextChunk(
+                    id: key as String,
+                    documentId: self.documentId,
+                    chapterOrder: self.chapterOrder,
+                    index: i,
+                    text: slice
+                )
+                self.cache.setObject(ChunkBox(chunk), forKey: key)
+            }
         }
+    }
+
+    private func cacheKey(for index: Int) -> NSString {
+        "b\(documentId)_c\(chapterOrder)_i\(index)" as NSString
     }
 }
