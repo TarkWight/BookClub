@@ -56,15 +56,15 @@ final class NetworkClient: NetworkClientProtocol {
             throw mapAFError(afError)
         }
 
-        if let text = String(data: data, encoding: .utf8) {
-            print(
-                "[NetworkClient] Response from \(url.absoluteString):\n\(text)"
-            )
-        } else {
-            print(
-                "[NetworkClient] Response from \(url.absoluteString): <binary data> (\(data.count) bytes)"
-            )
-        }
+//        if let text = String(data: data, encoding: .utf8) {
+//            print(
+//                "[NetworkClient] Response from \(url.absoluteString):\n\(text)"
+//            )
+//        } else {
+//            print(
+//                "[NetworkClient] Response from \(url.absoluteString): <binary data> (\(data.count) bytes)"
+//            )
+//        }
 
         do {
             return try decoder.decode(T.self, from: data)

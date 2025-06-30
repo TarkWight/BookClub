@@ -7,10 +7,22 @@
 
 import Foundation
 
-protocol TextChunkManagerProtocol:
-    ReaderTextServiceProtocol,
-    ChaptersListServiceProtocol,
-    ChapterProgressServiceProtocol {
+protocol TextChunkManagerProtocol: Sendable {
 
-    func totalChunks() -> Int
+    func resetToChapter(
+        documentId: String,
+        chapterOrder: Int,
+        charCountPerChunk: Int
+    ) async throws
+
+    func loadInitialChunk() async throws -> TextChunk
+
+    func loadNextChunk() async throws -> TextChunk
+
+    func loadPreviousChunk() async throws -> TextChunk
+
+    var currentChunkIndex: Int { get }
+
+    var hasNext: Bool { get }
+    var hasPrevious: Bool { get }
 }

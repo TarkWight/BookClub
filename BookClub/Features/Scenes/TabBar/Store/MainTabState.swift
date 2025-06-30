@@ -11,6 +11,7 @@ struct MainTabState: Equatable, Sendable {
     var selectedTab: Tab = .library
     var library: LibraryState = .init()
     var search: SearchState = .init()
+    var bookDetails: BookDetailsState = .init()
     var bookmarks: BookmarksState = .init()
 }
 

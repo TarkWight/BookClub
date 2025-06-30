@@ -11,4 +11,9 @@ extension String {
     static func placeholder(length: Int) -> String {
         return String(Array(repeating: "X", count: length))
     }
+
+    @MainActor
+    static func authorPlaceholder() -> String {
+        LocalizedKey.authorPlaceholder
+    }
 }

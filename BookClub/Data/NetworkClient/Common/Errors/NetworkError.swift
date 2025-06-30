@@ -17,6 +17,7 @@ enum NetworkError: Error, Equatable {
     case unacceptableStatusCode(Int)
     case decodingError(String)
     case afError(AFError)
+    case notCached
 
     static func == (lhs: NetworkError, rhs: NetworkError) -> Bool {
         switch (lhs, rhs) {
@@ -69,6 +70,8 @@ extension NetworkError {
             return LocalizedKey.decodingError
         case .afError:
             return LocalizedKey.requestFailed
+        case .notCached:
+            return LocalizedKey.notCached
         }
     }
 }

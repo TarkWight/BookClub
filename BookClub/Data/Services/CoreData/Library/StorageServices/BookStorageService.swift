@@ -7,7 +7,8 @@
 
 import CoreData
 
-actor BookStorageService: BookStorageServiceProtocol {
+final class BookStorageService: BookStorageServiceProtocol {
+
     private let container: NSPersistentContainer
 
     init(container: NSPersistentContainer) {
@@ -23,6 +24,7 @@ actor BookStorageService: BookStorageServiceProtocol {
                     (try context.fetch(req)).first
                     ?? BookEntity(context: context)
                 entity.update(from: book)
+                entity.authorName = book.authorName
             }
             if context.hasChanges {
                 try context.save()
@@ -64,11 +66,30 @@ actor BookStorageService: BookStorageServiceProtocol {
 
     func deleteAll() async throws {
         try await container.performBackgroundTask { context in
-            let fetch: NSFetchRequest<NSFetchRequestResult> =
-                BookEntity.fetchRequest()
-            let delete = NSBatchDeleteRequest(fetchRequest: fetch)
-            try context.execute(delete)
-            try context.save()
+
+            let fetchReq: NSFetchRequest<BookEntity> = BookEntity.fetchRequest()
+            let allBooks = try context.fetch(fetchReq)
+
+            for book in allBooks {
+                context.delete(book)
+            }
+            if context.hasChanges {
+                try context.save()
+            }
+        }
+    }
+
+    func setFavorite(
+        documentId: String,
+        to isFav: Bool
+    ) async throws {
+        try await container.performBackgroundTask { ctx in
+            let req: NSFetchRequest<BookEntity> = BookEntity.fetchRequest()
+            req.predicate = NSPredicate(format: "documentId == %@", documentId)
+            if let book = try ctx.fetch(req).first {
+                book.isFavorite = isFav
+                try ctx.save()
+            }
         }
     }
 }

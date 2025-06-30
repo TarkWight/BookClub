@@ -10,6 +10,8 @@ import Foundation
 enum SearchAction: Equatable {
     // MARK: — Lifecycle
     case onAppear
+    case onDisappear
+
     case dismissError
 
     // MARK: — UI

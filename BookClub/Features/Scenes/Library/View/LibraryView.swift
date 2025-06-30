@@ -11,8 +11,10 @@ struct LibraryView: View {
     @ObservedObject var store: Store<LibraryState, LibraryAction>
 
     private let columns: [GridItem] =
-        Array(repeating: .init(.flexible(), spacing: Constants.itemSpacing),
-              count: 3)
+        Array(
+            repeating: .init(.flexible(), spacing: Constants.itemSpacing),
+            count: 3
+        )
 
     var body: some View {
         ZStack {
@@ -59,7 +61,9 @@ struct LibraryView: View {
                     LazyVGrid(columns: columns, spacing: Constants.itemSpacing) {
                         ForEach(books) { book in
                             BookCell(book: book) {
-                                store.send(.didSelectBook(documentId: book.documentId))
+                                store.send(
+                                    .didSelectBook(documentId: book.documentId)
+                                )
                             }
                         }
                     }
@@ -72,9 +76,15 @@ struct LibraryView: View {
             }
         }
         .onAppear {
-            store.send(.fetchLocalNewBooks)
-            store.send(.fetchLocalPopularBooks)
+            store.send(.onAppear)
         }
+        .onDisappear {
+            store.send(.onDisappear)
+        }
+        //        .onAppear {
+        //            store.send(.fetchLocalNewBooks)
+        //            store.send(.fetchLocalPopularBooks)
+        //        }
         .refreshable {
             store.send(.requestNewBooks)
             store.send(.requestPopularBooks(page: 1))
@@ -84,8 +94,8 @@ struct LibraryView: View {
 
 // MARK: — BookCell для отображения одной книги
 
-private extension LibraryView {
-    struct BookCell: View {
+extension LibraryView {
+    fileprivate struct BookCell: View {
         let book: BookDetailsItem
         let onTap: () -> Void
 
@@ -94,12 +104,14 @@ private extension LibraryView {
                 VStack(alignment: .leading, spacing: Constants.textSpacing) {
                     AsyncImage(url: book.coverURL) { image in
                         image.resizable()
-                             .scaledToFill()
+                            .scaledToFill()
                     } placeholder: {
                         Color.gray.opacity(0.3)
                     }
-                    .frame(width: Constants.bookWidth,
-                           height: Constants.bookCoverHeight)
+                    .frame(
+                        width: Constants.bookWidth,
+                        height: Constants.bookCoverHeight
+                    )
                     .clipped()
                     .cornerRadius(Constants.cornerRadius)
 
@@ -119,8 +131,8 @@ private extension LibraryView {
 
 // MARK: — Константы
 
-private extension LibraryView {
-    enum Constants {
+extension LibraryView {
+    fileprivate enum Constants {
         static let topPadding: CGFloat = 26
         static let sidePadding: CGFloat = 16
         static let bottomPadding: CGFloat = 16
@@ -149,10 +161,12 @@ struct LibraryView_Previews: PreviewProvider {
 }
 
 #Preview {
-    LibraryView(store: Store<LibraryState, LibraryAction>(
-        initialState: .init(),
-        reducer: { _, _ in
-            return .none
-        }
-    ))
+    LibraryView(
+        store: Store<LibraryState, LibraryAction>(
+            initialState: .init(),
+            reducer: { _, _ in
+                return .none
+            }
+        )
+    )
 }

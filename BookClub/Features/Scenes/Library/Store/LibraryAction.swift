@@ -8,6 +8,9 @@
 import Foundation
 
 enum LibraryAction: Equatable {
+    case onAppear
+    case onDisappear
+
     // MARK: – Local storage (DB)
     case fetchLocalNewBooks
     case localNewBooksLoaded([BookDetailsItem])
@@ -23,5 +26,7 @@ enum LibraryAction: Equatable {
     case popularBooksResponse(Result<[BookDetailsItem], NetworkError>)
 
     // MARK: – Navigation
+    case bookDetails(BookDetailsAction)
     case didSelectBook(documentId: String)
+    case didConfigureBookDetails(BookDetailsAction)
 }

@@ -46,13 +46,21 @@ enum LocalizedKey {
     )
 
     // MARK: - Book Details Screen
+    static let downloadButtonTitle = NSLocalizedString(
+        "downloadButtonTitle",
+        comment: "Title fot the download book button"
+    )
     static let readButtonTitle = NSLocalizedString(
         "readButtonTitle",
         comment: "Title for the read button"
     )
+    static let removeFromFavoritesTitle = NSLocalizedString(
+        "removeFromFavoritesTitle",
+        comment: "Title for the delete from favorite to bookmark button"
+    )
     static let addToBookmarkButtonTitle = NSLocalizedString(
         "addToBookmarkButtonTitle",
-        comment: "Title for the add to bookmark button"
+        comment: "Title for the add favorite to bookmark button"
     )
     static let progressBarLabel = NSLocalizedString(
         "progressBarLabel",
@@ -88,10 +96,6 @@ enum LocalizedKey {
     )
 
     // MARK: - Search Screen
-    static let searchFieldPlaceholder = NSLocalizedString(
-        "seatchFieldPlaceholder",
-        comment: "Placeholder for the search field"
-    )
     static let recentRequestsLabel = NSLocalizedString(
         "recentRequestsLabel",
         comment: "Title for the recent requests"
@@ -131,6 +135,29 @@ enum LocalizedKey {
 }
 
 extension LocalizedKey {
+    // MARK: - Placeholders
+    static let authorPlaceholder = NSLocalizedString(
+        "authorPlaceholder",
+        comment: ""
+    )
+
+    static let bookTitlePlaceholder = NSLocalizedString(
+        "bookTitlePlaceholder",
+        comment: ""
+    )
+
+    static let searchFieldPlaceholder = NSLocalizedString(
+        "seatchFieldPlaceholder",
+        comment: "Placeholder for the search field"
+    )
+
+    static let chaptersPlaceholder = NSLocalizedString(
+        "chaptersPlaceholder",
+        comment: "Label for the empty list of chapters"
+    )
+}
+
+extension LocalizedKey {
     // MARK: — LoginError
     static let tokenNotFound = NSLocalizedString(
         "error_tokenNotFound",
@@ -150,6 +177,10 @@ extension LocalizedKey {
     )
     static let unhandledError = NSLocalizedString(
         "error_unhandledError",
+        comment: ""
+    )
+    static let invalidCredentials = NSLocalizedString(
+        "error_invalidCredentials",
         comment: ""
     )
     static let networkError = NSLocalizedString("error_network", comment: "")
@@ -175,4 +206,5 @@ extension LocalizedKey {
         "error_requestTimeout",
         comment: ""
     )
+    static let notCached = NSLocalizedString("error_notCached", comment: "")
 }

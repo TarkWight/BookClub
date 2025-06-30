@@ -8,138 +8,103 @@
 import SwiftUI
 
 @MainActor
-final class ReadingSession: ObservableObject {
+final class ReadingSession: ReadingSessionProtocol, ObservableObject {
     // MARK: - Dependencies
-    private let chunkManager: TextChunkManager
+    private let chapterStorage: ChapterStorageServiceProtocol
+    private let chunkManager: TextChunkManagerProtocol
+    private let highlightingService: TextHighlightingServiceProtocol
 
     // MARK: - UI State
     @Published var currentChunks: [TextChunk] = []
-    @Published var currentChapterTitle: String = ""
+    @Published var currentChapterOrder: Int = 0
+    @Published var documentId: String = ""
+    @Published var chapterTitle: String = ""
+    @Published var isAutoScrolling: Bool = false
+    @Published var highlightedSentence: Int? = nil
+
+    // MARK: - Reader Settings
     @Published var fontSize: CGFloat = 16
     @Published var lineSpacing: CGFloat = 8
-
-    // MARK: - Internal State
-    private var isLoading = false
+    private let charCountPerChunk: Int
 
     // MARK: - Init
-    init(chunkManager: TextChunkManager) {
+    init(
+        chapterStorage: ChapterStorageServiceProtocol,
+        chunkManager: TextChunkManagerProtocol,
+        highlightingService: TextHighlightingServiceProtocol,
+        charCountPerChunk: Int
+    ) {
+        self.chapterStorage = chapterStorage
         self.chunkManager = chunkManager
+        self.highlightingService = highlightingService
+        self.charCountPerChunk = charCountPerChunk
     }
 
-    // MARK: - Start points
+    // MARK: - Start Reading
+    func startReading(
+        documentId: String,
+        chapterOrder: Int
+    ) async {
+        self.documentId = documentId
+        self.currentChapterOrder = chapterOrder
 
-    func startFromChunk(index: Int) async {
-        chunkManager.setCurrentChunkIndex(index)
-        await loadInitialChunkSet()
-    }
+        if let summary =
+            try? await chapterStorage
+                .fetchChapterSummaries(forDocumentId: documentId)
+                .first(where: { $0.order == chapterOrder }) {
+            chapterTitle = summary.title
+        }
 
-    func startFromChapter(_ chapter: BookChapter) async {
-        do {
-            let chunk = try chunkManager.loadChunk(for: chapter)
-            chunkManager.setCurrentChunkIndex(chunk.index)
-            currentChunks = [chunk]
-            updateChapterTitle()
-        } catch {
-            print("Failed to load chunk for chapter: \(error)")
+        try? await chunkManager.resetToChapter(
+            documentId: documentId,
+            chapterOrder: chapterOrder,
+            charCountPerChunk: charCountPerChunk
+        )
+
+        if let first = try? await chunkManager.loadInitialChunk() {
+            currentChunks = [first]
         }
     }
 
-    func startFromLastRead() async {
-        let index = chunkManager.getCurrentChunkIndex()
-        await startFromChunk(index: index)
-    }
-
-    // MARK: - Loading chunks when scrolling
-
-    func onChunkAppear(_ chunk: TextChunk) {
-        guard chunk.index == currentChunks.last?.index else { return }
-        Task {
-            await loadNextChunkIfNeeded()
+    // MARK: - Chunk Loading
+    func onChunkAppear(_ chunk: TextChunk) async {
+        guard chunk.index == chunkManager.currentChunkIndex,
+              chunkManager.hasNext
+        else { return }
+        if let next = try? await chunkManager.loadNextChunk() {
+            currentChunks.append(next)
         }
     }
 
-    func loadNextChunkIfNeeded() async {
-        guard !isLoading, chunkManager.hasNext() else { return }
-        isLoading = true
-        do {
-            let chunk = try chunkManager.loadNextChunk()
-            if !currentChunks.contains(where: { $0.index == chunk.index }) {
-                currentChunks.append(chunk)
+    // MARK: - Auto Scroll
+    // MARK: - Auto Scroll
+    func toggleAutoScroll() async {
+        if isAutoScrolling {
+            await highlightingService.stop()
+            isAutoScrolling = false
+            highlightedSentence = nil
+        } else if let chunk = currentChunks.last {
+            await highlightingService.prepareHighlighting(for: chunk.text)
+            isAutoScrolling = true
+            // Сразу ждем старта, чтобы startCalls инкрементировался до возврата
+            await highlightingService.start(interval: 2) { [weak self] idx in
+                self?.highlightedSentence = idx
             }
-            updateChapterTitle()
-        } catch {
-            print("Failed to load next chunk: \(error)")
-        }
-        isLoading = false
-    }
-
-    // MARK: - Chapter transitions
-
-    func jumpToNextChapter() {
-        guard let currentIndex = chapterIndex(for: chunkManager.getCurrentChunkIndex()) else { return }
-        let chapters = chunkManager.fetchChapters()
-        guard currentIndex + 1 < chapters.count else { return }
-        Task {
-            await startFromChapter(chapters[currentIndex + 1])
         }
     }
 
-    func jumpToPreviousChapter() {
-        guard let currentIndex = chapterIndex(for: chunkManager.getCurrentChunkIndex()) else { return }
-        let chapters = chunkManager.fetchChapters()
-        guard currentIndex - 1 >= 0 else { return }
-        Task {
-            await startFromChapter(chapters[currentIndex - 1])
+    // MARK: - User Scroll
+    func userDidScroll() async {
+        if isAutoScrolling {
+            await highlightingService.stop()
+            isAutoScrolling = false
+            highlightedSentence = nil
         }
     }
 
-    // MARK: - Current chapter
-
-    func chapter(for index: Int) -> BookChapter? {
-        chunkManager.fetchChapters().last(where: { $0.chunkIndex <= index })
-    }
-
-    private func chapterIndex(for chunkIndex: Int) -> Int? {
-        chunkManager.fetchChapters().lastIndex(where: { $0.chunkIndex <= chunkIndex })
-    }
-
-    private func updateChapterTitle() {
-        if let title = chunkManager.currentChapterTitle(), title != currentChapterTitle {
-            currentChapterTitle = title
-        }
-    }
-
-    // MARK: - Initial load
-
-    func loadInitialChunkSet() async {
-        do {
-            let chunk = try chunkManager.loadInitialChunk()
-            currentChunks = [chunk]
-            updateChapterTitle()
-        } catch {
-            print("Failed to load initial chunk: \(error)")
-        }
-    }
-
-    // MARK: - List of chapters
-
-    func fetchChapters() -> [BookChapter] {
-        chunkManager.fetchChapters()
-    }
-
-    func getCurrentChunkIndex() -> Int {
-        chunkManager.getCurrentChunkIndex()
-    }
-
-    func hasNextChunk() -> Bool {
-        chunkManager.hasNext()
-    }
-
-    func hasPreviousChunk() -> Bool {
-        chunkManager.hasPrevious()
-    }
-
-    func fetchAllChapters() -> [BookChapter] {
-        chunkManager.fetchChapters()
+    // MARK: - Change Chapter
+    func goToChapter(order: Int) async {
+        await userDidScroll()
+        await startReading(documentId: documentId, chapterOrder: order)
     }
 }

@@ -27,14 +27,17 @@ struct BookClubApp: App {
         let bookStorage = BookStorageService(container: container)
         let genreStorage = GenreStorageService(container: container)
         let authorStorage = AuthorStorageService(container: container)
+        let chapterStorage = ChapterStorageService(container: container)
 
         // MARK: — Остальные сервисы
-        let keychainService = KeychainService() as KeychainServiceProtocol
+        let keychainService = KeychainService()
+
         let authService =
             AuthService(
                 networkClient: BookClubApp.makePlainClient(),
                 keychainService: keychainService
-            ) as AuthServiceProtocol
+            )
+
         let networkClient =
             NetworkClient(
                 session: BookClubApp.makeSession(
@@ -43,14 +46,30 @@ struct BookClubApp: App {
                         keychainService: keychainService
                     )
                 )
-            ) as NetworkClientProtocol
-        let recentSearchService = RecentSearchService()
+            )
 
-        // MARK: — Окружение и стор
+        let recentSearchService = RecentSearchService()
+        let highlightingService = TextHighlightingService()
+        let chunkManager = TextChunkManager(chapterStorage: chapterStorage)
+
+        let charCount = AppFonts.estimateCharCountPerChunk(
+            chunkScreens: 2,
+            lineSpacing: 8
+        )
+
+        let readingSession = ReadingSession(
+            chapterStorage: chapterStorage,
+            chunkManager: chunkManager,
+            highlightingService: highlightingService,
+            charCountPerChunk: charCount
+        )
+
         let environment = AppEnvironment(
             authService: authService,
             networkClient: networkClient,
+            readingSession: readingSession,
             bookStorage: bookStorage,
+            chapterStorage: chapterStorage,
             genreStorage: genreStorage,
             authorStorage: authorStorage,
             recentSearchService: recentSearchService

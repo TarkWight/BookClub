@@ -8,6 +8,10 @@
 import Alamofire
 import Foundation
 
+private enum LibraryCancellationID {
+    static let fetchBooks = "LibraryFetchBooks"
+}
+
 @MainActor
 func libraryReducer(
     state: inout LibraryState,
@@ -15,6 +19,41 @@ func libraryReducer(
     env: LibraryEnvironment
 ) -> Effect<LibraryAction> {
     switch action {
+
+    case .onAppear:
+        guard !state.didLoadOnAppear else { return .none }
+        state.didLoadOnAppear = true
+
+        let localNew = localNewBooksReducer(
+            state: &state,
+            action: .fetchLocalNewBooks,
+            env: env
+        )
+        .cancellable(id: LibraryCancellationID.fetchBooks)
+        let localPop = localPopularBooksReducer(
+            state: &state,
+            action: .fetchLocalPopularBooks,
+            env: env
+        )
+        .cancellable(id: LibraryCancellationID.fetchBooks)
+        let netNew = networkNewBooksReducer(
+            state: &state,
+            action: .requestNewBooks,
+            env: env
+        )
+        .cancellable(id: LibraryCancellationID.fetchBooks)
+        let netPop = networkPopularBooksReducer(
+            state: &state,
+            action: .requestPopularBooks(page: 1),
+            env: env
+        )
+        .cancellable(id: LibraryCancellationID.fetchBooks)
+
+        return .batch([localNew, localPop, netNew, netPop])
+
+    case .onDisappear:
+        return .cancel(id: LibraryCancellationID.fetchBooks)
+
     // MARK: — Local DB: New Books
     case .fetchLocalNewBooks,
         .localNewBooksLoaded:
@@ -40,15 +79,49 @@ func libraryReducer(
         )
 
     // MARK: — UI
+
     case .didSelectBook(let documentId):
-        state.selectedBookID = documentId
+        var all: [BookDetailsItem] = []
+        if case .loaded(let arr) = state.newBooks { all += arr }
+        if case .loaded(let arr) = state.popularBooks { all += arr }
+
+        guard let item = all.first(where: { $0.documentId == documentId })
+        else { return .none }
+
+        state.bookDetails = .init()
+
+        let payload = BookDetailsPayload(
+            bookId: Int(item.id),
+            documentId: item.documentId,
+            title: item.title,
+            author: item.authorName ?? LocalizedKey.authorPlaceholder,
+            description: item.description,
+            coverURL: item.coverURL
+        )
+
+        return .batch([
+            .task(id: LibraryCancellationID.fetchBooks) {
+                .bookDetails(.configure(payload))
+            },
+            .task(id: LibraryCancellationID.fetchBooks) {
+                .bookDetails(.onAppear)
+            },
+        ])
+
+    case .bookDetails:
         return .none
+
+    case .didConfigureBookDetails(let cfgAction):
+        return .task(id: LibraryCancellationID.fetchBooks) {
+            .bookDetails(cfgAction)
+        }
     }
+
 }
 
 // MARK: — Local New Books Reducer
 
-private func localNewBooksReducer(
+func localNewBooksReducer(
     state: inout LibraryState,
     action: LibraryAction,
     env: LibraryEnvironment
@@ -57,7 +130,7 @@ private func localNewBooksReducer(
     case .fetchLocalNewBooks:
         guard case .idle = state.newBooks else { return .none }
         state.newBooks = .loading
-        return .task {
+        return .task(id: LibraryCancellationID.fetchBooks) {
             do {
                 let books = try await env.storage.fetch(isNew: true)
                 if books.isEmpty {
@@ -81,7 +154,7 @@ private func localNewBooksReducer(
 
 // MARK: — Local Popular Books Reducer
 
-private func localPopularBooksReducer(
+func localPopularBooksReducer(
     state: inout LibraryState,
     action: LibraryAction,
     env: LibraryEnvironment
@@ -90,7 +163,7 @@ private func localPopularBooksReducer(
     case .fetchLocalPopularBooks:
         guard case .idle = state.popularBooks else { return .none }
         state.popularBooks = .loading
-        return .task {
+        return .task(id: LibraryCancellationID.fetchBooks) {
             do {
                 let books = try await env.storage.fetch(isNew: false)
                 if books.isEmpty {
@@ -105,7 +178,7 @@ private func localPopularBooksReducer(
 
     case .localPopularBooksLoaded(let items):
         state.popularBooks = .loaded(items)
-        return .fireAndForget {
+        return .fireAndForget(id: LibraryCancellationID.fetchBooks) {
             let domain = items.map { Book(from: $0) }
             guard !domain.isEmpty else { return }
             try? await env.storage.save(domain)
@@ -118,7 +191,8 @@ private func localPopularBooksReducer(
 
 // MARK: — Network New Books Reducer
 
-@MainActor private func networkNewBooksReducer(
+@MainActor
+func networkNewBooksReducer(
     state: inout LibraryState,
     action: LibraryAction,
     env: LibraryEnvironment
@@ -126,7 +200,7 @@ private func localPopularBooksReducer(
     switch action {
     case .requestNewBooks:
         state.newBooks = .loading
-        return .task {
+        return .task(id: LibraryCancellationID.fetchBooks) {
             do {
                 let wrapper: StrapiResponse<[BookDetailsItem]> =
                     try await env.networkClient.request(
@@ -146,7 +220,7 @@ private func localPopularBooksReducer(
         switch result {
         case .success(let items):
             state.newBooks = .loaded(items)
-            return .fireAndForget {
+            return .fireAndForget(id: LibraryCancellationID.fetchBooks) {
                 let domain = items.map { Book(from: $0) }
                 guard !domain.isEmpty else { return }
                 try? await env.storage.save(domain)
@@ -163,7 +237,8 @@ private func localPopularBooksReducer(
 
 // MARK: — Network Popular Books Reducer
 
-@MainActor private func networkPopularBooksReducer(
+@MainActor
+func networkPopularBooksReducer(
     state: inout LibraryState,
     action: LibraryAction,
     env: LibraryEnvironment
@@ -171,7 +246,7 @@ private func localPopularBooksReducer(
     switch action {
     case .requestPopularBooks(let page):
         state.popularBooks = .loading
-        return .task {
+        return .task(id: LibraryCancellationID.fetchBooks) {
             do {
                 let wrapper: StrapiResponse<[BookDetailsItem]> =
                     try await env.networkClient.request(
@@ -191,7 +266,7 @@ private func localPopularBooksReducer(
         switch result {
         case .success(let items):
             state.popularBooks = .loaded(items)
-            return .fireAndForget {
+            return .fireAndForget(id: LibraryCancellationID.fetchBooks) {
                 let domain = items.map { Book(from: $0) }
                 guard !domain.isEmpty else { return }
                 try? await env.storage.save(domain)
@@ -216,7 +291,10 @@ extension Book {
             title: title,
             coverURL: coverURL,
             isNew: isNew,
-            illustrationURL: illustrationURL
+            illustrationURL: illustrationURL,
+            isFavorite: isFavorite,
+            authorName: authorName,
+            description: description
         )
     }
 }
@@ -235,7 +313,10 @@ extension Book {
             title: details.title,
             coverURL: details.coverURL,
             illustrationURL: details.illustrationURL,
-            isNew: details.isNew
+            isFavorite: details.isFavorite,
+            isNew: details.isNew,
+            authorName: details.authorName,
+            description: details.description
         )
     }
 }

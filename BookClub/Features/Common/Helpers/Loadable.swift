@@ -13,3 +13,10 @@ enum Loadable<Value: Equatable>: Equatable {
     case loaded(Value)
     case failure(String)
 }
+
+extension Loadable {
+    var isLoaded: Bool {
+        if case .loaded = self { return true }
+        return false
+    }
+}

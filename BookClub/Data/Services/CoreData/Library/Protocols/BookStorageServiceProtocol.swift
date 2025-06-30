@@ -13,4 +13,5 @@ protocol BookStorageServiceProtocol: Sendable {
     func fetch(byID id: Int64) async throws -> Book?
     func fetch(byDocumentId documentId: String) async throws -> Book?
     func deleteAll() async throws
+    func setFavorite(documentId: String, to isFav: Bool) async throws
 }

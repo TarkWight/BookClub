@@ -7,6 +7,12 @@
 
 import Foundation
 
+private enum SearchCancellationID {
+    static let onAppear = "SearchOnAppear"
+    static let performReq = "SearchPerformRequest"
+    static let metadataReq = "SearchMetadataRequest"
+}
+
 @MainActor
 func searchReducer(
     state: inout SearchState,
@@ -16,12 +22,17 @@ func searchReducer(
     switch action {
     // MARK: — Lifecycle
     case .onAppear:
-        // kick off loading of recent searches & local metadata
-        return .merge(
-            .task { .fetchRecentSearches },
-            .task { .fetchLocalGenres },
-            .task { .fetchLocalAuthors }
-        )
+        return .batch([
+            .task(id: SearchCancellationID.onAppear) { .fetchRecentSearches },
+            .task(id: SearchCancellationID.onAppear) { .fetchLocalGenres },
+            .task(id: SearchCancellationID.onAppear) { .fetchLocalAuthors },
+        ])
+    case .onDisappear:
+        return .batch([
+            .cancel(id: SearchCancellationID.onAppear),
+            .cancel(id: SearchCancellationID.performReq),
+            .cancel(id: SearchCancellationID.metadataReq),
+        ])
 
     // MARK: — Recent Searches
     case .fetchRecentSearches,
@@ -69,10 +80,11 @@ func searchReducer(
     case .booksByTextLoaded,
         .booksByGenreLoaded,
         .booksByAuthorLoaded:
-        return searchResultsResponseReducer(
+        let effect = searchResultsResponseReducer(
             state: &state,
             action: action
         )
+        return .batch([ effect, .cancel(id: SearchCancellationID.performReq) ])
 
     // MARK: — Remote metadata (genres & authors)
     case .fetchRemoteGenres,
@@ -105,7 +117,7 @@ private func recentSearchesReducer(
 ) -> Effect<SearchAction> {
     switch action {
     case .fetchRecentSearches:
-        return .task {
+        return .task(id: SearchCancellationID.onAppear) {
             do {
                 let recents = try await env.recentSearchService.load()
                 return .recentSearchesLoaded(recents)
@@ -116,8 +128,8 @@ private func recentSearchesReducer(
 
     case .addRecentSearch(let recent):
         return .merge(
-            .fireAndForget { try? await env.recentSearchService.add(recent) },
-            .task { .fetchRecentSearches }
+            .fireAndForget(id: SearchCancellationID.onAppear) { try? await env.recentSearchService.add(recent) },
+            .task(id: SearchCancellationID.onAppear) { .fetchRecentSearches }
         )
 
     case .recentSearchesLoaded(let recents):
@@ -125,7 +137,7 @@ private func recentSearchesReducer(
         return .none
 
     case .removeRecentSearch(let query):
-        return .task {
+        return .task(id: SearchCancellationID.onAppear) {
             try? await env.recentSearchService.remove(query)
             let recents = (try? await env.recentSearchService.load()) ?? []
             return .recentSearchesLoaded(recents)
@@ -146,7 +158,7 @@ private func localMetadataReducer(
     switch action {
     case .fetchLocalGenres:
         state.genres = .loading
-        return .task {
+        return .task(id: SearchCancellationID.onAppear) {
             do {
                 let items = try await env.genreStorage.fetchAll()
                 return .localGenresLoaded(items)
@@ -161,7 +173,7 @@ private func localMetadataReducer(
 
     case .fetchLocalAuthors:
         state.authors = .loading
-        return .task {
+        return .task(id: SearchCancellationID.onAppear) {
             do {
                 let items = try await env.authorStorage.fetchAll()
                 return .localAuthorsLoaded(items)
@@ -281,7 +293,7 @@ private func performSearch(
         SearchAction,
     env: SearchEnvironment
 ) -> Effect<SearchAction> {
-    .task {
+    .task(id: SearchCancellationID.performReq) {
         do {
             let wrapper: StrapiResponse<[BookDetailsItem]> =
                 try await env.networkClient.request(
@@ -334,7 +346,7 @@ private func remoteMetadataReducer(
     switch action {
     case .fetchRemoteGenres:
         state.genres = .loading
-        return .task {
+        return .task(id: SearchCancellationID.metadataReq) {
             do {
                 let wrapper: StrapiResponse<[GenreItem]> =
                     try await env.networkClient.request(
@@ -354,9 +366,12 @@ private func remoteMetadataReducer(
         switch result {
         case .success(let items):
             state.genres = .loaded(items)
-            return .fireAndForget {
-                try? await env.genreStorage.save(items)
-            }
+            return .batch([
+                .cancel(id: SearchCancellationID.metadataReq),
+                .fireAndForget(id: SearchCancellationID.metadataReq) {
+                    try? await env.genreStorage.save(items)
+                },
+            ])
         case .failure(let err):
             state.genres = .failure(err.localizedKey)
             return .none
@@ -364,7 +379,7 @@ private func remoteMetadataReducer(
 
     case .fetchRemoteAuthors:
         state.authors = .loading
-        return .task {
+        return .task(id: SearchCancellationID.metadataReq) {
             do {
                 let wrapper: StrapiResponse<[AuthorItem]> =
                     try await env.networkClient.request(
@@ -384,9 +399,12 @@ private func remoteMetadataReducer(
         switch result {
         case .success(let items):
             state.authors = .loaded(items)
-            return .fireAndForget {
-                try? await env.authorStorage.save(items)
-            }
+            return .batch([
+                .cancel(id: SearchCancellationID.metadataReq),
+                .fireAndForget(id: SearchCancellationID.metadataReq) {
+                    try? await env.authorStorage.save(items)
+                },
+            ])
         case .failure(let err):
             state.authors = .failure(err.localizedKey)
             return .none

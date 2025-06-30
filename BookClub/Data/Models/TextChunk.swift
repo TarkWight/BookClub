@@ -7,9 +7,10 @@
 
 import Foundation
 
-struct TextChunk: Identifiable, Equatable {
+struct TextChunk: Identifiable {
+    let id: String
+    let documentId: String
+    let chapterOrder: Int
     let index: Int
     let text: String
-
-    var id: Int { index }
 }
