@@ -42,8 +42,7 @@ struct BookmarksView: View {
         Group {
             if case let .loaded(dict) = store.state.readingProgress,
                 let docId = store.state.currentReadingDocumentId,
-                let prog = dict[docId]
-            {
+                let prog = dict[docId] {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(LocalizedKey.readingNowLabel)
                         .applyFontH2AccentDarkStyle()
