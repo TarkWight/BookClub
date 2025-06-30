@@ -14,15 +14,3 @@ struct MainTabState: Equatable, Sendable {
     var bookDetails: BookDetailsState = .init()
     var bookmarks: BookmarksState = .init()
 }
-
-// Bookmarks feature (заглушки)
-struct BookmarksState: Equatable {}
-enum BookmarksAction: Equatable {}
-struct BookmarksEnvironment {}
-func bookmarksReducer(
-    state: inout BookmarksState,
-    action: BookmarksAction,
-    env: BookmarksEnvironment
-) -> Effect<BookmarksAction> {
-
-}

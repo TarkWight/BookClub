@@ -36,10 +36,10 @@ struct MainTabView: View {
             )
         case .bookmarks:
             BookmarksView(
-//                store: store.scope(
-//                    state: \.bookmarks,
-//                    action: MainTabAction.bookmarks
-//                )
+                store: store.scope(
+                    state: \.bookmarks,
+                    action: MainTabAction.bookmarks
+                )
             )
         }
 //        .ignoresSafeArea(.all, edges: .bottom)
