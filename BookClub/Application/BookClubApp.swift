@@ -6,6 +6,7 @@
 //
 
 import Alamofire
+import CoreData
 import SwiftUI
 
 @main
@@ -13,15 +14,30 @@ struct BookClubApp: App {
     let store: Store<AppState, AppAction>
 
     init() {
-        // MARK: - Services
-        let keychainService = KeychainService() as KeychainServiceProtocol
+        // MARK: — Core Data
+        let container = NSPersistentContainer(name: "BookClub")
+        container.loadPersistentStores { _, error in
+            if let error = error {
+                fatalError("Unresolved Core Data error: \(error)")
+            }
+        }
+        container.viewContext.automaticallyMergesChangesFromParent = true
+
+        // MARK: — Сервисы хранения
+        let bookStorage = BookStorageService(container: container)
+        let genreStorage = GenreStorageService(container: container)
+        let authorStorage = AuthorStorageService(container: container)
+        let chapterStorage = ChapterStorageService(container: container)
+
+        // MARK: — Остальные сервисы
+        let keychainService = KeychainService()
+
         let authService =
             AuthService(
                 networkClient: BookClubApp.makePlainClient(),
                 keychainService: keychainService
-            ) as AuthServiceProtocol
+            )
 
-        // MARK: - Network Client with Auth
         let networkClient =
             NetworkClient(
                 session: BookClubApp.makeSession(
@@ -30,18 +46,35 @@ struct BookClubApp: App {
                         keychainService: keychainService
                     )
                 )
-            ) as NetworkClientProtocol
+            )
 
-        // MARK: - Core Data Storage
-        let bookStorage = BookStorageService()
+        let recentSearchService = RecentSearchService()
+        let highlightingService = TextHighlightingService()
+        let chunkManager = TextChunkManager(chapterStorage: chapterStorage)
 
-        // MARK: - Environment & Store
+        let charCount = AppFonts.estimateCharCountPerChunk(
+            chunkScreens: 2,
+            lineSpacing: 8
+        )
+
+        let readingSession = ReadingSession(
+            chapterStorage: chapterStorage,
+            chunkManager: chunkManager,
+            highlightingService: highlightingService,
+            charCountPerChunk: charCount
+        )
+
         let environment = AppEnvironment(
             authService: authService,
             networkClient: networkClient,
-            bookStorage: bookStorage
+            readingSession: readingSession,
+            bookStorage: bookStorage,
+            chapterStorage: chapterStorage,
+            genreStorage: genreStorage,
+            authorStorage: authorStorage,
+            recentSearchService: recentSearchService
         )
-        self.store = Store(
+        store = Store(
             initialState: AppState(),
             reducer: { state, action in
                 appReducer(state: &state, action: action, env: environment)
@@ -72,8 +105,7 @@ struct BookClubApp: App {
     }
 
     private static func makeSession(with interceptor: RequestInterceptor?)
-        -> Session
-    {
+        -> Session {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 60
         config.timeoutIntervalForResource = 60

@@ -1,4 +1,3 @@
-//
 //  AppReducer.swift
 //  BookClub
 //
@@ -15,7 +14,7 @@ func appReducer(
 ) -> Effect<AppAction> {
     switch action {
     case .appStarted:
-        return .task {
+        return .task(id: UUID()) {
             do {
                 _ = try await env.authService.retrieveToken()
                 return .authStatusChanged(.authenticated)
@@ -29,12 +28,10 @@ func appReducer(
         state.path = []
         return .none
 
-    // MARK: — navigation
-    case let .pathChanged(path):
+    case .pathChanged(let path):
         state.path = path
         return .none
 
-    // MARK: — login flow
     case .login(.loginSucceeded):
         state.path = [.mainTab]
         return .none
@@ -47,13 +44,26 @@ func appReducer(
         )
         .map(AppAction.login)
 
-    // MARK: — mainTab flow
-    case .mainTab(let action):
-        return mainTabReducer(
+    case .mainTab(let tabAction):
+        let effect = mainTabReducer(
             state: &state.mainTab,
-            action: action,
+            action: tabAction,
             env: env.mainTabEnv
         )
         .map(AppAction.mainTab)
+
+        switch tabAction {
+        case .library(.didSelectBook):
+            state.path.append(.bookDetails)
+        case .bookDetails(.backButtonTapped):
+            state.path.removeLast()
+        case .bookDetails(.startReadingTapped), .readSelected:
+            state.path.append(.reader)
+        case .logoutTapped:
+            break
+        default:
+            break
+        }
+        return effect
     }
 }

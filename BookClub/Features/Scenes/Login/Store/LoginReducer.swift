@@ -39,7 +39,7 @@ func loginReducer(
         let email = state.email
         let password = state.password
 
-        return .task {
+        return .task(id: UUID()) {
             do {
                 _ = try await env.authService.refreshToken(
                     identifier: email,

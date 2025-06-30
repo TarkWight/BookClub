@@ -7,15 +7,10 @@
 
 import Foundation
 
-enum Loadable<Value: Equatable>: Equatable {
-    case idle
-    case loading
-    case loaded(Value)
-    case failure(String)
-}
-
 struct LibraryState: Equatable, Sendable {
+    var bookDetails: BookDetailsState = .init()
     var newBooks: Loadable<[BookDetailsItem]> = .idle
     var popularBooks: Loadable<[BookDetailsItem]> = .idle
     var selectedBookID: String?
+    var didLoadOnAppear: Bool = false
 }

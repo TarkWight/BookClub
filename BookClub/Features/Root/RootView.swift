@@ -12,18 +12,16 @@ struct RootView: View {
 
     var body: some View {
         Group {
-            switch store.current.authStatus {
+            switch store.state.authStatus {
             case .unknown:
                 ProgressView()
                     .onAppear { store.send(.appStarted) }
 
             case .unauthenticated:
-                NavigationStack(
-                    path: store.binding(
-                        get: \.path,
-                        send: AppAction.pathChanged
-                    )
-                ) {
+                NavigationStack(path: store.binding(
+                    get: \.path,
+                    send: AppAction.pathChanged
+                )) {
                     LoginView(
                         store: store.scope(
                             state: \.login,
@@ -31,28 +29,32 @@ struct RootView: View {
                         )
                     )
                     .navigationDestination(for: AppRoute.self) { route in
-                        routeDestination(route)
+                        destination(for: route)
                     }
                 }
-                .task {
-                    store.send(.appStarted)
-                }
+                .task { store.send(.appStarted) }
 
             case .authenticated:
-                NavigationStack {
+                NavigationStack(path: store.binding(
+                    get: \.path,
+                    send: AppAction.pathChanged
+                )) {
                     MainTabView(
                         store: store.scope(
                             state: \.mainTab,
                             action: AppAction.mainTab
                         )
                     )
+                    .navigationDestination(for: AppRoute.self) { route in
+                        destination(for: route)
+                    }
                 }
             }
         }
     }
 
     @ViewBuilder
-    private func routeDestination(_ route: AppRoute) -> some View {
+    private func destination(for route: AppRoute) -> some View {
         switch route {
         case .auth:
             LoginView(
@@ -61,6 +63,7 @@ struct RootView: View {
                     action: AppAction.login
                 )
             )
+
         case .mainTab:
             MainTabView(
                 store: store.scope(
@@ -68,14 +71,54 @@ struct RootView: View {
                     action: AppAction.mainTab
                 )
             )
-        case .bookDetails(let bookID):
-            BookDetailsView( /*bookID: bookID*/)
-        case .reader(let bookID, let chapterID):
-            ReaderView( /*bookID: bookID, chapterID: chapterID*/)
-        case .chapters(let bookID):
-            ChaptersView( /*bookID: bookID*/)
-        case .library, .search, .bookmarks:
-            EmptyView()
+
+        case .library:
+            LibraryView(
+                store: store.scope(
+                    state: \.mainTab.library,
+                    action: { AppAction.mainTab(.library($0)) }
+                )
+            )
+
+        case .search:
+            SearchView(
+                store: store.scope(
+                    state: \.mainTab.search,
+                    action: { AppAction.mainTab(.search($0)) }
+                )
+            )
+
+        case .bookmarks:
+            BookmarksView(
+//                store: store.scope(
+//                    state: \.mainTab.bookmarks,
+//                    action: { AppAction.mainTab(.bookmarks($0)) }
+//                )
+            )
+
+        case .bookDetails:
+            BookDetailsView(
+                store: store.scope(
+                    state: \.mainTab.bookDetails,
+                    action: { AppAction.mainTab(.bookDetails($0)) }
+                )
+            )
+
+        case .reader:
+            ReaderView(
+//                store: store.scope(
+//                    state: \.mainTab.bookDetails,
+//                    action: { AppAction.mainTab(.bookDetails($0)) }
+//                )
+            )
+
+        case .chapters:
+            ChaptersView(
+//                store: store.scope(
+//                    state: \.mainTab.bookDetails,
+//                    action: { AppAction.mainTab(.bookDetails($0)) }
+//                )
+            )
         }
     }
 }

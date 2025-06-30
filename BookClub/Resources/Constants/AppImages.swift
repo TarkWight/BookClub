@@ -16,6 +16,7 @@ enum AppImages {
     static let bookmarks = Image("Bookmarks")
     static let arrowLeft = Image("Arrow Left")
     static let contents = Image("Contents")
+    static let download = Image("Arrow Down")
     static let play = Image("Play")
     static let pause = Image("Pause")
     static let settings = Image("Settings")

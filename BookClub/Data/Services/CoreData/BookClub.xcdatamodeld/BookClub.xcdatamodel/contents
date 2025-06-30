@@ -1,20 +1,59 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24F74" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AuthorEntity" representedClassName="AuthorEntity" syncable="YES">
+        <attribute name="documentId" attributeType="String"/>
+        <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="imageUrl" optional="YES" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
+        <fetchIndex name="id">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="documentId">
+            <fetchIndexElement property="documentId" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
     <entity name="BookEntity" representedClassName="BookEntity" syncable="YES">
+        <attribute name="authorName" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="bookDescription" optional="YES" attributeType="String"/>
         <attribute name="coverURL" optional="YES" attributeType="String"/>
-        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="documentId" attributeType="String"/>
         <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="illustrationURL" optional="YES" attributeType="String"/>
+        <attribute name="isFavorite" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isNew" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="publishedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="title" attributeType="String"/>
-        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="chapters" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ChapterEntity" inverseName="bookEntity" inverseEntity="ChapterEntity"/>
         <fetchIndex name="documentId">
             <fetchIndexElement property="documentId" type="Binary" order="ascending"/>
         </fetchIndex>
         <fetchIndex name="id">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="ChapterEntity" representedClassName="ChapterEntity" syncable="YES">
+        <attribute name="documentId" optional="YES" attributeType="String"/>
+        <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="order" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="statusRaw" attributeType="Integer 16" usesScalarValueType="YES"/>
+        <attribute name="text" attributeType="String"/>
+        <attribute name="title" attributeType="String"/>
+        <relationship name="bookEntity" maxCount="1" deletionRule="Nullify" destinationEntity="BookEntity" inverseName="chapters" inverseEntity="BookEntity"/>
+        <fetchIndex name="documentId">
+            <fetchIndexElement property="documentId" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="id">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="GenreEntity" representedClassName="GenreEntity" syncable="YES">
+        <attribute name="documentId" attributeType="String"/>
+        <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <fetchIndex name="id">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="documentId">
+            <fetchIndexElement property="documentId" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
 </model>

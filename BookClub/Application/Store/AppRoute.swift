@@ -13,9 +13,9 @@ enum AppRoute: Hashable {
     case library
     case search
     case bookmarks
-    case bookDetails(bookID: String)
-    case reader(bookID: String, chapterID: String)
-    case chapters(bookID: String)
+    case bookDetails
+    case reader
+    case chapters
 }
 // auth>mainTab
 // mainTab>[library, search, bookmarks]
