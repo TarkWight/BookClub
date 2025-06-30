@@ -21,14 +21,13 @@ final class TextHighlightingServiceTests: XCTestCase {
     override func tearDown() async throws {
         await service.stop()
         service = nil
-        try await Task.sleep(nanoseconds: 10_000_000)  // дать очередь освободиться
+        try await Task.sleep(nanoseconds: 10_000_000)
     }
 
     func testPrepareHighlightingSplitsSentences() async throws {
         let text = "Hello world. This is a test! And another?"
         await service.prepareHighlighting(for: text)
 
-        // через приватное API достать currentIndex? нет, проверим через очередь подсветок
         var received: [Int] = []
         let exp = expectation(description: "all sentences highlighted")
         exp.expectedFulfillmentCount = 3
@@ -64,11 +63,11 @@ final class TextHighlightingServiceTests: XCTestCase {
 
     func testLeakTextHighlightingService() async throws {
         weak var weakService: TextHighlightingService?
-        
+
         let handle: Task<Void, Never> = autoreleasepool {
             let svc = TextHighlightingService()
             weakService = svc
-            
+
             return Task.detached {
                 await svc.prepareHighlighting(for: "A. B.")
                 await svc.start(interval: 0.001) { _ in }
@@ -76,11 +75,14 @@ final class TextHighlightingServiceTests: XCTestCase {
                 await svc.stop()
             }
         }
-        
+
         await handle.value
-        
+
         try await Task.sleep(nanoseconds: 10_000_000)
-        
-        XCTAssertNil(weakService, "TextHighlightingService должен освободиться из памяти после stop() и окончания всех задач")
+
+        XCTAssertNil(
+            weakService,
+            "TextHighlightingService должен освободиться из памяти после stop() и окончания всех задач"
+        )
     }
 }

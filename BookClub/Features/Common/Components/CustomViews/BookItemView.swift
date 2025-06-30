@@ -8,21 +8,45 @@
 import SwiftUI
 
 struct BookItemView: View {
+    let book: BookDetailsItem
+
     var body: some View {
         HStack {
-            Image("Cover1")
-                .resizable()
-                .scaledToFill()
+            if let url = book.coverURL {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        Color.gray.opacity(0.2)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    case .failure:
+                        Color.red.opacity(0.1)
+                    @unknown default:
+                        Color.gray
+                    }
+                }
                 .frame(width: 80, height: 126)
+                .clipped()
                 .cornerRadius(4)
+            } else {
+                Image("Cover1")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 80, height: 126)
+                    .clipped()
+                    .cornerRadius(4)
+            }
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(LocalizedKey.bookTitlePlaceholder)
+                Text(book.title)
                     .applyFontH2AccentDarkStyle()
 
-                Text(LocalizedKey.authorPlaceholder)
+                Text(book.authorName ?? LocalizedKey.authorPlaceholder)
                     .applyFontBodySmallAccentDarkStyle()
             }
+
             Spacer()
         }
         .frame(height: 126)

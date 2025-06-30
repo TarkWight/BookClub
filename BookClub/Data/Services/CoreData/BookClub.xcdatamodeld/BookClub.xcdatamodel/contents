@@ -23,6 +23,7 @@
         <attribute name="isNew" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>
         <relationship name="chapters" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ChapterEntity" inverseName="bookEntity" inverseEntity="ChapterEntity"/>
+        <relationship name="quotes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="QuoteEntity" inverseName="book" inverseEntity="QuoteEntity"/>
         <fetchIndex name="documentId">
             <fetchIndexElement property="documentId" type="Binary" order="ascending"/>
         </fetchIndex>
@@ -49,6 +50,19 @@
         <attribute name="documentId" attributeType="String"/>
         <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String"/>
+        <fetchIndex name="id">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="documentId">
+            <fetchIndexElement property="documentId" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="QuoteEntity" representedClassName="QuoteEntity" syncable="YES">
+        <attribute name="bookId" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="documentId" attributeType="String"/>
+        <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="text" attributeType="String"/>
+        <relationship name="book" maxCount="1" deletionRule="Nullify" destinationEntity="BookEntity" inverseName="quotes" inverseEntity="BookEntity"/>
         <fetchIndex name="id">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>

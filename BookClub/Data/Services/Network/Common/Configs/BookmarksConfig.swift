@@ -1,5 +1,5 @@
 //
-//  BookmakrConfig.swift
+//  BookmarksConfig.swift
 //  BookClub
 //
 //  Created by Tark Wight on 26.06.2025.
@@ -8,7 +8,7 @@
 import Alamofire
 import Foundation
 
-enum BookmakrConfig: NetworkConfigProtocol {
+enum BookmarksConfig: NetworkConfigProtocol {
     case favorites
     case quotes
 

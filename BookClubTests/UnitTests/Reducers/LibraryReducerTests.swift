@@ -30,8 +30,10 @@ final class LibraryReducerTests: XCTestCase {
         func fetch(isNew: Bool?) async throws -> [Book] {
             isNew == true ? newBooksDomain : popularBooksDomain
         }
-        func fetch(byID id: Int64) async throws -> Book?    { nil }
-        func fetch(byDocumentId documentId: String) async throws -> Book? { nil }
+        func fetch(byID id: Int64) async throws -> Book? { nil }
+        func fetch(byDocumentId documentId: String) async throws -> Book? {
+            nil
+        }
         func deleteAll() async throws {}
         func setFavorite(documentId: String, to isFav: Bool) async throws {}
     }
@@ -98,7 +100,10 @@ final class LibraryReducerTests: XCTestCase {
 
     func testOnAppear_triggersNetworkUsingMockNetworkService() async throws {
         var state = LibraryState()
-        let storage = StubBookStorage(newBooksDomain: [], popularBooksDomain: [])
+        let storage = StubBookStorage(
+            newBooksDomain: [],
+            popularBooksDomain: []
+        )
         let mockNet = MockNetworkService()
         let item = BookDetailsItem(
             id: 1,
@@ -131,7 +136,9 @@ final class LibraryReducerTests: XCTestCase {
         case .newBooksResponse(.success(let arr)):
             XCTAssertEqual(arr, [item])
         default:
-            XCTFail("Ожидали .newBooksResponse(.success([item])), получили \(action)")
+            XCTFail(
+                "Ожидали .newBooksResponse(.success([item])), получили \(String(describing: action))"
+            )
         }
     }
     func testOnAppear_firstTime_producesFourTasks() async {
@@ -142,7 +149,11 @@ final class LibraryReducerTests: XCTestCase {
             return XCTFail("Ожидали batch из 4 эффектов")
         }
         XCTAssertEqual(effects.count, 4)
-        XCTAssertTrue(effects.allSatisfy { if case .task = $0 { return true } else { return false } })
+        XCTAssertTrue(
+            effects.allSatisfy {
+                if case .task = $0 { return true } else { return false }
+            }
+        )
     }
 
     // MARK: — Тест локальной загрузки новых книг
@@ -242,10 +253,14 @@ final class LibraryReducerTests: XCTestCase {
             return XCTFail("Ожидали batch")
         }
         XCTAssertEqual(effects.count, 2)
-        XCTAssertTrue(effects.allSatisfy { if case .task = $0 { return true } else { return false } })
+        XCTAssertTrue(
+            effects.allSatisfy {
+                if case .task = $0 { return true } else { return false }
+            }
+        )
 
-        let a0 = await effects[0].run()
-        if case .bookDetails(.configure(let payload)) = a0 {
+        let ans0 = await effects[0].run()
+        if case .bookDetails(.configure(let payload)) = ans0 {
             XCTAssertEqual(payload.documentId, item.documentId)
             XCTAssertEqual(payload.title, item.title)
             XCTAssertEqual(payload.author, item.authorName)
@@ -256,7 +271,7 @@ final class LibraryReducerTests: XCTestCase {
             XCTFail("Первый эффект должен быть .bookDetails(.configure(...))")
         }
 
-        let a1 = await effects[1].run()
-        XCTAssertEqual(a1, .bookDetails(.onAppear))
+        let ans1 = await effects[1].run()
+        XCTAssertEqual(ans1, .bookDetails(.onAppear))
     }
 }

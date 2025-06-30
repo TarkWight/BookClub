@@ -90,10 +90,10 @@ struct RootView: View {
 
         case .bookmarks:
             BookmarksView(
-//                store: store.scope(
-//                    state: \.mainTab.bookmarks,
-//                    action: { AppAction.mainTab(.bookmarks($0)) }
-//                )
+                store: store.scope(
+                    state: \.mainTab.bookmarks,
+                    action: { AppAction.mainTab(.bookmarks($0)) }
+                )
             )
 
         case .bookDetails:

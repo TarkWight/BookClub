@@ -7,13 +7,21 @@
 
 import SwiftUI
 
+// MARK: — Простая модель для View
+struct Quote: Identifiable {
+    let id: Int
+    let text: String
+    let book: String
+    let author: String
+}
+
 struct QuoteItemView: View {
     let quote: Quote
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("“\(quote.text)”")
-                .applyFontQuoteAccentDarkStyle()
+                .applyFontQuoteBlackStyle()
 
             Text("\(quote.book) • \(quote.author)")
                 .applyFontTextAccentDarkStyle()

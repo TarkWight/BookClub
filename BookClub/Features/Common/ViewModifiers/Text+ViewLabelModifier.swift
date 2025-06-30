@@ -143,9 +143,9 @@ extension View {
 }
 
 // MARK: - Font Quote Accent Dark Style
-struct FontQuoteAccentDarkModifier: ViewModifier {
+struct FontQuoteBlackModifier: ViewModifier {
     let font = AppFonts.quote
-    let color = AppColors.accentDark
+    let color = AppColors.black
 
     func body(content: Content) -> some View {
         content
@@ -155,8 +155,8 @@ struct FontQuoteAccentDarkModifier: ViewModifier {
 }
 
 extension View {
-    func applyFontQuoteAccentDarkStyle() -> some View {
-        self.modifier(FontQuoteAccentDarkModifier())
+    func applyFontQuoteBlackStyle() -> some View {
+        self.modifier(FontQuoteBlackModifier())
     }
 }
 

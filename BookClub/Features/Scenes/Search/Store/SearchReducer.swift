@@ -20,7 +20,7 @@ func searchReducer(
     env: SearchEnvironment
 ) -> Effect<SearchAction> {
     switch action {
-    // MARK: — Lifecycle
+
     case .onAppear:
         return .batch([
             .task(id: SearchCancellationID.onAppear) { .fetchRecentSearches },
@@ -34,7 +34,6 @@ func searchReducer(
             .cancel(id: SearchCancellationID.metadataReq),
         ])
 
-    // MARK: — Recent Searches
     case .fetchRecentSearches,
         .addRecentSearch,
         .recentSearchesLoaded,
@@ -45,7 +44,6 @@ func searchReducer(
             env: env
         )
 
-    // MARK: — Local DB (genres & authors)
     case .fetchLocalGenres,
         .localGenresLoaded,
         .fetchLocalAuthors,
@@ -56,13 +54,10 @@ func searchReducer(
             env: env
         )
 
-    // MARK: — Search text UI
     case .didChangeSearchText,
         .didClearSearch:
-        // pure UI updates, no effects
         return searchInputReducer(state: &state, action: action)
 
-    // MARK: — Triggering remote book search
     case .didSelectRecentSearch,
         .didSelectGenre,
         .didSelectAuthor,
@@ -76,7 +71,6 @@ func searchReducer(
             env: env
         )
 
-    // MARK: — Handling remote book responses
     case .booksByTextLoaded,
         .booksByGenreLoaded,
         .booksByAuthorLoaded:
@@ -84,9 +78,8 @@ func searchReducer(
             state: &state,
             action: action
         )
-        return .batch([ effect, .cancel(id: SearchCancellationID.performReq) ])
+        return .batch([effect, .cancel(id: SearchCancellationID.performReq)])
 
-    // MARK: — Remote metadata (genres & authors)
     case .fetchRemoteGenres,
         .remoteGenresLoaded,
         .fetchRemoteAuthors,
@@ -97,7 +90,6 @@ func searchReducer(
             env: env
         )
 
-    // MARK: — Navigation / UI
     case .didSelectBook(let documentId):
         state.selectedBookID = documentId
         return .none
@@ -107,8 +99,6 @@ func searchReducer(
         return .none
     }
 }
-
-// MARK: — Recent Searches Reducer
 
 private func recentSearchesReducer(
     state: inout SearchState,
@@ -128,7 +118,9 @@ private func recentSearchesReducer(
 
     case .addRecentSearch(let recent):
         return .merge(
-            .fireAndForget(id: SearchCancellationID.onAppear) { try? await env.recentSearchService.add(recent) },
+            .fireAndForget(id: SearchCancellationID.onAppear) {
+                try? await env.recentSearchService.add(recent)
+            },
             .task(id: SearchCancellationID.onAppear) { .fetchRecentSearches }
         )
 
@@ -147,8 +139,6 @@ private func recentSearchesReducer(
         return .none
     }
 }
-
-// MARK: — Local Metadata Reducer
 
 private func localMetadataReducer(
     state: inout SearchState,
@@ -191,8 +181,6 @@ private func localMetadataReducer(
     }
 }
 
-// MARK: — Search Input Reducer
-
 private func searchInputReducer(
     state: inout SearchState,
     action: SearchAction
@@ -216,8 +204,6 @@ private func searchInputReducer(
         return .none
     }
 }
-
-// MARK: — Trigger Remote Search Reducer
 
 private func searchResultsTriggerReducer(
     state: inout SearchState,
@@ -310,8 +296,6 @@ private func performSearch(
     }
 }
 
-// MARK: — Handle Remote Response Reducer
-
 @MainActor
 private func searchResultsResponseReducer(
     state: inout SearchState,
@@ -334,8 +318,6 @@ private func searchResultsResponseReducer(
         return .none
     }
 }
-
-// MARK: — Remote Metadata Reducer
 
 @MainActor
 private func remoteMetadataReducer(

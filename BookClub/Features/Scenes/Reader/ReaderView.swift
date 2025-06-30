@@ -22,6 +22,7 @@ struct ReaderView: View {
                 isPlaying.toggle()
             }
         }
+        //        .navigationBarBackButtonHidden(true)
         //        ZStack {
         //            backgroundColor
         //            content

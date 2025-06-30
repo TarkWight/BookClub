@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 
-final class TextHighlightingService: TextHighlightingServiceProtocol {
+actor TextHighlightingService: TextHighlightingServiceProtocol {
     private var sentences: [String] = []
     private var currentIndex = 0
     private var timerCancellable: AnyCancellable?
