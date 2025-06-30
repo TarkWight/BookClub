@@ -179,6 +179,10 @@ extension LocalizedKey {
         "error_unhandledError",
         comment: ""
     )
+    static let invalidCredentials = NSLocalizedString(
+        "error_invalidCredentials",
+        comment: ""
+    )
     static let networkError = NSLocalizedString("error_network", comment: "")
 
     // MARK: — NetworkError
