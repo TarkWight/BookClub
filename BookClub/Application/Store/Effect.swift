@@ -60,3 +60,28 @@ enum Effect<Action> {
         }
     }
 }
+
+// MARK: — Утилиты для тестов
+
+extension Effect {
+    /// true, если это `.none`
+    var isNone: Bool {
+        if case .none = self { return true }
+        return false
+    }
+    /// true, если это `.task`
+    var isTask: Bool {
+        if case .task = self { return true }
+        return false
+    }
+    /// «Запускает» таск-эффект и возвращает порождённое действие
+    /// (бросать может только если вы внутри `.task` пишете `async throws`)
+    func run() async -> Action? {
+        switch self {
+        case let .task(_, work):
+            return await work()
+        default:
+            return nil
+        }
+    }
+}

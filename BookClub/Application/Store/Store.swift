@@ -24,43 +24,45 @@ final class Store<State, Action>: ObservableObject {
     }
 
     func send(_ action: Action) {
+        // print("[Store] send action: \(action)")
         let effect = reducer(&state, action)
-        handle(effect)
+        handle(effect, originatingFrom: action)
     }
 
-    private func handle(_ effect: Effect<Action>) {
+    private func handle(_ effect: Effect<Action>, originatingFrom action: Action? = nil) {
         switch effect {
         case .none:
             break
 
         case let .cancel(id):
-            // cancel and remove any running task for this id
+            // print("[Store] cancel task with id: \(id)")
             runningTasks[id]?.cancel()
             runningTasks.removeValue(forKey: id)
 
         case let .task(id, work):
-            // cancel existing task with same id
+            // print("[Store] start task id: \(id), origin: \(String(describing: action))")
             runningTasks[id]?.cancel()
-            // start new task
             let task = Task { [weak self] in
                 let action = await work()
+                // print("[Store] task id: \(id) completed, sending action: \(action)")
                 await MainActor.run { self?.send(action) }
             }
             runningTasks[id] = task
 
         case let .fireAndForget(id, work):
-            // fire and forget tasks need not be tracked if id is nil, else track
             if let id = id {
+                // print("[Store] start fireAndForget id: \(id)")
                 runningTasks[id]?.cancel()
                 let task = Task { await work() }
                 runningTasks[id] = task
             } else {
+                // print("[Store] start fireAndForget (no id)")
                 Task { await work() }
             }
 
         case .batch(let effects):
             for eff in effects {
-                handle(eff)
+                handle(eff, originatingFrom: action)
             }
         }
     }
