@@ -5,12 +5,12 @@
 //  Created by Tark Wight on 23.06.2025.
 //
 
-struct StrapiResponse<Data: Decodable>: Decodable {
+struct StrapiResponse<Data: Codable>: Codable {
     let data: Data
     let meta: PaginationMeta
 }
 
-struct PaginationMeta: Decodable {
+struct PaginationMeta: Codable {
     struct Pagination: Codable {
         let page: Int
         let pageSize: Int
@@ -22,7 +22,7 @@ struct PaginationMeta: Decodable {
 
 }
 
-struct ChapterNetworkItem: Decodable {
+struct ChapterNetworkItem: Codable {
   let id: Int64
   let documentId: String
   let title: String

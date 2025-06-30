@@ -121,7 +121,7 @@ func libraryReducer(
 
 // MARK: — Local New Books Reducer
 
-private func localNewBooksReducer(
+func localNewBooksReducer(
     state: inout LibraryState,
     action: LibraryAction,
     env: LibraryEnvironment
@@ -154,7 +154,7 @@ private func localNewBooksReducer(
 
 // MARK: — Local Popular Books Reducer
 
-private func localPopularBooksReducer(
+func localPopularBooksReducer(
     state: inout LibraryState,
     action: LibraryAction,
     env: LibraryEnvironment
@@ -191,7 +191,8 @@ private func localPopularBooksReducer(
 
 // MARK: — Network New Books Reducer
 
-@MainActor private func networkNewBooksReducer(
+@MainActor
+func networkNewBooksReducer(
     state: inout LibraryState,
     action: LibraryAction,
     env: LibraryEnvironment
@@ -236,7 +237,8 @@ private func localPopularBooksReducer(
 
 // MARK: — Network Popular Books Reducer
 
-@MainActor private func networkPopularBooksReducer(
+@MainActor
+func networkPopularBooksReducer(
     state: inout LibraryState,
     action: LibraryAction,
     env: LibraryEnvironment
