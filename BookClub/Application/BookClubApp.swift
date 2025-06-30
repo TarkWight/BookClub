@@ -28,6 +28,7 @@ struct BookClubApp: App {
         let genreStorage = GenreStorageService(container: container)
         let authorStorage = AuthorStorageService(container: container)
         let chapterStorage = ChapterStorageService(container: container)
+        let quoteStorage = QuoteStorageService(container: container)
 
         // MARK: — Остальные сервисы
         let keychainService = KeychainService()
@@ -72,7 +73,8 @@ struct BookClubApp: App {
             chapterStorage: chapterStorage,
             genreStorage: genreStorage,
             authorStorage: authorStorage,
-            recentSearchService: recentSearchService
+            recentSearchService: recentSearchService,
+            quoteStorage: quoteStorage
         )
         store = Store(
             initialState: AppState(),
