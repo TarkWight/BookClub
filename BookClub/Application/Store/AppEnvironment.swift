@@ -18,6 +18,7 @@ struct AppEnvironment {
     let genreStorage: GenreStorageServiceProtocol
     let authorStorage: AuthorStorageServiceProtocol
     let recentSearchService: RecentSearchServiceProtocol
+    let quoteStorage: QuoteStorageServiceProtocol
 
     var loginEnv: LoginEnvironment {
         LoginEnvironment(authService: authService)
@@ -37,7 +38,12 @@ struct AppEnvironment {
     }
 
     var bookmarksEnv: BookmarksEnvironment {
-        BookmarksEnvironment()
+        BookmarksEnvironment(
+            networkClient: networkClient,
+            quoteStorage: quoteStorage,
+            bookStorage: bookStorage,
+            chapterStorage: chapterStorage
+        )
     }
 
     var bookDetailsEnv: BookDetailsEnvironment {
