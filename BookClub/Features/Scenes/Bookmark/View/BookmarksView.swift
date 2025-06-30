@@ -17,13 +17,11 @@ struct BookmarksView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    // Заголовок
                     Text(LocalizedKey.bookmarksLabel)
                         .applyFontH1SecondaryStyle()
                         .padding(.top, 26)
                         .padding(.horizontal, 16)
 
-                    // Секции
                     readingNowSection
                     favoritesSection
                     quotesSection
@@ -35,15 +33,17 @@ struct BookmarksView: View {
         .onAppear { store.send(.onAppear) }
         .onDisappear { store.send(.onDisappear) }
         .navigationBarBackButtonHidden(true)
+        .refreshable {
+            store.send(.onAppear)
+        }
     }
 
-    // MARK: — Секция «Читаю сейчас»
     private var readingNowSection: some View {
-        if case .loaded(let dict) = store.state.readingProgress,
-            let docId = store.state.currentReadingDocumentId,
-            let prog = dict[docId],
-            prog > 0 {
-            return AnyView(
+        Group {
+            if case let .loaded(dict) = store.state.readingProgress,
+                let docId = store.state.currentReadingDocumentId,
+                let prog = dict[docId]
+            {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(LocalizedKey.readingNowLabel)
                         .applyFontH2AccentDarkStyle()
@@ -51,13 +51,17 @@ struct BookmarksView: View {
                     ProgressBarView(progress: prog)
                         .padding(.horizontal, 16)
                 }
-            )
-        } else {
-            return AnyView(EmptyView())
+            } else if case .loading = store.state.readingProgress {
+                ProgressView()
+                    .padding(.horizontal, 16)
+            } else {
+                Text("Вы ещё ничего не читали")
+                    .foregroundColor(.gray)
+                    .padding(.horizontal, 16)
+            }
         }
     }
 
-    // MARK: — Секция «Избранное»
     private var favoritesSection: some View {
         if case .loaded(let favs) = store.state.favorites,
             !favs.isEmpty {
@@ -85,7 +89,6 @@ struct BookmarksView: View {
         }
     }
 
-    // MARK: — Секция «Цитаты»
     private var quotesSection: some View {
         if case .loaded(let items) = store.state.quotes {
             return AnyView(
@@ -95,7 +98,7 @@ struct BookmarksView: View {
                         .padding(.horizontal, 16)
 
                     ForEach(items, id: \.id) { item in
-                         let quoteModel: Quote = {
+                        let quoteModel: Quote = {
                             if let book = store.state.booksByDocumentId[
                                 item.documentId
                             ] {
