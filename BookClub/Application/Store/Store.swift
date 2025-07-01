@@ -12,6 +12,9 @@ final class Store<State, Action>: ObservableObject {
     @Published private(set) var state: State
     private let reducer: (inout State, Action) -> Effect<Action>
 
+    // Keep track of running tasks to allow cancellation
+    private var runningTasks: [AnyHashable: Task<Void, Never>] = [:]
+
     init(
         initialState: State,
         reducer: @escaping (inout State, Action) -> Effect<Action>
@@ -21,19 +24,46 @@ final class Store<State, Action>: ObservableObject {
     }
 
     func send(_ action: Action) {
+        // print("[Store] send action: \(action)")
         let effect = reducer(&state, action)
+        handle(effect, originatingFrom: action)
+    }
+
+    private func handle(_ effect: Effect<Action>, originatingFrom action: Action? = nil) {
         switch effect {
         case .none:
             break
 
-        case .task(let work):
-            Task {
-                let next = await work()
-                await MainActor.run { self.send(next) }
+        case let .cancel(id):
+            // print("[Store] cancel task with id: \(id)")
+            runningTasks[id]?.cancel()
+            runningTasks.removeValue(forKey: id)
+
+        case let .task(id, work):
+            // print("[Store] start task id: \(id), origin: \(String(describing: action))")
+            runningTasks[id]?.cancel()
+            let task = Task { [weak self] in
+                let action = await work()
+                // print("[Store] task id: \(id) completed, sending action: \(action)")
+                await MainActor.run { self?.send(action) }
+            }
+            runningTasks[id] = task
+
+        case let .fireAndForget(id, work):
+            if let id = id {
+                // print("[Store] start fireAndForget id: \(id)")
+                runningTasks[id]?.cancel()
+                let task = Task { await work() }
+                runningTasks[id] = task
+            } else {
+                // print("[Store] start fireAndForget (no id)")
+                Task { await work() }
             }
 
-        case .fireAndForget(let work):
-            Task { await work() }
+        case .batch(let effects):
+            for eff in effects {
+                handle(eff, originatingFrom: action)
+            }
         }
     }
 
@@ -60,8 +90,7 @@ final class Store<State, Action>: ObservableObject {
         )
         Task { @MainActor in
             for await fullState in self.$state.values {
-                let newLocalState = toLocalState(fullState)
-                localStore.state = newLocalState
+                localStore.state = toLocalState(fullState)
             }
         }
         return localStore

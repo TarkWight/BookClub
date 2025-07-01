@@ -5,16 +5,16 @@
 //  Created by Tark Wight on 29.05.2025.
 //
 
-import Security
 import Foundation
+import Security
 
 final class KeychainService: KeychainServiceProtocol {
     private let service = Bundle.main.bundleIdentifier ?? "BookClubService"
 
     private enum Account: String {
-        case token       = "authToken"
-        case identifier  = "userIdentifier"
-        case password    = "userPassword"
+        case token = "authToken"
+        case identifier = "userIdentifier"
+        case password = "userPassword"
     }
 
     // MARK: – Token
@@ -26,7 +26,7 @@ final class KeychainService: KeychainServiceProtocol {
         let deleteQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccount as String: accountKey
+            kSecAttrAccount as String: accountKey,
         ]
         SecItemDelete(deleteQuery as CFDictionary)
 
@@ -34,7 +34,7 @@ final class KeychainService: KeychainServiceProtocol {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: accountKey,
-            kSecValueData as String: data
+            kSecValueData as String: data,
         ]
         let status = SecItemAdd(addQuery as CFDictionary, nil)
         guard status == errSecSuccess else {
@@ -49,7 +49,7 @@ final class KeychainService: KeychainServiceProtocol {
             kSecAttrService as String: service,
             kSecAttrAccount as String: accountKey,
             kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
+            kSecMatchLimit as String: kSecMatchLimitOne,
         ]
 
         var result: AnyObject?
@@ -78,7 +78,7 @@ final class KeychainService: KeychainServiceProtocol {
         let deleteQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccount as String: accountKey
+            kSecAttrAccount as String: accountKey,
         ]
         let status = SecItemDelete(deleteQuery as CFDictionary)
         guard status == errSecSuccess || status == errSecItemNotFound else {
@@ -95,7 +95,7 @@ final class KeychainService: KeychainServiceProtocol {
         let deleteQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccount as String: accountKey
+            kSecAttrAccount as String: accountKey,
         ]
         SecItemDelete(deleteQuery as CFDictionary)
 
@@ -103,7 +103,7 @@ final class KeychainService: KeychainServiceProtocol {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: accountKey,
-            kSecValueData as String: data
+            kSecValueData as String: data,
         ]
         let status = SecItemAdd(addQuery as CFDictionary, nil)
         guard status == errSecSuccess else {
@@ -118,7 +118,7 @@ final class KeychainService: KeychainServiceProtocol {
             kSecAttrService as String: service,
             kSecAttrAccount as String: accountKey,
             kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
+            kSecMatchLimit as String: kSecMatchLimitOne,
         ]
 
         var result: AnyObject?
@@ -147,7 +147,7 @@ final class KeychainService: KeychainServiceProtocol {
         let deleteQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccount as String: accountKey
+            kSecAttrAccount as String: accountKey,
         ]
         let status = SecItemDelete(deleteQuery as CFDictionary)
         guard status == errSecSuccess || status == errSecItemNotFound else {
@@ -164,7 +164,7 @@ final class KeychainService: KeychainServiceProtocol {
         let deleteQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccount as String: accountKey
+            kSecAttrAccount as String: accountKey,
         ]
         SecItemDelete(deleteQuery as CFDictionary)
 
@@ -172,7 +172,7 @@ final class KeychainService: KeychainServiceProtocol {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: accountKey,
-            kSecValueData as String: data
+            kSecValueData as String: data,
         ]
         let status = SecItemAdd(addQuery as CFDictionary, nil)
         guard status == errSecSuccess else {
@@ -187,7 +187,7 @@ final class KeychainService: KeychainServiceProtocol {
             kSecAttrService as String: service,
             kSecAttrAccount as String: accountKey,
             kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
+            kSecMatchLimit as String: kSecMatchLimitOne,
         ]
 
         var result: AnyObject?
@@ -216,7 +216,7 @@ final class KeychainService: KeychainServiceProtocol {
         let deleteQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccount as String: accountKey
+            kSecAttrAccount as String: accountKey,
         ]
         let status = SecItemDelete(deleteQuery as CFDictionary)
         guard status == errSecSuccess || status == errSecItemNotFound else {

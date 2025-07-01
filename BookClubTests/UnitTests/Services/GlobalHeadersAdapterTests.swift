@@ -5,29 +5,77 @@
 //  Created by Tark Wight on 01.06.2025.
 //
 
-import XCTest
 import Alamofire
+import XCTest
+
 @testable import BookClub
 
 final class GlobalHeadersAdapterTests: XCTestCase {
-    func test_adapt_shouldAddAcceptLanguageHeader() throws {
-        let adapter = GlobalHeadersAdapter()
-        let url = try XCTUnwrap(URL(string: "https://example.com"))
+    private var mockProvider: MockTokenProvider!
+    private var adapter: GlobalHeadersAdapter!
+    private let session = Session.default
 
-        let originalRequest = URLRequest(url: url)
+    override func setUp() {
+        super.setUp()
+        mockProvider = MockTokenProvider()
+        adapter = GlobalHeadersAdapter(tokenProvider: mockProvider)
+    }
+
+    func test_adapt_withToken_addsAuthorizationHeader() {
+        // Given
+        mockProvider.token = "abc123"
+        let url = URL(string: "https://example.com")!
+        var originalRequest = URLRequest(url: url)
+        originalRequest.setValue(
+            "application/json",
+            forHTTPHeaderField: "Accept"
+        )
+
         let exp = expectation(description: "Adapted")
-
-        adapter.adapt(originalRequest, for: .default) { result in
+        // When
+        adapter.adapt(originalRequest, for: session) { result in
             do {
-                let adaptedRequest = try result.get()
-                let header = adaptedRequest.headers["Accept-Language"]
-                XCTAssertEqual(header, Locale.current.identifier)
-                exp.fulfill()
+                let adapted = try result.get()
+                // Then
+                XCTAssertEqual(
+                    adapted.value(forHTTPHeaderField: "Authorization"),
+                    "Bearer abc123",
+                    "Should inject correct Bearer token"
+                )
+                // Ensure other headers are preserved
+                XCTAssertEqual(
+                    adapted.value(forHTTPHeaderField: "Accept"),
+                    "application/json"
+                )
             } catch {
-                XCTFail("Adaptation failed with error: \(error)")
+                XCTFail("adapt failed: \(error)")
             }
+            exp.fulfill()
         }
+        wait(for: [exp], timeout: 1.0)
+    }
 
+    func test_adapt_withoutToken_doesNotAddAuthorizationHeader() {
+        // Given
+        mockProvider.token = nil
+        let url = URL(string: "https://example.com")!
+        let originalRequest = URLRequest(url: url)
+
+        let exp = expectation(description: "Adapted")
+        // When
+        adapter.adapt(originalRequest, for: session) { result in
+            do {
+                let adapted = try result.get()
+                // Then
+                XCTAssertNil(
+                    adapted.value(forHTTPHeaderField: "Authorization"),
+                    "Should not add Authorization header when token is nil"
+                )
+            } catch {
+                XCTFail("adapt failed: \(error)")
+            }
+            exp.fulfill()
+        }
         wait(for: [exp], timeout: 1.0)
     }
 }

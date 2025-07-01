@@ -5,9 +5,10 @@
 //  Created by Tark Wight on 01.06.2025.
 //
 
-import XCTest
-@testable import BookClub
 import Alamofire
+import XCTest
+
+@testable import BookClub
 
 @MainActor
 final class AuthRetrierTests: XCTestCase {
@@ -20,7 +21,7 @@ final class AuthRetrierTests: XCTestCase {
         retrier = AuthRetrier(authService: mockAuthService)
     }
 
-    // MARK: - shouldRetry logic
+    // MARK: – shouldRetry logic
 
     func test_shouldRetry_whenStatusCode401_returnsTrue() {
         XCTAssertTrue(retrier.shouldRetry(statusCode: 401))
@@ -31,21 +32,19 @@ final class AuthRetrierTests: XCTestCase {
         XCTAssertFalse(retrier.shouldRetry(statusCode: nil))
     }
 
-    // MARK: - Integration-like behavior with mockAuthService
+    // MARK: – simulateRetry integration
 
     func test_retry_shouldTriggerRefresh_when401() async {
         let exp = expectation(description: "Should retry")
-        mockAuthService.shouldSucceed = true
+        mockAuthService.shouldSucceedRefresh = true
 
-        let completion: @Sendable  (RetryResult) -> Void = { result in
+        retrier.simulateRetry(statusCode: 401) { result in
             if case .retry = result {
                 exp.fulfill()
             } else {
                 XCTFail("Expected .retry")
             }
         }
-
-        retrier.simulateRetry(statusCode: 401, completion: completion)
 
         await fulfillment(of: [exp], timeout: 1.0)
     }
@@ -66,7 +65,7 @@ final class AuthRetrierTests: XCTestCase {
 
     func test_retry_shouldFailAll_whenRefreshFails() async {
         let exp = expectation(description: "Should fail all")
-        mockAuthService.shouldSucceed = false
+        mockAuthService.shouldSucceedRefresh = false
 
         retrier.simulateRetry(statusCode: 401) { result in
             if case .doNotRetryWithError = result {
@@ -82,36 +81,16 @@ final class AuthRetrierTests: XCTestCase {
     func test_retry_shouldQueueMultipleCompletions_andCallRefreshOnce() async {
         let exp1 = expectation(description: "First completion")
         let exp2 = expectation(description: "Second completion")
-        mockAuthService.shouldSucceed = true
+        mockAuthService.shouldSucceedRefresh = true
 
         retrier.simulateRetry(statusCode: 401) { result in
-            if case .retry = result {
-                exp1.fulfill()
-            }
+            if case .retry = result { exp1.fulfill() }
         }
-
         retrier.simulateRetry(statusCode: 401) { result in
-            if case .retry = result {
-                exp2.fulfill()
-            }
+            if case .retry = result { exp2.fulfill() }
         }
 
         await fulfillment(of: [exp1, exp2], timeout: 1.0)
         XCTAssertEqual(mockAuthService.refreshTokenCallCount, 1)
     }
 }
-
-// MARK: - Extension for testing private logic
-#if DEBUG
-extension AuthRetrier {
-    func simulateRetry(statusCode: Int?, completion: @escaping @Sendable (RetryResult) -> Void) {
-        if shouldRetry(statusCode: statusCode) {
-            Task {
-                await retryManager.enqueue(completion)
-            }
-        } else {
-            completion(.doNotRetry)
-        }
-    }
-}
-#endif

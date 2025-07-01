@@ -4,44 +4,42 @@
 //
 //  Created by Tark Wight on 01.06.2025.
 //
-
 import Foundation
 import Alamofire
 
 @testable import BookClub
 
-final class MockNetworkService: NetworkServiceProtocol {
-    var encodedBody: Data?
+final class MockNetworkService: NetworkClientProtocol {
+    /// If true, any request throws a URLError(.badServerResponse)
     var shouldThrowOnRequest = false
-    var shouldThrowOnEncode = false
-    var stubbedResponse: AuthResponse?
+    /// The raw data to return for any successful request
+    var stubbedData: Data?
 
-    func request(with config: NetworkConfig) async throws -> Data {
+    /// Async request returning a decoded model
+    func request<T: Decodable>(
+        _ config: NetworkConfigProtocol,
+        decoder: DataDecoder = JSONDecoder()
+    ) async throws -> T {
+        // Simulate network failure
         if shouldThrowOnRequest {
             throw URLError(.badServerResponse)
         }
-        guard let stubbedResponse else {
+        // Ensure we have stubbed data
+        guard let data = stubbedData else {
             throw DecodingError.valueNotFound(
-                AuthResponse.self,
-                .init(codingPath: [],
-                      debugDescription: "Stubbed response is nil")
+                T.self,
+                .init(codingPath: [], debugDescription: "No stubbed data")
             )
         }
-        return try encode(stubbedResponse)
+        // Decode into the expected model type T
+        return try decoder.decode(T.self, from: data)
     }
 
-    func request<Model>(with config: NetworkConfig) async throws -> Model where Model: Decodable {
-        let data = try await request(with: config)
-        return try JSONDecoder().decode(Model.self, from: data)
-    }
-
-    func encode<Value>(_ value: Value) throws -> Data where Value: Encodable {
-        if shouldThrowOnEncode {
-            throw EncodingError.invalidValue(value, .init(
-                codingPath: [],
-                debugDescription: "Stubbed encoding failure"
-            ))
+    /// Async request expecting no response body
+    func request(_ config: NetworkConfigProtocol) async throws {
+        if shouldThrowOnRequest {
+            throw URLError(.badServerResponse)
         }
-        return try JSONEncoder().encode(value)
+        // otherwise succeed silently
     }
 }
