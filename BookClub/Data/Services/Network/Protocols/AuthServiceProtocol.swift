@@ -1,0 +1,14 @@
+//
+//  AuthServiceProtocol.swift
+//  BookClub
+//
+//  Created by Tark Wight on 01.06.2025.
+//
+
+import Foundation
+
+protocol AuthServiceProtocol: Sendable {
+    func retrieveToken() async throws -> String
+    func refreshToken(identifier: String?, password: String?) async throws
+        -> String
+}
